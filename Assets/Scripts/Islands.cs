@@ -1,12 +1,21 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+public class Tile
+{
+
+
+}
+
 public class Islands : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        List<List<int>> a = blobGenerator(15, 15, 100);
+        List<List<int>> a = blobGenerator(4, 4, 4);
+        printBlob(a);
+        Debug.Log("");
+        a = generateEdgeInts(a);
         printBlob(a);
 
     }
@@ -16,6 +25,138 @@ public class Islands : MonoBehaviour
     {
 
     }
+
+    List<List<int>> generateEdgeInts(List<List<int>> blobTiles)
+    {
+        // tiles are stored as a bit string 
+        //   1  2
+        // 7      3
+        // 8      4
+        //   5  6
+        //
+        List<List<int>> tiles = new List<List<int>>();
+        int height = blobTiles.Count - 1;
+        int width = blobTiles[0].Count - 1;
+
+        // initialise tile map as empty
+        for (int y = 0; y < blobTiles.Count - 1; y++)
+        {
+            tiles.Add(new List<int>(new int[blobTiles[y].Count - 1]));
+        }
+
+        // loop over all the tile squares and generate bit strings
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int tileInt = 0;
+                // get corner sections
+                bool tl = blobTiles[y][x] == 1;
+                bool tr = blobTiles[y][x + 1] == 1;
+                bool br = blobTiles[y + 1][x + 1] == 1;
+                bool bl = blobTiles[y + 1][x] == 1;
+
+                //top
+                if (y != 0)
+                {
+                    tileInt |= (tiles[y - 1][x] & (0b11 << 4)) >> 4;
+                }
+                else
+                {
+                    //todo
+                }
+
+                //left
+                if (x != 0)
+                {
+                    tileInt |= (tiles[y][x - 1] & (0b11 << 2)) << 4;
+                }
+                else
+                {
+                    //todo
+                }
+
+                // bottm side
+                if (br)
+                {
+                    if (bl)
+                    {
+                        // both
+                        tileInt |= 0b11 << 4;
+                    }
+                    else
+                    {
+                        // just br
+                        if (Random.Range(0f, 1f) > 0.5)
+                        {
+                            tileInt |= 0b11 << 4;
+                        }
+                        else
+                        {
+                            tileInt |= 0b1 << 5;
+                        }
+                    }
+                }
+                else
+                {
+                    if (bl)
+                    {
+                        // just bl
+                        if (Random.Range(0f, 1f) > 0.5)
+                        {
+                            tileInt |= 0b11 << 4;
+                        }
+                        else
+                        {
+                            tileInt |= 0b1 << 4;
+                        }
+                    }
+                }
+
+
+                // right side
+                if (tr)
+                {
+                    if (br)
+                    {
+                        // both
+                        tileInt |= 0b11 << 2;
+                    }
+                    else
+                    {
+                        // just tr
+                        if (Random.Range(0f, 1f) > 0.5)
+                        {
+                            tileInt |= 0b11 << 2;
+                        }
+                        else
+                        {
+                            tileInt |= 0b1 << 2;
+                        }
+                    }
+                }
+                else
+                {
+                    if (br)
+                    {
+                        // just br
+                        if (Random.Range(0f, 1f) > 0.5)
+                        {
+                            tileInt |= 0b11 << 2;
+                        }
+                        else
+                        {
+                            tileInt |= 0b1 << 3;
+                        }
+                    }
+                }
+
+                tiles[y][x] = tileInt;
+            }
+        }
+        return tiles;
+    }
+
 
     static List<List<int>> blobGenerator(int maxWidth, int maxHeight, int landMass)
     {
