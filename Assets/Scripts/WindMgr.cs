@@ -9,7 +9,7 @@ public class WindMgr : MonoBehaviour
     private float timeSinceLastChange;
     private float transitionTime;
     private float targetWindDir;
-    private float targetWindAngle;
+    public float targetWindAngle;
 
     public Vector3 windDir = Vector3.forward;
     public float windStrength = 1f; //Added wind strength!
@@ -53,9 +53,11 @@ public class WindMgr : MonoBehaviour
         if (timeSinceLastChange >= directionChangeInterval)
         {
             //Set new target direction
-            targetWindDir = UnityEngine.Random.Range(0.0f, 360.0f);
+targetWindDir = Random.Range(0.0f, 360.0f);
+            targetWindAngle = targetWindDir;
             transitionTime = 0f;
             timeSinceLastChange = 0f;
+
             Debug.Log("Changing wind direction to: " + targetWindDir);
         }
 
@@ -66,9 +68,9 @@ public class WindMgr : MonoBehaviour
             float t = Mathf.Clamp01(transitionTime / transitionDuration);
             //ease in and out
             t = Mathf.SmoothStep(0f, 1f, t);
-            //chaneg wind direction transition time
-            float windDir = Mathf.LerpAngle(getWindAngle(), targetWindDir, t);
-            updateDir();
+            //change wind direction transition time
+            float newAngle = Mathf.LerpAngle(getWindAngle(), targetWindDir, t);
+            updateDir(newAngle);
         }
     }
 
@@ -79,6 +81,7 @@ public class WindMgr : MonoBehaviour
         {
             angle = targetWindAngle;
         }
+
         float angleRad = angle * Mathf.Deg2Rad;
         windDir = new Vector3(Mathf.Cos(angleRad), 0, Mathf.Sin(angleRad)).normalized;
     }
