@@ -71,7 +71,7 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    void windEffect()
+    void windEffect() //integrates this script with WindMgr
     {
         wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength;
     }
