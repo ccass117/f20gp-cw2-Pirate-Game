@@ -4,8 +4,8 @@ using System.Collections.Generic;
 public class Islands : MonoBehaviour
 {
 
-    // holds the mapping from 
-    private Dictionary<int, int> tileMapping = new Dictionary<int, int>();
+    // holds the mapping from (baseTileInt, flipHoriz, rotate amount)
+    private Dictionary<int, (int, bool, int)> tileMapping = new Dictionary<int, (int, bool, int)>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,7 +17,7 @@ public class Islands : MonoBehaviour
         a = generateEdgeInts(a);
         printBlob(a);
         Debug.Log(tileMapping.Keys.Count);
-        Debug.Log(string.Join(" ", tileMapping.Keys));
+        List<List<(int, bool, int)>> b = mapTilesToBase(a);
     }
 
     // Update is called once per frame
@@ -26,12 +26,29 @@ public class Islands : MonoBehaviour
 
     }
 
-    void generateTileMapping(Dictionary<int, int> tileMap)
+
+    // map tile ints to base tiles with rotation and flip flags
+    List<List<(int, bool, int)>> mapTilesToBase(List<List<int>> tileInts)
+    {
+        List<List<(int, bool, int)>> baseTiles = new List<List<(int, bool, int)>>();
+        for (int y = 0; y < tileInts.Count; y++)
+        {
+            baseTiles.Add(new List<(int, bool, int)>());
+            for (int x = 0; x < tileInts[0].Count; x++)
+            {
+                baseTiles[y].Add(tileMapping[tileInts[y][x]]);
+            }
+        }
+        return baseTiles;
+
+    }
+
+    void generateTileMapping(Dictionary<int, (int, bool, int)> tileMap)
     {
         int[] tileInts = {
             321, // 1 corner, 1 each side
             323, // 1 corner, 1 on one side 2 on the other
-            391, // 1 corner, 2 on each side
+            451, // 1 corner, 2 on each side
 
             839, // 2 adjacent corners, 1 each side
             847, // 2 adjacent corners, 1 on one side 2 on the other
@@ -51,17 +68,18 @@ public class Islands : MonoBehaviour
         {
             // add all rotations
             int cur = tileInts[i];
-            tileMap.Add(cur, cur);
-            tileMap.Add(rotateCW(cur), cur);
-            tileMap.Add(rotateCW(rotateCW(cur)), cur);
-            tileMap.Add(rotateCW(rotateCW(rotateCW(cur))), cur);
-            tileMap.TryAdd(flipHoriz(cur), cur);
-            tileMap.TryAdd(rotateCW(flipHoriz(cur)), cur);
-            tileMap.TryAdd(rotateCW(rotateCW(flipHoriz(cur))), cur);
-            tileMap.TryAdd(rotateCW(rotateCW(rotateCW(flipHoriz(cur)))), cur);
+            tileMap.TryAdd(cur, (cur, false, 0));
+            tileMap.TryAdd(rotateCW(cur), (cur, false, 1));
+            tileMap.TryAdd(rotateCW(rotateCW(cur)), (cur, false, 2));
+            tileMap.TryAdd(rotateCW(rotateCW(rotateCW(cur))), (cur, false, 3));
+            tileMap.TryAdd(flipHoriz(cur), (cur, true, 0));
+            tileMap.TryAdd(rotateCW(flipHoriz(cur)), (cur, true, 1));
+            tileMap.TryAdd(rotateCW(rotateCW(flipHoriz(cur))), (cur, true, 2));
+            tileMap.TryAdd(rotateCW(rotateCW(rotateCW(flipHoriz(cur)))), (cur, true, 3));
         }
 
-        tileMap.Add(4095, 4095);
+        tileMap.Add(4095, (4095, false, 0)); // full tile
+        tileMap.Add(0, (0, false, 0)); // empty tile
 
     }
 
@@ -104,28 +122,22 @@ public class Islands : MonoBehaviour
     }
 
 
-    int matchTile(int tileInt)
-    {
-        return 0;
-    }
-
     List<List<int>> generateEdgeInts(List<List<int>> blobTiles)
     {
         // tiles are stored as a bit string 
-        //   1  2
+        // 9 1  2 10
         // 7      3
         // 8      4
-        //   5  6
-        // the blob tiles holds the corner bits
+        //12 5  6 11
 
         List<List<int>> tiles = new List<List<int>>();
-        int height = blobTiles.Count - 1;
-        int width = blobTiles[0].Count - 1;
+        int height = blobTiles.Count + 1;
+        int width = blobTiles[0].Count + 1;
 
         // initialise tile map as empty
-        for (int y = 0; y < blobTiles.Count - 1; y++)
+        for (int y = 0; y < height; y++)
         {
-            tiles.Add(new List<int>(new int[blobTiles[y].Count - 1]));
+            tiles.Add(new List<int>(new int[width]));
         }
 
         // loop over all the tile squares and generate bit strings
@@ -135,10 +147,10 @@ public class Islands : MonoBehaviour
             {
                 int tileInt = 0;
                 // get corner sections
-                bool tl = blobTiles[y][x] == 1;
-                bool tr = blobTiles[y][x + 1] == 1;
-                bool br = blobTiles[y + 1][x + 1] == 1;
-                bool bl = blobTiles[y + 1][x] == 1;
+                bool tl = x > 0 && y > 0 ? (blobTiles[y - 1][x - 1] == 1) : false;
+                bool tr = x < width - 1 && y > 0 ? (blobTiles[y - 1][x] == 1) : false;
+                bool br = x < width - 1 && y < height - 1 ? blobTiles[y][x] == 1 : false;
+                bool bl = x > 0 && y < height - 1 ? blobTiles[y][x - 1] == 1 : false;
 
                 //top
                 if (y != 0)
@@ -276,7 +288,7 @@ public class Islands : MonoBehaviour
             float comX = com.Item1;
             float comY = com.Item2;
             float dist = (comX - x) * (comX - x) + (comY - y) * (comY - y);
-            if (Random.Range(0, dist) > 1) continue;
+            if (Random.Range(0, dist) > 0) continue;
 
             // add landmass
             open.RemoveAt(pos);
