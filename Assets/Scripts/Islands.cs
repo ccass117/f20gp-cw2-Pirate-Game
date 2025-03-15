@@ -7,23 +7,22 @@ public class Islands : MonoBehaviour
     // holds the mapping from (baseTileInt, flipHoriz, rotate amount)
     private Dictionary<int, (int, bool, int)> tileMapping = new Dictionary<int, (int, bool, int)>();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // run once to generate all the tile orientations
         generateTileMapping(tileMapping);
-        List<List<int>> a = blobGenerator(4, 4, 4);
-        printBlob(a);
-        Debug.Log("");
+
+        // generate a 2d "blob"
+        List<List<int>> a = blobGenerator(4, 4, 4, 1f);
+
+        // generate tile as edge bit encodedints 
         a = generateEdgeInts(a);
-        printBlob(a);
-        Debug.Log(tileMapping.Keys.Count);
+
+        // map the tiles to base tile + transform (tile, flipHoriz, rotation CW 90º)
         List<List<(int, bool, int)>> b = mapTilesToBase(a);
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
 
+        // todo in
     }
 
 
@@ -36,15 +35,24 @@ public class Islands : MonoBehaviour
             baseTiles.Add(new List<(int, bool, int)>());
             for (int x = 0; x < tileInts[0].Count; x++)
             {
+                // find the current tile in the tile map and take its base tile + transform
                 baseTiles[y].Add(tileMapping[tileInts[y][x]]);
             }
         }
         return baseTiles;
-
     }
+
 
     void generateTileMapping(Dictionary<int, (int, bool, int)> tileMap)
     {
+        // make sure the base tiles can map to these ints
+        // for instance 847 (2 adjacent corners, one with 1, and the other with 2) would map to 
+        // # # # #
+        // x     #
+        // o     x
+        // o o o o
+        // where # are in-land, x are land connections, o are sea
+
         int[] tileInts = {
             321, // 1 corner, 1 each side
             323, // 1 corner, 1 on one side 2 on the other
@@ -124,6 +132,11 @@ public class Islands : MonoBehaviour
 
     List<List<int>> generateEdgeInts(List<List<int>> blobTiles)
     {
+
+        // convert the blobs to tiles, the items in blob act as the inner corners of a grid
+        // returned dimensions are +1 from blob in both x and y as it goes from corners to squares
+        // edges are filled with 0s
+
         // tiles are stored as a bit string 
         // 9 1  2 10
         // 7      3
@@ -146,7 +159,8 @@ public class Islands : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 int tileInt = 0;
-                // get corner sections
+
+                // get corner sections, if on edge, default empty
                 bool tl = x > 0 && y > 0 ? (blobTiles[y - 1][x - 1] == 1) : false;
                 bool tr = x < width - 1 && y > 0 ? (blobTiles[y - 1][x] == 1) : false;
                 bool br = x < width - 1 && y < height - 1 ? blobTiles[y][x] == 1 : false;
@@ -260,8 +274,10 @@ public class Islands : MonoBehaviour
     }
 
 
-    static List<List<int>> blobGenerator(int maxWidth, int maxHeight, int landMass)
+    List<List<int>> blobGenerator(int maxWidth, int maxHeight, int landMass, float randomness)
     {
+        // generate connected 2d blob in a 2d array
+
         List<List<int>> tiles = new List<List<int>>();
         List<(int, int)> open = new List<(int, int)>();
         int mass = 0;
@@ -288,7 +304,7 @@ public class Islands : MonoBehaviour
             float comX = com.Item1;
             float comY = com.Item2;
             float dist = (comX - x) * (comX - x) + (comY - y) * (comY - y);
-            if (Random.Range(0, dist) > 0) continue;
+            if (Random.Range(0, dist) < randomness) continue;
 
             // add landmass
             open.RemoveAt(pos);
