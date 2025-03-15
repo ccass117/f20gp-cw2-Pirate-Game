@@ -1,29 +1,112 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Tile
-{
-
-
-}
-
 public class Islands : MonoBehaviour
 {
+
+    // holds the mapping from 
+    private Dictionary<int, int> tileMapping = new Dictionary<int, int>();
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        generateTileMapping(tileMapping);
         List<List<int>> a = blobGenerator(4, 4, 4);
         printBlob(a);
         Debug.Log("");
         a = generateEdgeInts(a);
         printBlob(a);
-
+        Debug.Log(tileMapping.Keys.Count);
+        Debug.Log(string.Join(" ", tileMapping.Keys));
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    void generateTileMapping(Dictionary<int, int> tileMap)
+    {
+        int[] tileInts = {
+            321, // 1 corner, 1 each side
+            323, // 1 corner, 1 on one side 2 on the other
+            391, // 1 corner, 2 on each side
+
+            839, // 2 adjacent corners, 1 each side
+            847, // 2 adjacent corners, 1 on one side 2 on the other
+            975, // 2 adjacent corners, 2 each side
+
+            1385, // 2 opposite corners, 1 each side
+            1387, // 2 opposite corners, 1 2
+            // errors will provide the rest lol
+            1535, // 2 opposite corners, 2 each side
+
+            1903, // 3 corners, 1 each side
+            1919, // 3 corners, 1 on one side 2 on the other
+            2047, // 3 corners, 2 each side
+        };
+
+        for (int i = 0; i < tileInts.Length; i++)
+        {
+            // add all rotations
+            int cur = tileInts[i];
+            tileMap.Add(cur, cur);
+            tileMap.Add(rotateCW(cur), cur);
+            tileMap.Add(rotateCW(rotateCW(cur)), cur);
+            tileMap.Add(rotateCW(rotateCW(rotateCW(cur))), cur);
+            tileMap.TryAdd(flipHoriz(cur), cur);
+            tileMap.TryAdd(rotateCW(flipHoriz(cur)), cur);
+            tileMap.TryAdd(rotateCW(rotateCW(flipHoriz(cur))), cur);
+            tileMap.TryAdd(rotateCW(rotateCW(rotateCW(flipHoriz(cur)))), cur);
+        }
+
+        tileMap.Add(4095, 4095);
+
+    }
+
+    int flipHoriz(int tileInt)
+    {
+        int newTileInt = 0;
+        // edges
+        newTileInt |= (tileInt & (0b1 << 0)) << 1;
+        newTileInt |= (tileInt & (0b1 << 1)) >> 1;
+        newTileInt |= (tileInt & (0b11 << 2)) << 4;
+        newTileInt |= (tileInt & (0b1 << 4)) << 1;
+        newTileInt |= (tileInt & (0b1 << 5)) >> 1;
+        newTileInt |= (tileInt & (0b11 << 6)) >> 4;
+
+        // corners
+        newTileInt |= (tileInt & (0b1 << 8)) << 1;
+        newTileInt |= (tileInt & (0b1 << 9)) >> 1;
+        newTileInt |= (tileInt & (0b1 << 10)) << 1;
+        newTileInt |= (tileInt & (0b1 << 11)) >> 1;
+        return newTileInt;
+    }
+
+    int rotateCW(int tileInt)
+    {
+        int newTileInt = 0;
+        // edges
+        newTileInt |= (tileInt & (0b11 << 0)) << 2;
+        newTileInt |= (tileInt & (0b1 << 2)) << 3;
+        newTileInt |= (tileInt & (0b1 << 3)) << 1;
+        newTileInt |= (tileInt & (0b11 << 4)) << 2;
+        newTileInt |= (tileInt & (0b1 << 6)) >> 5;
+        newTileInt |= (tileInt & (0b1 << 7)) >> 7;
+
+        // corners
+        newTileInt |= (tileInt & (0b1 << 8)) << 1;
+        newTileInt |= (tileInt & (0b1 << 9)) << 1;
+        newTileInt |= (tileInt & (0b1 << 10)) << 1;
+        newTileInt |= (tileInt & (0b1 << 11)) >> 3;
+        return newTileInt;
+    }
+
+
+    int matchTile(int tileInt)
+    {
+        return 0;
     }
 
     List<List<int>> generateEdgeInts(List<List<int>> blobTiles)
@@ -33,7 +116,8 @@ public class Islands : MonoBehaviour
         // 7      3
         // 8      4
         //   5  6
-        //
+        // the blob tiles holds the corner bits
+
         List<List<int>> tiles = new List<List<int>>();
         int height = blobTiles.Count - 1;
         int width = blobTiles[0].Count - 1;
@@ -150,6 +234,12 @@ public class Islands : MonoBehaviour
                         }
                     }
                 }
+
+                //add corners to 9, 10, 11, 12 bits
+                tileInt |= (tl ? 1 : 0) << 8;
+                tileInt |= (tr ? 1 : 0) << 9;
+                tileInt |= (br ? 1 : 0) << 10;
+                tileInt |= (bl ? 1 : 0) << 11;
 
                 tiles[y][x] = tileInt;
             }
