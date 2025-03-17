@@ -1,33 +1,30 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Islands : MonoBehaviour
+public class Islands
 {
 
     // holds the mapping from (baseTileInt, flipHoriz, rotate amount)
-    private Dictionary<int, (int, bool, int)> tileMapping = new Dictionary<int, (int, bool, int)>();
+    private static Dictionary<int, (int, bool, int)> tileMapping = generateTileMapping();
 
-    void Start()
+    public static List<List<(int, bool, int)>> genIsland(int maxWidth, int maxHeight, int mass, float roundedness)
     {
-        // run once to generate all the tile orientations
-        generateTileMapping(tileMapping);
-
         // generate a 2d "blob"
-        List<List<int>> a = blobGenerator(4, 4, 4, 1f);
+        List<List<int>> a = blobGenerator(maxWidth, maxHeight, mass, roundedness);
 
         // generate tile as edge bit encodedints 
         a = generateEdgeInts(a);
+        printBlob(a);
 
         // map the tiles to base tile + transform (tile, flipHoriz, rotation CW 90º)
         List<List<(int, bool, int)>> b = mapTilesToBase(a);
 
-
-        // todo in
+        return b;
     }
 
 
     // map tile ints to base tiles with rotation and flip flags
-    List<List<(int, bool, int)>> mapTilesToBase(List<List<int>> tileInts)
+    static List<List<(int, bool, int)>> mapTilesToBase(List<List<int>> tileInts)
     {
         List<List<(int, bool, int)>> baseTiles = new List<List<(int, bool, int)>>();
         for (int y = 0; y < tileInts.Count; y++)
@@ -43,8 +40,9 @@ public class Islands : MonoBehaviour
     }
 
 
-    void generateTileMapping(Dictionary<int, (int, bool, int)> tileMap)
+    static Dictionary<int, (int, bool, int)> generateTileMapping()
     {
+        Dictionary<int, (int, bool, int)> tileMap = new Dictionary<int, (int, bool, int)>();
         // make sure the base tiles can map to these ints
         // for instance 847 (2 adjacent corners, one with 1, and the other with 2) would map to 
         // # # # #
@@ -89,9 +87,10 @@ public class Islands : MonoBehaviour
         tileMap.Add(4095, (4095, false, 0)); // full tile
         tileMap.Add(0, (0, false, 0)); // empty tile
 
+        return tileMap;
     }
 
-    int flipHoriz(int tileInt)
+    static int flipHoriz(int tileInt)
     {
         int newTileInt = 0;
         // edges
@@ -110,7 +109,7 @@ public class Islands : MonoBehaviour
         return newTileInt;
     }
 
-    int rotateCW(int tileInt)
+    static int rotateCW(int tileInt)
     {
         int newTileInt = 0;
         // edges
@@ -130,7 +129,7 @@ public class Islands : MonoBehaviour
     }
 
 
-    List<List<int>> generateEdgeInts(List<List<int>> blobTiles)
+    static List<List<int>> generateEdgeInts(List<List<int>> blobTiles)
     {
 
         // convert the blobs to tiles, the items in blob act as the inner corners of a grid
@@ -274,7 +273,7 @@ public class Islands : MonoBehaviour
     }
 
 
-    List<List<int>> blobGenerator(int maxWidth, int maxHeight, int landMass, float randomness)
+    static List<List<int>> blobGenerator(int maxWidth, int maxHeight, int landMass, float randomness)
     {
         // generate connected 2d blob in a 2d array
 
@@ -303,8 +302,8 @@ public class Islands : MonoBehaviour
             (float, float) com = centerOfMass(tiles);
             float comX = com.Item1;
             float comY = com.Item2;
-            float dist = (comX - x) * (comX - x) + (comY - y) * (comY - y);
-            if (Random.Range(0, dist) < randomness) continue;
+            float dist = Mathf.Sqrt((comX - x) * (comX - x) + (comY - y) * (comY - y));
+            //if (Random.Range(0, dist) < randomness) continue;
 
             // add landmass
             open.RemoveAt(pos);
