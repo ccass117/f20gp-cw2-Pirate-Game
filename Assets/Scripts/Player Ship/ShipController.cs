@@ -147,10 +147,11 @@ public class ShipController : MonoBehaviour
 
         Debug.Log("Anchor Raised");
         //build up to min speed over 0.5 seconds
+        float targetRiggingSpeed = currentRiggingSpeed;
         while (elapsed < restoreDuration)
         {
             elapsed += Time.deltaTime;
-            currentRiggingSpeed = Mathf.Lerp(0f, 2f, elapsed / restoreDuration);
+            currentRiggingSpeed = Mathf.Lerp(0f, targetRiggingSpeed, elapsed / restoreDuration);
             yield return null;
         }      
     }
