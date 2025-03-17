@@ -38,11 +38,11 @@ void Start()
 
     void Update()
     {
-        float windSpeedMod = windSpeedMod();
+        float windSpeedMod = windSpeedModify();
         //Briefly ignore wind effects if ramming (maybe? We'll need to see how this feels in gameplay)
         if (currentState != State.Ramming)
         {
-            agent.speed = Mathf.Clamp(baseSpeed * windSpeedModifier, minSpeed, baseSpeed * (1 + windEffect));
+            agent.speed = Mathf.Clamp(baseSpeed * windSpeedMod, minSpeed, baseSpeed * (1 + windEffect));
         }
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -143,7 +143,7 @@ void Start()
         }
     }
 
-    private float windSpeedMod()
+    private float windSpeedModify()
     {
         Vector3 windDirection = WindMgr.Instance.windDir;
         float dotProduct = Vector3.Dot(transform.forward, windDirection);
