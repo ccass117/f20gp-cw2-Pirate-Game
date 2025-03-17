@@ -3,29 +3,47 @@ using UnityEngine.AI;
 
 public class EnemyShipAI : MonoBehaviour
 {
-    public Transform player;  // Assign the player's Transform in the Inspector
-    public float approachDistance = 20f;  // Distance to start pulling alongside
-    public float alongsideDistance = 10f; // Desired distance from the player when alongside
-    public float alongsideOffset = 5f;    // Offset to the side of the player
-    public float rotationSpeed = 1f; // Adjust for smooth rotation towards target
+    public Transform player;
+    public float approachDistance = 20f;
+    public float alongsideDistance = 10f;
+    public float rotationSpeed = 1f;
+    public float baseSpeed = 5f;
+    public float minSpeed = 2f;
+    public float windEffect = 0.5f;
+    public bool enableRamming = false;
+    public float rammingDistance = 5f;
+    public float rammingSpeedMultiplier = 1.5f;
 
     private NavMeshAgent agent;
-    private enum State { Approaching, Aligning, Alongside }
+    private enum State { Approaching, Aligning, Alongside, Ramming } //Finite state machine for movement behaviours, add combat states to this later
     private State currentState = State.Approaching;
+    private float originalSpeed;
 
-    void Start()
+void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        if (player == null)
+        agent.speed = baseSpeed;
+        originalSpeed = baseSpeed;
+        GameObject playerGameObject = GameObject.FindWithTag("Player");
+        if (playerGameObject != null)
         {
-            Debug.LogError("Player Transform not assigned to EnemyShipAI!");
-            enabled = false; // Disable the script if no player is assigned.
+            player = playerGameObject.transform;
+        }
+        else
+        {
+            Debug.LogError("L + plundered + marooned (you need to assign the player tag)");
+            enabled = false;
         }
     }
 
     void Update()
     {
-        if (player == null) return;
+        float windSpeedMod = windSpeedMod();
+        //Briefly ignore wind effects if ramming (maybe? We'll need to see how this feels in gameplay)
+        if (currentState != State.Ramming)
+        {
+            agent.speed = Mathf.Clamp(baseSpeed * windSpeedModifier, minSpeed, baseSpeed * (1 + windEffect));
+        }
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
@@ -33,88 +51,103 @@ public class EnemyShipAI : MonoBehaviour
         {
             case State.Approaching:
                 agent.SetDestination(player.position);
-                agent.stoppingDistance = approachDistance; // Set stopping distance for approach
+                agent.stoppingDistance = approachDistance;
 
-                if (distanceToPlayer <= approachDistance)
+                if (enableRamming && distanceToPlayer <= rammingDistance)
+                {
+                    currentState = State.Ramming;
+                    originalSpeed = agent.speed;
+                    agent.speed *= rammingSpeedMultiplier;
+                }
+                else if (distanceToPlayer <= approachDistance)
                 {
                     currentState = State.Aligning;
                 }
                 break;
 
             case State.Aligning:
-                // Calculate a point to the side of the player.
-                Vector3 alongsidePoint = CalculateAlongsidePoint();
+                Vector3 alongsidePoint = pullUpOnDaOpps();
                 agent.SetDestination(alongsidePoint);
-                agent.stoppingDistance = alongsideDistance;  // Adjust for final alongside position
+                agent.stoppingDistance = alongsideDistance;
 
-                // Check if we are facing the player and are close enough.
-                if (distanceToPlayer <= approachDistance && IsFacingPlayer())
+                if (enableRamming && distanceToPlayer <= rammingDistance)
+                {
+                    currentState = State.Ramming;
+                    originalSpeed = agent.speed;
+                    agent.speed *= rammingSpeedMultiplier;
+                }
+                else if (distanceToPlayer <= approachDistance && facingPlayer())
                 {
                     currentState = State.Alongside;
                 }
+                 smoothRotation(alongsidePoint);
 
-                 //Smoothly Rotate towards the target point
-                SmoothRotation(alongsidePoint);
                 break;
+
             case State.Alongside:
-                //Maintain alongside position and heading.
-                Vector3 targetPosition = CalculateAlongsidePoint();
+                Vector3 targetPosition = pullUpOnDaOpps();
                 agent.SetDestination(targetPosition);
-                SmoothRotation(targetPosition);
+                smoothRotation(targetPosition);
 
-                 // Optional: Add some slight "bobbing" or forward movement here
-                 // to make the ship feel more alive while alongside.
-
-                // Re-engage if the player moves away.
-                if (distanceToPlayer > approachDistance * 1.5f) // Give some leeway
+                if (enableRamming && distanceToPlayer <= rammingDistance)
+                {
+                    currentState = State.Ramming;
+                    originalSpeed = agent.speed;
+                    agent.speed *= rammingSpeedMultiplier;
+                }
+                else if (distanceToPlayer > approachDistance * 1.5f)
                 {
                     currentState = State.Approaching;
                 }
                 break;
+
+            case State.Ramming:
+                agent.SetDestination(player.position);
+                agent.stoppingDistance = 0f;
+                smoothRotation(player.position);
+
+                if (!enableRamming || distanceToPlayer > rammingDistance * 2f)
+                {
+                    currentState = State.Approaching;
+                    agent.speed = originalSpeed;
+                }
+                break;
         }
     }
-    private Vector3 CalculateAlongsidePoint()
+
+    private Vector3 pullUpOnDaOpps()
     {
-         // Determine which side to approach (left or right).  A simple way is to use the dot product.
         Vector3 toPlayer = player.position - transform.position;
         float dotProduct = Vector3.Dot(transform.right, toPlayer.normalized);
         Vector3 offsetDirection = (dotProduct > 0) ? player.right : -player.right;
-
-        // Calculate a point offset to the side of the player.
-        return player.position + offsetDirection * alongsideOffset;
+        return player.position + offsetDirection;
     }
-    private bool IsFacingPlayer()
+
+    private bool facingPlayer()
     {
-        // Check if the enemy is roughly facing the same direction as the player.
         float angleDifference = Vector3.Angle(transform.forward, player.forward);
-        return angleDifference < 45f;  // Consider it "facing" within a 45-degree cone. Adjust as needed.
+        return angleDifference < 45f;
     }
 
-    private void SmoothRotation(Vector3 targetPosition)
+  private void smoothRotation(Vector3 targetPosition)
     {
-        // Calculate direction to the target
         Vector3 direction = (targetPosition - transform.position).normalized;
 
-        // Prevent rotation on the Y-axis, keeping the ship upright
         direction.y = 0;
 
         if (direction != Vector3.zero)
         {
-             // Create a target rotation based on the direction
             Quaternion targetRotation = Quaternion.LookRotation(direction);
 
-            // Smoothly rotate towards the target rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
-        //Helper function, draws a sphere around the target position.
-     private void OnDrawGizmosSelected()
-    {
-        if (player != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(CalculateAlongsidePoint(), 2f); // Visualize the target point
-        }
-    }
 
+    private float windSpeedMod()
+    {
+        Vector3 windDirection = WindMgr.Instance.windDir;
+        float dotProduct = Vector3.Dot(transform.forward, windDirection);
+        float speedModifier = 1 + (dotProduct * windEffect);
+        return speedModifier;
+    }
 }
