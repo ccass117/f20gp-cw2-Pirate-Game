@@ -153,7 +153,7 @@ GameObject:
   - component: {fileID: 8843355865848048696}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -297,11 +297,17 @@ MonoBehaviour:
   rudderSpeed: 45
   maxTurnRate: 15
   turnDamping: 0.9
+  anchorRaiseTime: 3
+  maxTurnBoost: 2
   targetRudderAngle: 0
   currentRiggingSpeed: 0
   currentRudderAngle: 0
   anchored: 0
+  isRaisingAnchor: 0
   wind: {x: 0, y: 0, z: 0}
+  anchorTurnMomentum: 0
+  anchorRaiseSFX: {fileID: 0}
+  anchorDropSFX: {fileID: 0}
 --- !u!1 &8445927246795466540
 GameObject:
   m_ObjectHideFlags: 0

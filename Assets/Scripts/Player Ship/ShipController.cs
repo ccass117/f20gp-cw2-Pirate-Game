@@ -15,6 +15,11 @@ public class ShipController : MonoBehaviour
     public float maxTurnRate = 15f;
     public float turnDamping = 0.9f;
     public float anchorRaiseTime = 3f;
+    public float maxTurnBoost = 2f;
+
+    public bool sirenInfluenceActive = false;
+    public Transform sirenTarget = null;
+    public float sirenTurnStrength = 0.75f;
 
     [Header("Read Only")]
     [SerializeField] private float targetRudderAngle;
@@ -66,6 +71,23 @@ public class ShipController : MonoBehaviour
         if (Input.GetKey(KeyCode.A)) targetRudderAngle = maxRudderAngle;
         if (Input.GetKey(KeyCode.D)) targetRudderAngle = -maxRudderAngle;
 
+        //Siren influence override
+        if (sirenInfluenceActive && sirenTarget != null)
+        {
+            Vector3 toSiren = sirenTarget.position - transform.position;
+            toSiren.y = 0;
+
+            float angleToSiren = Vector3.SignedAngle(transform.forward, toSiren.normalized, Vector3.up);
+
+            // Apply a portion of this angle as a rudder influence
+            float influence = Mathf.Clamp(angleToSiren / maxRudderAngle, -1f, 1f);
+            float sirenRudder = influence * maxRudderAngle * sirenTurnStrength;
+
+            // Blend in the Siren influence with player input
+            targetRudderAngle += sirenRudder;
+            targetRudderAngle = Mathf.Clamp(targetRudderAngle, -maxRudderAngle, maxRudderAngle);
+        }
+
         currentRudderAngle = Mathf.MoveTowards(
             currentRudderAngle,
             targetRudderAngle,
@@ -106,17 +128,22 @@ public class ShipController : MonoBehaviour
             currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, anchorForce * Time.fixedDeltaTime);
             rb.MovePosition(rb.position + currentVelocity * Time.fixedDeltaTime);
 
-            //continue to turn slowing down (think handbreak turn but with an anchor)
+            // Add extra turn boost for more spin when anchored
+            float turnBoost = maxTurnBoost * (currentRiggingSpeed / maxSpeed);
             if (Mathf.Abs(anchorTurnMomentum) > 0.01f)
             {
-                Quaternion targetRot = rb.rotation * Quaternion.Euler(0, anchorTurnMomentum * Time.fixedDeltaTime, 0);
+                //add extra turn boost to the current momentum
+                float boostedTurnMomentum = anchorTurnMomentum * turnBoost;
+
+                //apply the boosted turn momentum to the ship's rotation
+                Quaternion targetRot = rb.rotation * Quaternion.Euler(0, boostedTurnMomentum * Time.fixedDeltaTime, 0);
                 rb.MoveRotation(targetRot);
 
-                //gradually reduce the spin of the turn
+                //gradually reduce the spin (momentum) of the turn
                 anchorTurnMomentum = Mathf.Lerp(anchorTurnMomentum, 0f, 1f * Time.fixedDeltaTime);
             }
         }
-        
+
         else
         {
             float forwardSpeed = currentRiggingSpeed + Vector3.Dot(transform.forward, wind);
