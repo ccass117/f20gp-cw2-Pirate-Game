@@ -915,11 +915,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: ffec643a-0070-4c1a-b0fb-74332da1c6ee
+  cloudProjectId: 253b5fa9-f544-46a5-b962-cb74a2c2d67d
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: F20GP-Pirates
-  organizationId: cook1ek1w111
+  projectName: F20GP-CW2
+  organizationId: b0_jangles
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
