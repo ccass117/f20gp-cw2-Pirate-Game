@@ -5,6 +5,7 @@ public class Cannonball : MonoBehaviour
 {
     public float damage = 1f;
     public AudioClip splashSound;
+    public float gravityMultiplier = 1f;
     public AudioClip hitSound;
     private Rigidbody rb;
     private AudioSource audioSource;
@@ -23,6 +24,11 @@ public class Cannonball : MonoBehaviour
         {
             splashCoroutine = StartCoroutine(splashAndDestroy());
         }
+    }
+
+    void FixedUpdate()
+    {
+        rb.AddForce(Physics.gravity * (gravityMultiplier), ForceMode.Acceleration);
     }
 
     void OnCollisionEnter(Collision collision)

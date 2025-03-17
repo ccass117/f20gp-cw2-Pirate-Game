@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Cannons : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Cannons : MonoBehaviour
     [Header("Cannon Statistics")]
     public int cannonsPerSide = 1;
     public float cooldownTime = 3f;
+    public float timeBetweenShots = 0.1f;
     public float shotSpeed = 10f;
     public float shotDamageBase = 1f;
     public float shotDamageMult = 1f;
@@ -116,7 +118,7 @@ public class Cannons : MonoBehaviour
         float cannonSpacing = cannonsPerSide > 1 ? shipLength / (cannonsPerSide - 1) : 0; // set cannon spacing to 0 if there is only 1 cannon per side
         float angleDeviation = cannonsPerSide > 1 ? 2 * maxAngleDifference / (cannonsPerSide - 1) : 0;
 
-        for (int i = 0; i < cannonsPerSide; i++)
+        for (int i = cannonsPerSide - 1; i >= 0; i--)
         {
             float zPosition = cannonsPerSide > 1 ? -shipLength / 2 + i * cannonSpacing : 0; // cannons are spaced out evenly along the ship's length if there are multiple per side
             float angle = cannonsPerSide > 1 ? -maxAngleDifference + i * angleDeviation : 0; // cannons are angled evenly between -maxAngleDifference and maxAngleDifference if there are multiple per side
@@ -137,7 +139,7 @@ public class Cannons : MonoBehaviour
     {
         if (leftCooldown <= 0)
         {
-            Fire(leftCannons);
+            StartCoroutine(Fire(leftCannons));
             leftCooldown = cooldownTime;
         }
     }
@@ -146,12 +148,12 @@ public class Cannons : MonoBehaviour
     {
         if (rightCooldown <= 0)
         {
-            Fire(rightCannons);
+            StartCoroutine(Fire(rightCannons));
             rightCooldown = cooldownTime;
         }
     }
 
-    void Fire(GameObject cannons)
+    private IEnumerator Fire(GameObject cannons)
     {
         foreach (Transform cannon in cannons.transform)
         {
@@ -173,16 +175,16 @@ public class Cannons : MonoBehaviour
                 {
                     rb.linearVelocity = cannon.forward * shotSpeed;
                 }
-                rb.useGravity = true;
-                rb.mass *= shotGravityMult;
             }
 
-            // Set the damage of the cannonball
+            // Set the damage and gravity of the cannonball
             Cannonball cannonballScript = cannonball.GetComponent<Cannonball>();
             if (cannonballScript != null)
             {
+                cannonballScript.gravityMultiplier = shotGravityMult;
                 cannonballScript.damage = shotDamageBase * shotDamageMult;
             }
+            yield return new WaitForSeconds(timeBetweenShots);
         }
     }
 
