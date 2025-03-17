@@ -17,8 +17,7 @@ public class ShipController : MonoBehaviour
     public float anchorRaiseTime = 3f;
     public float maxTurnBoost = 2f;
 
-    public bool sirenInfluenceActive = false;
-    public Transform sirenTarget = null;
+
     public float sirenTurnStrength = 0.75f;
 
     [Header("Read Only")]
@@ -32,6 +31,9 @@ public class ShipController : MonoBehaviour
 
     [SerializeField] private AudioSource anchorRaiseSFX;
     [SerializeField] private AudioSource anchorDropSFX;
+
+    public bool sirenInfluenceActive = false;
+    public Transform sirenTarget = null;
 
 
     private Rigidbody rb;
