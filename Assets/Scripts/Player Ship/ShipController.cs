@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System;
 
 public class ShipController : MonoBehaviour
 {
@@ -12,13 +14,20 @@ public class ShipController : MonoBehaviour
     public float rudderSpeed = 45f;
     public float maxTurnRate = 15f;
     public float turnDamping = 0.9f;
+    public float anchorRaiseTime = 3f;
 
     [Header("Read Only")]
     [SerializeField] private float targetRudderAngle;
     [SerializeField] private float currentRiggingSpeed;
     [SerializeField] private float currentRudderAngle = 0f;
     [SerializeField] private bool anchored = false;
+    [SerializeField] private bool isRaisingAnchor = false;
     [SerializeField] private Vector3 wind = Vector3.zero;
+    [SerializeField] private float anchorTurnMomentum = 0f;
+
+    [SerializeField] private AudioSource anchorRaiseSFX;
+    [SerializeField] private AudioSource anchorDropSFX;
+
 
     private Rigidbody rb;
     private Vector3 currentVelocity; 
@@ -63,11 +72,24 @@ public class ShipController : MonoBehaviour
             rudderSpeed * Time.deltaTime
         );
 
-        //Anchor Control (Space)
+        // Anchor Control (Space)
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            anchored = !anchored;
-            Debug.Log("Anchor " + (anchored ? "Dropped" : "Raised"));
+            if (!anchored && !isRaisingAnchor)
+            {
+                //drop anchor
+                anchored = true;
+                //maintain turnrate
+                anchorDropSFX.Play();
+                float turnRate = maxTurnRate * (currentRudderAngle / maxRudderAngle);
+                anchorTurnMomentum = turnRate;
+                Debug.Log("Anchor Dropped");
+            }
+            else if (anchored && !isRaisingAnchor)
+            {
+                // Start raising anchor
+                StartCoroutine(RaiseAnchor());
+            }
         }
     }
 
@@ -80,9 +102,21 @@ public class ShipController : MonoBehaviour
     {
         if (anchored)
         {
+            //stop forward movement
             currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, anchorForce * Time.fixedDeltaTime);
             rb.MovePosition(rb.position + currentVelocity * Time.fixedDeltaTime);
+
+            //continue to turn slowing down (think handbreak turn but with an anchor)
+            if (Mathf.Abs(anchorTurnMomentum) > 0.01f)
+            {
+                Quaternion targetRot = rb.rotation * Quaternion.Euler(0, anchorTurnMomentum * Time.fixedDeltaTime, 0);
+                rb.MoveRotation(targetRot);
+
+                //gradually reduce the spin of the turn
+                anchorTurnMomentum = Mathf.Lerp(anchorTurnMomentum, 0f, 1f * Time.fixedDeltaTime);
+            }
         }
+        
         else
         {
             float forwardSpeed = currentRiggingSpeed + Vector3.Dot(transform.forward, wind);
@@ -94,5 +128,30 @@ public class ShipController : MonoBehaviour
 
             rb.MovePosition(rb.position + currentVelocity * Time.fixedDeltaTime);
         }
+    }
+
+    private IEnumerator RaiseAnchor()
+    {
+        //Begin raising anchor
+        isRaisingAnchor = true;
+        Debug.Log("Raising anchor...");
+        anchorRaiseSFX.Play();
+
+        yield return new WaitForSeconds(anchorRaiseTime);
+
+        anchorRaiseSFX.Stop();
+        anchored = false;
+        isRaisingAnchor = false;
+        float elapsed = 0f;
+        float restoreDuration = 0.5f;
+
+        Debug.Log("Anchor Raised");
+        //build up to min speed over 0.5 seconds
+        while (elapsed < restoreDuration)
+        {
+            elapsed += Time.deltaTime;
+            currentRiggingSpeed = Mathf.Lerp(0f, 2f, elapsed / restoreDuration);
+            yield return null;
+        }      
     }
 }
