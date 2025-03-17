@@ -21,11 +21,13 @@ public class ShipController : MonoBehaviour
     [SerializeField] private Vector3 wind = Vector3.zero;
 
     private Rigidbody rb;
-    private Vector3 currentVelocity; 
+    private Vector3 currentVelocity;
+    private Cannons cannons;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        cannons = GetComponent<Cannons>();
         currentRiggingSpeed = speed;
         currentVelocity = Vector3.zero;
     }
@@ -34,6 +36,13 @@ public class ShipController : MonoBehaviour
     {
         playerMovement();
         windEffect();
+        playerWeapons();
+
+        // TEMPORARY DEV CHEAT: PRESS SPACE TO RE-INITIALISE CANNONS (regenerate cannons with current stats, useful for editing cannons via inspector in play mode)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            cannons.InitializeCannons();
+        }
     }
 
     private void FixedUpdate()
@@ -70,6 +79,21 @@ public class ShipController : MonoBehaviour
             Debug.Log("Anchor " + (anchored ? "Dropped" : "Raised"));
         }
     }
+
+    void playerWeapons()
+    {
+        // Cannon firing
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            cannons.FireLeft();
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            cannons.FireRight();
+        }
+    }   
+
 
     void windEffect() //integrates this script with WindMgr
     {
