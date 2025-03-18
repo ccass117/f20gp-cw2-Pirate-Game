@@ -8,6 +8,7 @@ public class Cannons : MonoBehaviour
     public float yOffset = 0f;
     public float xOffset = 0f;
     public float zOffset = 0f;
+    public float cannonScale = 1f;
 
     [Header("Cannon Statistics")]
     public int cannonsPerSide = 1;
@@ -19,6 +20,7 @@ public class Cannons : MonoBehaviour
     public float shotGravityMult = 1f;
     public float shotSizeMult = 1f;
     public float maxAngleDifference = 0f;
+    public int ballsFiredPerCannon = 1;
 
     [Header("Prefabs")]
     public GameObject cannonPrefab;
@@ -89,6 +91,11 @@ public class Cannons : MonoBehaviour
         InitializeCannons();
     }
 
+    public void setCannonScale(float newCannonScale)
+    {
+        cannonScale = newCannonScale;
+        InitializeCannons();
+    }
 
     public void InitializeCannons()
     {
@@ -126,12 +133,14 @@ public class Cannons : MonoBehaviour
             // Right side cannons
             Vector3 rightLocalPosition = new Vector3(xOffset, yOffset, zPosition);
             Vector3 rightWorldPosition = transform.TransformPoint(rightLocalPosition);
-            Instantiate(cannonPrefab, rightWorldPosition, transform.rotation * Quaternion.Euler(0, 90 - angle, 0), rightCannons.transform);
+            GameObject rightCannon = Instantiate(cannonPrefab, rightWorldPosition, transform.rotation * Quaternion.Euler(0, 90 - angle, 0), rightCannons.transform);
+            rightCannon.transform.localScale *= cannonScale;
 
             // Left side cannons
             Vector3 leftLocalPosition = new Vector3(-xOffset, yOffset, zPosition);
             Vector3 leftWorldPosition = transform.TransformPoint(leftLocalPosition);
-            Instantiate(cannonPrefab, leftWorldPosition, transform.rotation * Quaternion.Euler(0, -90 + angle, 0), leftCannons.transform);
+            GameObject leftCannon = Instantiate(cannonPrefab, leftWorldPosition, transform.rotation * Quaternion.Euler(0, -90 + angle, 0), leftCannons.transform);
+            leftCannon.transform.localScale *= cannonScale;
         }
     }
 
@@ -139,7 +148,7 @@ public class Cannons : MonoBehaviour
     {
         if (leftCooldown <= 0)
         {
-            StartCoroutine(Fire(leftCannons));
+            StartCoroutine(Fire(leftCannons, ballsFiredPerCannon));
             leftCooldown = cooldownTime;
         }
     }
@@ -148,14 +157,16 @@ public class Cannons : MonoBehaviour
     {
         if (rightCooldown <= 0)
         {
-            StartCoroutine(Fire(rightCannons));
+            StartCoroutine(Fire(rightCannons, ballsFiredPerCannon));
             rightCooldown = cooldownTime;
         }
     }
 
-    private IEnumerator Fire(GameObject cannons)
+    private IEnumerator Fire(GameObject cannons, int timesToFire)
     {
-        foreach (Transform cannon in cannons.transform)
+        for (int i = 0; i < timesToFire; i++)
+        {
+            foreach (Transform cannon in cannons.transform)
         {
             // Instantiate a cannonball
             GameObject cannonball = Instantiate(cannonballPrefab, cannon.position, cannon.rotation);
@@ -186,6 +197,8 @@ public class Cannons : MonoBehaviour
             }
             yield return new WaitForSeconds(timeBetweenShots);
         }
+        }
+        
     }
 
 
