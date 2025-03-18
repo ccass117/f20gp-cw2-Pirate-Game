@@ -14,6 +14,10 @@ public class EnemyShipAI : MonoBehaviour
     public float rammingDistance = 5f;
     public float rammingSpeedMultiplier = 1.5f;
 
+    [Header ("Ship Stats")]
+    public float maxHealth = 50f;
+    public float health;
+
     private NavMeshAgent agent;
     private enum State { Approaching, Aligning, Alongside, Ramming } //Finite state machine for movement behaviours, add combat states to this later
     private State currentState = State.Approaching;
@@ -22,6 +26,7 @@ public class EnemyShipAI : MonoBehaviour
 void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        health = maxHealth;
         agent.speed = baseSpeed;
         originalSpeed = baseSpeed;
         GameObject playerGameObject = GameObject.FindWithTag("Player");
@@ -149,5 +154,18 @@ void Start()
         float dotProduct = Vector3.Dot(transform.forward, windDirection);
         float speedModifier = 1 + (dotProduct * windEffect);
         return speedModifier;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        health = Mathf.Clamp(health, 0, maxHealth);
+        Debug.Log("Enemy took " + damage + " damage. Health = " + health);
+
+        if (health <= 0)
+        {
+            //Play an animation or somethin idk
+            Destroy(gameObject); //For now
+        }
     }
 }

@@ -33,8 +33,25 @@ public class Cannonball : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            EnemyShipAI enemyAI = collision.gameObject.GetComponent<EnemyShipAI>();
+            if (enemyAI != null)
+            {
+                enemyAI.TakeDamage(damage);
+                PlaySound(hitSound);
+                Destroy(gameObject);
+                return;
+            }
+        }
+
+        //For when the canonball hits the water
+        if (transform.position.y >= 0)
+        {
         PlaySound(hitSound);
-        // update this with hit and damage logic once implemented
+        Destroy(gameObject);
+        }
+
     }
 
     private IEnumerator splashAndDestroy()

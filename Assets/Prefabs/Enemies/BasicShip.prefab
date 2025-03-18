@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3631947698205225310}
   m_Layer: 0
   m_Name: BasicShip
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,8 +147,12 @@ MonoBehaviour:
   player: {fileID: 0}
   approachDistance: 10
   alongsideDistance: 10
-  alongsideOffset: 0
   rotationSpeed: 1
   baseSpeed: 5
   minSpeed: 2
-  windInfluence: 0.5
+  windEffect: 0.5
+  enableRamming: 0
+  rammingDistance: 5
+  rammingSpeedMultiplier: 1.5
+  maxHealth: 50
+  health: 0

@@ -16,9 +16,12 @@ public class ShipController : MonoBehaviour
     public float turnDamping = 0.9f;
     public float anchorRaiseTime = 3f;
     public float maxTurnBoost = 2f;
-
-
     public float sirenTurnStrength = 0.75f;
+
+    [Header("Ship Stats")]
+    public float maxHealth = 100f;
+    public float health;
+
 
     [Header("Read Only")]
     [SerializeField] private float targetRudderAngle;
@@ -46,6 +49,7 @@ public class ShipController : MonoBehaviour
         cannons = GetComponent<Cannons>();
         currentRiggingSpeed = speed;
         currentVelocity = Vector3.zero;
+        health = maxHealth;
     }
 
     void Update()
@@ -207,5 +211,20 @@ public class ShipController : MonoBehaviour
             currentRiggingSpeed = Mathf.Lerp(0f, targetRiggingSpeed, elapsed / restoreDuration);
             yield return null;
         }      
+    }
+
+    //Add a TakeDamage method for taking damage from enemy cannonballs
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        health = Mathf.Clamp(health, 0, maxHealth);
+
+        Debug.Log("Player took " + damage + " damage. Health = " + health);
+
+        if (health <= 0)
+        {
+            //TODO: Place proper death handling here
+            Destroy(gameObject); //For now
+        }
     }
 }
