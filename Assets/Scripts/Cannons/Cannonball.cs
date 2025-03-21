@@ -3,13 +3,13 @@ using System.Collections;
 
 public class Cannonball : MonoBehaviour
 {
-    public float damage = 1f;
     public AudioClip splashSound;
     public float gravityMultiplier = 1f;
     public AudioClip hitSound;
     private Rigidbody rb;
     private AudioSource audioSource;
     private Coroutine splashCoroutine;
+    public GameObject firingShip;
 
     void Start()
     {
@@ -19,7 +19,6 @@ public class Cannonball : MonoBehaviour
 
     void Update()
     {
-        // play splash noise and destroy ball if it hits the water.
         if (transform.position.y < 0f && splashCoroutine == null)
         {
             splashCoroutine = StartCoroutine(splashAndDestroy());
@@ -33,25 +32,18 @@ public class Cannonball : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        //Ignore collisions with the firing shi (and its children).
+        if (firingShip != null && (collision.transform.IsChildOf(firingShip.transform) || collision.gameObject == firingShip))
         {
-            EnemyShipAI enemyAI = collision.gameObject.GetComponent<EnemyShipAI>();
-            if (enemyAI != null)
-            {
-                enemyAI.TakeDamage(damage);
-                PlaySound(hitSound);
-                Destroy(gameObject);
-                return;
-            }
+            return; // Ignore the collision.
         }
 
-        //For when the canonball hits the water
         if (transform.position.y >= 0)
         {
-        PlaySound(hitSound);
-        Destroy(gameObject);
-        }
+          PlaySound(hitSound);
+          Destroy(gameObject);
 
+        }
     }
 
     private IEnumerator splashAndDestroy()
