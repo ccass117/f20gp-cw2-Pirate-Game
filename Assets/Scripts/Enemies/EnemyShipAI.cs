@@ -4,9 +4,12 @@ using UnityEngine.AI;
 public class EnemyShipAI : MonoBehaviour
 {
     [Header("Targeting")]
+    [Tooltip("Target (player) that the enemy ship will pursue. If left unassigned, the first GameObject tagged 'Player' will be used.")]
     public Transform playerShip;
+    [Tooltip("Desired attack distance when ramming.")]
     public float targetDistance = 20f;
-    public float side = 1f; //1 = right, -1 = left
+    [Tooltip("When avoiding collision, maintain at least this distance from the player.")]
+    public float avoidanceRadius = 25f;
     public float positionTolerance = 3f;
 
     [Header("Navigation")]
@@ -29,6 +32,14 @@ public class EnemyShipAI : MonoBehaviour
     [Header("Idle Behavior Settings")]
     public float patrolRadius = 10f;
     public float idleAngularSpeed = 3f;
+
+    [Header("Hold Course Settings")]
+    [Tooltip("When within this distance of the target position, hold course rather than turning aggressively.")]
+    public float holdCourseThreshold = 5f;
+
+    [Header("Collision Behavior")]
+    [Tooltip("If true, the enemy will attempt to ram (attack) the player. If false, it will avoid collisions by keeping at least 'avoidanceRadius' away.")]
+    public bool isRammingShip = true;
 
     [Header("Read Only")]
     [SerializeField] private float targetRudderAngle;
@@ -60,6 +71,18 @@ public class EnemyShipAI : MonoBehaviour
         idleCenterPosition = transform.position;
     }
 
+    void Start()
+    {
+        if (playerShip == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerShip = playerObj.transform;
+            }
+        }
+    }
+
     void Update()
     {
         if (playerShip == null)
@@ -73,10 +96,7 @@ public class EnemyShipAI : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, toPlayer.normalized, out hit, aggroRange, lineOfSightMask))
             {
-                if (hit.transform == playerShip || hit.transform.IsChildOf(playerShip))
-                    isAggroed = true;
-                else
-                    isAggroed = false;
+                isAggroed = (hit.transform == playerShip || hit.transform.IsChildOf(playerShip));
             }
             else
             {
@@ -100,8 +120,6 @@ public class EnemyShipAI : MonoBehaviour
 
         adjustSails();
 
-        Debug.Log($"Target: {targetPosition} | Dist: {Vector3.Distance(transform.position, targetPosition):F2} | Aggro: {isAggroed}");
-
         currentRudderAngle = Mathf.MoveTowards(currentRudderAngle, targetRudderAngle, rudderSpeed * Time.deltaTime);
     }
 
@@ -117,24 +135,28 @@ public class EnemyShipAI : MonoBehaviour
             navAgent.nextPosition = rb.position;
     }
 
-    // Aggro behavior: target player's offset position with prediction.
     void acquireTarget()
     {
-        Vector3 target = playerShip.position + playerShip.right * targetDistance * side;
-        float distanceToStatic = Vector3.Distance(transform.position, target);
-        if (distanceToStatic < targetDistance * 0.75f)
-            targetPosition = target;
-        else
+        Vector3 predictedPlayerPos = playerShip.position;
+        Rigidbody playerRb = playerShip.GetComponent<Rigidbody>();
+        float predictionTime = 2f;
+        if (playerRb != null)
         {
-            Rigidbody playerRb = playerShip.GetComponent<Rigidbody>();
-            Vector3 playerVelocity = (playerRb != null) ? playerRb.linearVelocity : Vector3.zero;
-            float predictionTime = 2f;
-            Vector3 predPosition = playerShip.position + playerVelocity * predictionTime;
-            targetPosition = predPosition + playerShip.right * targetDistance * side;
+            predictedPlayerPos += playerRb.linearVelocity * predictionTime;
         }
+        
+        Vector3 directionFromPlayer = transform.position - predictedPlayerPos;
+        if (directionFromPlayer == Vector3.zero)
+        {
+            directionFromPlayer = transform.forward;
+        }
+        directionFromPlayer.Normalize();
+
+        float desiredDistance = isRammingShip ? targetDistance : Mathf.Max(targetDistance, avoidanceRadius);
+
+        targetPosition = predictedPlayerPos + directionFromPlayer * desiredDistance;
     }
 
-    //circle around spawn point when not aggro'd
     void Idle()
     {
         float angle = Time.time * idleAngularSpeed;
@@ -145,9 +167,9 @@ public class EnemyShipAI : MonoBehaviour
     void Move()
     {
         float windEffect = Vector3.Dot(transform.forward, wind);
-        float speed = currentRiggingSpeed + windEffect;
-        speed = Mathf.Max(0, speed);
-        Vector3 velocity = transform.forward * speed;
+        float effectiveSpeed = currentRiggingSpeed + windEffect;
+        effectiveSpeed = Mathf.Max(0, effectiveSpeed);
+        Vector3 velocity = transform.forward * effectiveSpeed;
         rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
     }
 
@@ -155,17 +177,21 @@ public class EnemyShipAI : MonoBehaviour
     {
         Vector3 toTarget = targetPosition - transform.position;
         float distance = toTarget.magnitude;
+        if (distance < holdCourseThreshold)
+        {
+            targetRudderAngle = 0;
+            return;
+        }
+
         Vector3 targetDir = toTarget.normalized;
-        float angleBuffer = Mathf.Abs(Vector3.SignedAngle(transform.forward, targetDir, Vector3.up));
-        float turnRate = maxTurnRate;
-        if (angleBuffer > 20f)
-            turnRate += maxTurnBoost * (angleBuffer / 90f);
-        if (distance > targetDistance)
-            turnRate *= 1.5f;
-        if (angleBuffer > 60f)
-            turnRate *= 1.25f;
-        Quaternion targetRot = Quaternion.LookRotation(targetDir);
-        rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, targetRot, turnRate * Time.fixedDeltaTime));
+        float angleDiff = Mathf.Abs(Vector3.SignedAngle(transform.forward, targetDir, Vector3.up));
+        float aggressiveMultiplier = 3f;
+        float effectiveTurnRate = maxTurnRate * aggressiveMultiplier;
+        if (angleDiff > 20f)
+            effectiveTurnRate += maxTurnBoost * (angleDiff / 90f);
+
+        Quaternion desiredRotation = Quaternion.LookRotation(targetDir);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation, effectiveTurnRate * Time.fixedDeltaTime);
     }
 
     void Navigate()
@@ -179,20 +205,18 @@ public class EnemyShipAI : MonoBehaviour
         if (navAgent.pathPending || !navAgent.hasPath)
             return;
 
-        Vector3 newPath = navAgent.path.corners.Length > 1 ? navAgent.path.corners[1] : targetPosition;
-        Vector3 targetDir = (newPath - transform.position).normalized;
-        Vector3 correctedDir = courseCorrect(targetDir); //Account for wind vector in course calculations
+        Vector3 nextCorner = navAgent.path.corners.Length > 1 ? navAgent.path.corners[1] : targetPosition;
+        Vector3 targetDir = (nextCorner - transform.position).normalized;
+        Vector3 correctedDir = courseCorrect(targetDir);
         float angleToTarget = Vector3.SignedAngle(transform.forward, correctedDir, Vector3.up);
         targetRudderAngle = Mathf.Clamp(angleToTarget, -maxRudderAngle, maxRudderAngle);
-        Debug.DrawRay(transform.position, targetDir * 10, Color.green);
-        Debug.DrawRay(transform.position, correctedDir * 10, Color.blue);
     }
 
     Vector3 courseCorrect(Vector3 targetDir)
     {
-        Vector3 windDirection = wind.normalized;
+        Vector3 windDir = wind.normalized;
         float windStrength = wind.magnitude;
-        Vector3 projectedWind = Vector3.ProjectOnPlane(windDirection, Vector3.up);
+        Vector3 projectedWind = Vector3.ProjectOnPlane(windDir, Vector3.up);
         float windEffect = Mathf.Clamp01(windStrength / currentRiggingSpeed);
         return Vector3.Lerp(targetDir, targetDir - projectedWind * windEffect, 0.5f).normalized;
     }
@@ -200,11 +224,10 @@ public class EnemyShipAI : MonoBehaviour
     void Rudder()
     {
         Vector3 toTarget = targetPosition - transform.position;
-        float distance = toTarget.magnitude;
-        if (distance > positionTolerance)
+        if (toTarget.magnitude > positionTolerance)
         {
-            Vector3 desiredDirection = toTarget.normalized;
-            float angleToTarget = Vector3.SignedAngle(transform.forward, desiredDirection, Vector3.up);
+            Vector3 desiredDir = toTarget.normalized;
+            float angleToTarget = Vector3.SignedAngle(transform.forward, desiredDir, Vector3.up);
             targetRudderAngle = Mathf.Clamp(angleToTarget, -maxRudderAngle, maxRudderAngle);
         }
     }
@@ -214,15 +237,20 @@ public class EnemyShipAI : MonoBehaviour
         if (anchored)
             return;
 
-        float targetDistance = Vector3.Distance(transform.position, targetPosition);
-        float angleBuffer = Mathf.Abs(Vector3.SignedAngle(transform.forward, (targetPosition - transform.position).normalized, Vector3.up));
-        float alignmentStrength = Mathf.Clamp01(1 - (angleBuffer / 90f));
-        float brakingForce = (angleBuffer > 45f) ? 0.5f : 1f;
-        float targetSpeed = (targetDistance < positionTolerance)
-                                ? speed
-                                : Mathf.Lerp(speed, maxSpeed, alignmentStrength * Mathf.Clamp01((targetDistance - positionTolerance) / this.targetDistance));
-        targetSpeed *= brakingForce;
-        currentRiggingSpeed = Mathf.MoveTowards(currentRiggingSpeed, targetSpeed, riggingSpeed * Time.deltaTime);
+        float dist = Vector3.Distance(transform.position, targetPosition);
+        if (isAggroed)
+        {
+            currentRiggingSpeed = Mathf.MoveTowards(currentRiggingSpeed, maxSpeed, riggingSpeed * Time.deltaTime);
+        }
+        else
+        {
+            float angleDiff = Mathf.Abs(Vector3.SignedAngle(transform.forward, (targetPosition - transform.position).normalized, Vector3.up));
+            float alignmentStrength = Mathf.Clamp01(1 - (angleDiff / 90f));
+            float brakingForce = (angleDiff > 45f) ? 0.5f : 1f;
+            float targetSpeed = (dist < positionTolerance) ? speed : Mathf.Lerp(speed, maxSpeed, alignmentStrength * Mathf.Clamp01((dist - positionTolerance) / targetDistance));
+            targetSpeed *= brakingForce;
+            currentRiggingSpeed = Mathf.MoveTowards(currentRiggingSpeed, targetSpeed, riggingSpeed * Time.deltaTime);
+        }
         currentRiggingSpeed = Mathf.Clamp(currentRiggingSpeed, speed, maxSpeed);
     }
 }

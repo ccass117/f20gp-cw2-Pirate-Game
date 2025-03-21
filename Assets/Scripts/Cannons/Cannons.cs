@@ -25,7 +25,7 @@ public class Cannons : MonoBehaviour
     public float cannonDetectionRange = 50f;
     [Tooltip("Layers to check when raycasting for targets")]
     public LayerMask detectionLayers;
-    [Tooltip("Assign the target ship (if left unassigned and this object is not a Player, the first object tagged 'Player' will be used)")]
+    [Tooltip("Assign the target ship. If unassigned and this object is not the Player, it will automatically target the GameObject tagged 'Player'")]
     public Transform target;
     [Tooltip("Set true if this cannons component is on an enemy ship")]
     public bool isEnemy = true;
@@ -44,8 +44,7 @@ public class Cannons : MonoBehaviour
 
     void Start()
     {
-        //If this object is not a player, it is an enemy, so the cannon should automatically target the player with shots
-        if (!gameObject.CompareTag("Player") && target == null)
+        if (!gameObject.CompareTag("Player") && target == null && isEnemy)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
@@ -101,7 +100,7 @@ public class Cannons : MonoBehaviour
         return false;
     }
 
-    // SETTERS: (Use these if powerups change cannon stats, etc.)
+    // SETTERS for dynamic cannon stat changes.
     public void setShipLength(float newLength)
     {
         shipLength = newLength;
@@ -234,7 +233,6 @@ public class Cannons : MonoBehaviour
                     }
                 }
 
-                // Disable collisions between cannonball and this ship
                 Collider cannonballCollider = cannonball.GetComponent<Collider>();
                 if (cannonballCollider != null)
                 {
