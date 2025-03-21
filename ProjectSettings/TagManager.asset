@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Cannonball
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -12,8 +13,8 @@ TagManager:
   - Sea
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Enemy
   - 
   - 
   - 

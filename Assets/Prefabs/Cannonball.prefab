@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -5500503347520637732}
   - component: {fileID: 7194351645953212933}
   - component: {fileID: 3472526569715324412}
+  - component: {fileID: -4771927391302344162}
   m_Layer: 0
   m_Name: Cannonball
   m_TagString: Cannonball
@@ -102,10 +103,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f088da931f54df4494d40be90815eb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
   splashSound: {fileID: 8300000, guid: 57b4b82d82adc21488703b34e10a5821, type: 3}
   gravityMultiplier: 1
   hitSound: {fileID: 0}
+  firingShip: {fileID: 0}
 --- !u!54 &-5500503347520637732
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -251,3 +252,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.01
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-4771927391302344162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6648455457723268105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6665cc027cb6f5a4fa730a3903dc6f5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 20
+  currentHealth: 0
+  damageResistance: 0
+  damageMultiplier: 5
+  isProjectile: 1
