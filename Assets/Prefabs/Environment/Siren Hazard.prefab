@@ -5679,6 +5679,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Punk Mermaid
       objectReference: {fileID: 0}
+    - target: {fileID: 1074849475956915684, guid: 63744d80addc67240af9a0046aed5fdd, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023362280304637846, guid: 63744d80addc67240af9a0046aed5fdd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.00008
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023362280304637846, guid: 63744d80addc67240af9a0046aed5fdd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00128
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023362280304637846, guid: 63744d80addc67240af9a0046aed5fdd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00049
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -4535451643909538427, guid: 63744d80addc67240af9a0046aed5fdd, type: 3}

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Cannons : MonoBehaviour
 {
@@ -19,7 +20,17 @@ public class Cannons : MonoBehaviour
     public float shotSizeMult = 1f;
     public float maxAngleDifference = 0f;
     public int ballsFiredPerCannon = 1;
-    
+
+    [Header("Auto-Aim Options")]
+    public float autoAimFOV = 0f;
+    public float autoAimRange = 5f;
+    public float autoAimTurnSpeed = 1f;
+    private Transform leftAimTarget = null;
+    private Transform rightAimTarget = null;
+
+
+
+
     [Header("Detection Settings")]
     [Tooltip("Distance from cannon within which the target must be detected")]
     public float cannonDetectionRange = 50f;
@@ -41,6 +52,8 @@ public class Cannons : MonoBehaviour
     private float rightCooldown = 0f;
 
     private Rigidbody shipRb;
+
+    private Dictionary<Transform, Quaternion> defaultRotations = new Dictionary<Transform, Quaternion>();  // Stores the default rotation of each cannon to be returned to if there is no auto aim target.
 
     void Start()
     {
@@ -64,6 +77,15 @@ public class Cannons : MonoBehaviour
         if (rightCooldown > 0)
             rightCooldown -= Time.deltaTime;
 
+        if (autoAimFOV > 0 && autoAimRange > 0)
+        {
+            leftAimTarget = FindAutoAimTarget(-transform.right);
+            AimCannons(leftCannons.transform, leftAimTarget);
+
+            rightAimTarget = FindAutoAimTarget(transform.right);
+            AimCannons(rightCannons.transform, rightAimTarget);
+        }
+
         if (target != null)
         {
             foreach (Transform cannon in leftCannons.transform)
@@ -85,6 +107,51 @@ public class Cannons : MonoBehaviour
             }
         }
     }
+
+    Transform FindAutoAimTarget(Vector3 direction)
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, autoAimRange, detectionLayers);
+        Transform nearestTarget = null;
+        float nearestDistance = autoAimRange;
+
+        foreach (Collider hit in hits)
+        {
+            Vector3 toTarget = hit.transform.position - transform.position;
+            float angleToTarget = Vector3.Angle(direction, toTarget);
+
+            if (angleToTarget <= (autoAimFOV/2))
+            {
+                float distance = toTarget.magnitude;
+                if (distance < nearestDistance)
+                {
+                    nearestTarget = hit.transform;
+                    nearestDistance = distance;
+                }
+            }
+        }
+
+        return nearestTarget;
+    }
+
+    void AimCannons(Transform cannons, Transform target)
+    // Aims cannons for a respective side (left or right) if a target exists for that side, else resets the cannons to the default angle stored in defaultRotations.
+    {
+        foreach (Transform cannon in cannons)
+        {
+            Quaternion targetRotation;
+            if (target != null)
+            {
+                Vector3 directionToTarget = (target.position - cannon.position).normalized;
+                targetRotation = Quaternion.LookRotation(directionToTarget);
+            }
+            else
+            {
+                targetRotation = defaultRotations.ContainsKey(cannon) ? transform.rotation * defaultRotations[cannon] : cannon.rotation;
+            }
+            cannon.rotation = Quaternion.RotateTowards(cannon.rotation, Quaternion.Euler(0, targetRotation.eulerAngles.y, 0), autoAimTurnSpeed * Time.deltaTime);
+        }
+    }
+
 
     bool targetAcquired(Transform cannon)
     {
@@ -153,6 +220,7 @@ public class Cannons : MonoBehaviour
             rightCannons.transform.SetParent(transform);
         }
 
+        defaultRotations.Clear();
         foreach (Transform child in leftCannons.transform)
         {
             Destroy(child.gameObject);
@@ -161,6 +229,7 @@ public class Cannons : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        
 
         if (cannonsPerSide < 1)
             return;
@@ -177,11 +246,13 @@ public class Cannons : MonoBehaviour
             Vector3 rightWorldPosition = transform.TransformPoint(rightLocalPosition);
             GameObject rightCannon = Instantiate(cannonPrefab, rightWorldPosition, transform.rotation * Quaternion.Euler(0, 90 - angle, 0), rightCannons.transform);
             rightCannon.transform.localScale *= cannonScale;
+            defaultRotations[rightCannon.transform] = Quaternion.Inverse(transform.rotation) * rightCannon.transform.rotation;
 
             Vector3 leftLocalPosition = new Vector3(-xOffset, yOffset, zPosition);
             Vector3 leftWorldPosition = transform.TransformPoint(leftLocalPosition);
             GameObject leftCannon = Instantiate(cannonPrefab, leftWorldPosition, transform.rotation * Quaternion.Euler(0, -90 + angle, 0), leftCannons.transform);
             leftCannon.transform.localScale *= cannonScale;
+            defaultRotations[leftCannon.transform] = Quaternion.Inverse(transform.rotation) * leftCannon.transform.rotation;
         }
     }
 
