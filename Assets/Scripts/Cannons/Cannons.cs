@@ -29,7 +29,6 @@ public class Cannons : MonoBehaviour
     public Transform target;
     [Tooltip("Set true if this cannons component is on an enemy ship")]
     public bool isEnemy = true;
-    public int ballsFiredPerCannon = 1;
 
     [Header("Prefabs")]
     public GameObject cannonPrefab;
@@ -210,43 +209,44 @@ public class Cannons : MonoBehaviour
         for (int i = 0; i < timesToFire; i++)
         {
             foreach (Transform cannon in cannons.transform)
-        {
-            GameObject cannonball = Instantiate(cannonballPrefab, cannon.position, cannon.rotation);
-
-            Cannonball cannonballScript = cannonball.GetComponent<Cannonball>();
-            if (cannonballScript != null)
             {
-                cannonballScript.firingShip = this.gameObject;
-                cannonballScript.gravityMultiplier = shotGravityMult;
-            }
+                GameObject cannonball = Instantiate(cannonballPrefab, cannon.position, cannon.rotation);
 
-            cannonball.transform.localScale *= shotSizeMult;
-
-            Rigidbody rb = cannonball.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                if (shipRb != null)
+                Cannonball cannonballScript = cannonball.GetComponent<Cannonball>();
+                if (cannonballScript != null)
                 {
-                    rb.linearVelocity = shipRb.linearVelocity + (cannon.forward * shotSpeed);
+                    cannonballScript.firingShip = this.gameObject;
+                    cannonballScript.gravityMultiplier = shotGravityMult;
                 }
-                else
-                {
-                    rb.linearVelocity = cannon.forward * shotSpeed;
-                }
-            }
 
-            //Disable collisions between cannonball and this ship
-            Collider cannonballCollider = cannonball.GetComponent<Collider>();
-            if (cannonballCollider != null)
-            {
-                Collider[] shipColliders = GetComponentsInChildren<Collider>();
-                foreach (Collider col in shipColliders)
-                {
-                    Physics.IgnoreCollision(cannonballCollider, col);
-                }
-            }
+                cannonball.transform.localScale *= shotSizeMult;
 
-            yield return new WaitForSeconds(timeBetweenShots);
+                Rigidbody rb = cannonball.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    if (shipRb != null)
+                    {
+                        rb.linearVelocity = shipRb.linearVelocity + (cannon.forward * shotSpeed);
+                    }
+                    else
+                    {
+                        rb.linearVelocity = cannon.forward * shotSpeed;
+                    }
+                }
+
+                // Disable collisions between cannonball and this ship
+                Collider cannonballCollider = cannonball.GetComponent<Collider>();
+                if (cannonballCollider != null)
+                {
+                    Collider[] shipColliders = GetComponentsInChildren<Collider>();
+                    foreach (Collider col in shipColliders)
+                    {
+                        Physics.IgnoreCollision(cannonballCollider, col);
+                    }
+                }
+
+                yield return new WaitForSeconds(timeBetweenShots);
+            }
         }
     }
 }
