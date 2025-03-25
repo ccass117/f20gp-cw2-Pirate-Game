@@ -20,6 +20,8 @@ public class WindMgr : MonoBehaviour
     void Awake() //I changed this to awake from start, so it starts on scene start not script instance run
     {
 
+        BuffController.registerBuff("Calm Winds", "Make winds affect the player less", delegate () { windStrength = 0.5f; }, delegate () { windStrength = 1f; });
+
         //makes sure that there is only gonna be one instance of wind for when we start changing scenes later
         if (Instance == null)
         {
@@ -53,7 +55,7 @@ public class WindMgr : MonoBehaviour
         if (timeSinceLastChange >= directionChangeInterval)
         {
             //Set new target direction
-targetWindDir = Random.Range(0.0f, 360.0f);
+            targetWindDir = Random.Range(0.0f, 360.0f);
             targetWindAngle = targetWindDir;
             transitionTime = 0f;
             timeSinceLastChange = 0f;
