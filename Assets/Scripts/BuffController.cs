@@ -24,14 +24,21 @@ public class BuffController : MonoBehaviour
     private static Dictionary<string, Buff> buffStore = new Dictionary<string, Buff>();
     private static Dictionary<string, bool> activeBuff = new Dictionary<string, bool>();
 
-    public void registerBuff(string name, string description, Action activateCallback, Action deactivateCallback)
+    public static void registerBuff(string name, string description, Action activateCallback, Action deactivateCallback)
     {
+        Debug.Log("added");
         buffStore.Add(name, new Buff(name, description, activateCallback, deactivateCallback));
         activeBuff.Add(name, false);
+
+        foreach (var kvp in buffStore)
+        {
+            Debug.Log($"{kvp.Key}: {kvp.Value}");
+        }
     }
 
-    public void activateBuff(string name)
+    static public void activateBuff(string name)
     {
+        Debug.Log($"activated, {name}");
         Buff buff = buffStore[name];
         buff.activateCallback();
         activeBuff[name] = true;
@@ -39,9 +46,9 @@ public class BuffController : MonoBehaviour
 
     public void deactivateBuff(string name)
     {
+        Debug.Log($"deactivated, {name}");
         Buff buff = buffStore[name];
         buff.deactivateCallback();
-
         activeBuff[name] = false;
     }
 
