@@ -3,151 +3,254 @@ using UnityEngine.AI;
 
 public class EnemyShipAI : MonoBehaviour
 {
-    public Transform player;
-    public float approachDistance = 20f;
-    public float alongsideDistance = 10f;
-    public float rotationSpeed = 1f;
-    public float baseSpeed = 5f;
-    public float minSpeed = 2f;
-    public float windEffect = 0.5f;
-    public bool enableRamming = false;
-    public float rammingDistance = 5f;
-    public float rammingSpeedMultiplier = 1.5f;
+    [Header("Targeting")]
+    [Tooltip("Target (player) that the enemy ship will pursue. If left unassigned, the first GameObject tagged 'Player' will be used.")]
+    public Transform playerShip;
+    [Tooltip("Desired attack distance when ramming.")]
+    public float targetDistance = 20f;
+    [Tooltip("When avoiding collision, maintain at least this distance from the player.")]
+    public float avoidanceRadius = 25f;
+    public float positionTolerance = 3f;
 
-    private NavMeshAgent agent;
-    private enum State { Approaching, Aligning, Alongside, Ramming } //Finite state machine for movement behaviours, add combat states to this later
-    private State currentState = State.Approaching;
-    private float originalSpeed;
+    [Header("Navigation")]
+    public float updateTimer = 1f;
+    public bool useNavMesh = true;
 
-void Start()
+    [Header("Movement")]
+    public float speed = 2f;
+    public float maxSpeed = 5f;
+    public float riggingSpeed = 2f;
+    public float maxTurnRate = 60f;
+    public float maxRudderAngle = 90f;
+    public float rudderSpeed = 80f;
+    public float maxTurnBoost = 30f;
+
+    [Header("Aggro Settings")]
+    public float aggroRange = 20f;
+    public LayerMask lineOfSightMask;
+
+    [Header("Idle Behavior Settings")]
+    public float patrolRadius = 10f;
+    public float idleAngularSpeed = 3f;
+
+    [Header("Hold Course Settings")]
+    [Tooltip("When within this distance of the target position, hold course rather than turning aggressively.")]
+    public float holdCourseThreshold = 5f;
+
+    [Header("Collision Behavior")]
+    [Tooltip("If true, the enemy will attempt to ram (attack) the player. If false, it will avoid collisions by keeping at least 'avoidanceRadius' away.")]
+    public bool isRammingShip = true;
+
+    [Header("Read Only")]
+    [SerializeField] private float targetRudderAngle;
+    [SerializeField] private float currentRiggingSpeed;
+    [SerializeField] private float currentRudderAngle = 0f;
+    [SerializeField] private bool anchored = false;
+    [SerializeField] private Vector3 wind = Vector3.zero;
+    [SerializeField] private bool isAggroed = false;
+
+    private Rigidbody rb;
+    private NavMeshAgent navAgent;
+    private Vector3 targetPosition;
+    private float timer;
+    private Vector3 idleCenterPosition;
+
+    void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = baseSpeed;
-        originalSpeed = baseSpeed;
-        GameObject playerGameObject = GameObject.FindWithTag("Player");
-        if (playerGameObject != null)
+        rb = GetComponent<Rigidbody>();
+        currentRiggingSpeed = speed;
+
+        navAgent = GetComponent<NavMeshAgent>();
+        if (navAgent != null)
         {
-            player = playerGameObject.transform;
+            navAgent.speed = maxSpeed;
+            navAgent.updatePosition = false;
+            navAgent.updateRotation = false;
         }
-        else
+
+        idleCenterPosition = transform.position;
+    }
+
+    void Start()
+    {
+        if (playerShip == null)
         {
-            Debug.LogError("L + plundered + marooned (you need to assign the player tag)");
-            enabled = false;
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerShip = playerObj.transform;
+            }
         }
     }
 
     void Update()
     {
-        float windSpeedMod = windSpeedModify();
-        //Briefly ignore wind effects if ramming (maybe? We'll need to see how this feels in gameplay)
-        if (currentState != State.Ramming)
+        if (playerShip == null)
+            return;
+
+        wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength;
+
+        Vector3 toPlayer = playerShip.position - transform.position;
+        if (toPlayer.magnitude <= aggroRange)
         {
-            agent.speed = Mathf.Clamp(baseSpeed * windSpeedMod, minSpeed, baseSpeed * (1 + windEffect));
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, toPlayer.normalized, out hit, aggroRange, lineOfSightMask))
+            {
+                isAggroed = (hit.transform == playerShip || hit.transform.IsChildOf(playerShip));
+            }
+            else
+            {
+                isAggroed = false;
+            }
+        }
+        else
+        {
+            isAggroed = false;
         }
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if (isAggroed)
+            acquireTarget();
+        else
+            Idle();
 
-        switch (currentState)
+        if (useNavMesh && navAgent != null && isAggroed)
+            Navigate();
+        else
+            Rudder();
+
+        adjustSails();
+
+        currentRudderAngle = Mathf.MoveTowards(currentRudderAngle, targetRudderAngle, rudderSpeed * Time.deltaTime);
+    }
+
+    void FixedUpdate()
+    {
+        if (anchored)
+            return;
+
+        Move();
+        Steer();
+
+        if (useNavMesh && navAgent != null && isAggroed)
+            navAgent.nextPosition = rb.position;
+    }
+
+    void acquireTarget()
+    {
+        Vector3 predictedPlayerPos = playerShip.position;
+        Rigidbody playerRb = playerShip.GetComponent<Rigidbody>();
+        float predictionTime = 2f;
+        if (playerRb != null)
         {
-            case State.Approaching:
-                agent.SetDestination(player.position);
-                agent.stoppingDistance = approachDistance;
+            predictedPlayerPos += playerRb.linearVelocity * predictionTime;
+        }
+        
+        Vector3 directionFromPlayer = transform.position - predictedPlayerPos;
+        if (directionFromPlayer == Vector3.zero)
+        {
+            directionFromPlayer = transform.forward;
+        }
+        directionFromPlayer.Normalize();
 
-                if (enableRamming && distanceToPlayer <= rammingDistance)
-                {
-                    currentState = State.Ramming;
-                    originalSpeed = agent.speed;
-                    agent.speed *= rammingSpeedMultiplier;
-                }
-                else if (distanceToPlayer <= approachDistance)
-                {
-                    currentState = State.Aligning;
-                }
-                break;
+        float desiredDistance = isRammingShip ? targetDistance : Mathf.Max(targetDistance, avoidanceRadius);
 
-            case State.Aligning:
-                Vector3 alongsidePoint = pullUpOnDaOpps();
-                agent.SetDestination(alongsidePoint);
-                agent.stoppingDistance = alongsideDistance;
+        targetPosition = predictedPlayerPos + directionFromPlayer * desiredDistance;
+    }
 
-                if (enableRamming && distanceToPlayer <= rammingDistance)
-                {
-                    currentState = State.Ramming;
-                    originalSpeed = agent.speed;
-                    agent.speed *= rammingSpeedMultiplier;
-                }
-                else if (distanceToPlayer <= approachDistance && facingPlayer())
-                {
-                    currentState = State.Alongside;
-                }
-                 smoothRotation(alongsidePoint);
+    void Idle()
+    {
+        float angle = Time.time * idleAngularSpeed;
+        Vector3 offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * patrolRadius;
+        targetPosition = idleCenterPosition + offset;
+    }
 
-                break;
+    void Move()
+    {
+        float windEffect = Vector3.Dot(transform.forward, wind);
+        float effectiveSpeed = currentRiggingSpeed + windEffect;
+        effectiveSpeed = Mathf.Max(0, effectiveSpeed);
+        Vector3 velocity = transform.forward * effectiveSpeed;
+        rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+    }
 
-            case State.Alongside:
-                Vector3 targetPosition = pullUpOnDaOpps();
-                agent.SetDestination(targetPosition);
-                smoothRotation(targetPosition);
+    void Steer()
+    {
+        Vector3 toTarget = targetPosition - transform.position;
+        float distance = toTarget.magnitude;
+        if (distance < holdCourseThreshold)
+        {
+            targetRudderAngle = 0;
+            return;
+        }
 
-                if (enableRamming && distanceToPlayer <= rammingDistance)
-                {
-                    currentState = State.Ramming;
-                    originalSpeed = agent.speed;
-                    agent.speed *= rammingSpeedMultiplier;
-                }
-                else if (distanceToPlayer > approachDistance * 1.5f)
-                {
-                    currentState = State.Approaching;
-                }
-                break;
+        Vector3 targetDir = toTarget.normalized;
+        float angleDiff = Mathf.Abs(Vector3.SignedAngle(transform.forward, targetDir, Vector3.up));
+        float aggressiveMultiplier = 3f;
+        float effectiveTurnRate = maxTurnRate * aggressiveMultiplier;
+        if (angleDiff > 20f)
+            effectiveTurnRate += maxTurnBoost * (angleDiff / 90f);
 
-            case State.Ramming:
-                agent.SetDestination(player.position);
-                agent.stoppingDistance = 0f;
-                smoothRotation(player.position);
+        Quaternion desiredRotation = Quaternion.LookRotation(targetDir);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation, effectiveTurnRate * Time.fixedDeltaTime);
+    }
 
-                if (!enableRamming || distanceToPlayer > rammingDistance * 2f)
-                {
-                    currentState = State.Approaching;
-                    agent.speed = originalSpeed;
-                }
-                break;
+    void Navigate()
+    {
+        if (Time.time - timer > updateTimer)
+        {
+            navAgent.SetDestination(targetPosition);
+            timer = Time.time;
+        }
+
+        if (navAgent.pathPending || !navAgent.hasPath)
+            return;
+
+        Vector3 nextCorner = navAgent.path.corners.Length > 1 ? navAgent.path.corners[1] : targetPosition;
+        Vector3 targetDir = (nextCorner - transform.position).normalized;
+        Vector3 correctedDir = courseCorrect(targetDir);
+        float angleToTarget = Vector3.SignedAngle(transform.forward, correctedDir, Vector3.up);
+        targetRudderAngle = Mathf.Clamp(angleToTarget, -maxRudderAngle, maxRudderAngle);
+    }
+
+    Vector3 courseCorrect(Vector3 targetDir)
+    {
+        Vector3 windDir = wind.normalized;
+        float windStrength = wind.magnitude;
+        Vector3 projectedWind = Vector3.ProjectOnPlane(windDir, Vector3.up);
+        float windEffect = Mathf.Clamp01(windStrength / currentRiggingSpeed);
+        return Vector3.Lerp(targetDir, targetDir - projectedWind * windEffect, 0.5f).normalized;
+    }
+
+    void Rudder()
+    {
+        Vector3 toTarget = targetPosition - transform.position;
+        if (toTarget.magnitude > positionTolerance)
+        {
+            Vector3 desiredDir = toTarget.normalized;
+            float angleToTarget = Vector3.SignedAngle(transform.forward, desiredDir, Vector3.up);
+            targetRudderAngle = Mathf.Clamp(angleToTarget, -maxRudderAngle, maxRudderAngle);
         }
     }
 
-    private Vector3 pullUpOnDaOpps()
+    void adjustSails()
     {
-        Vector3 toPlayer = player.position - transform.position;
-        float dotProduct = Vector3.Dot(transform.right, toPlayer.normalized);
-        Vector3 offsetDirection = (dotProduct > 0) ? player.right : -player.right;
-        return player.position + offsetDirection;
-    }
+        if (anchored)
+            return;
 
-    private bool facingPlayer()
-    {
-        float angleDifference = Vector3.Angle(transform.forward, player.forward);
-        return angleDifference < 45f;
-    }
-
-  private void smoothRotation(Vector3 targetPosition)
-    {
-        Vector3 direction = (targetPosition - transform.position).normalized;
-
-        direction.y = 0;
-
-        if (direction != Vector3.zero)
+        float dist = Vector3.Distance(transform.position, targetPosition);
+        if (isAggroed)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            currentRiggingSpeed = Mathf.MoveTowards(currentRiggingSpeed, maxSpeed, riggingSpeed * Time.deltaTime);
         }
-    }
-
-    private float windSpeedModify()
-    {
-        Vector3 windDirection = WindMgr.Instance.windDir;
-        float dotProduct = Vector3.Dot(transform.forward, windDirection);
-        float speedModifier = 1 + (dotProduct * windEffect);
-        return speedModifier;
+        else
+        {
+            float angleDiff = Mathf.Abs(Vector3.SignedAngle(transform.forward, (targetPosition - transform.position).normalized, Vector3.up));
+            float alignmentStrength = Mathf.Clamp01(1 - (angleDiff / 90f));
+            float brakingForce = (angleDiff > 45f) ? 0.5f : 1f;
+            float targetSpeed = (dist < positionTolerance) ? speed : Mathf.Lerp(speed, maxSpeed, alignmentStrength * Mathf.Clamp01((dist - positionTolerance) / targetDistance));
+            targetSpeed *= brakingForce;
+            currentRiggingSpeed = Mathf.MoveTowards(currentRiggingSpeed, targetSpeed, riggingSpeed * Time.deltaTime);
+        }
+        currentRiggingSpeed = Mathf.Clamp(currentRiggingSpeed, speed, maxSpeed);
     }
 }
