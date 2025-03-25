@@ -44,12 +44,17 @@ public class BuffController : MonoBehaviour
         activeBuff[name] = true;
     }
 
-    public void deactivateBuff(string name)
+    static public void deactivateBuff(string name)
     {
         Debug.Log($"deactivated, {name}");
         Buff buff = buffStore[name];
         buff.deactivateCallback();
         activeBuff[name] = false;
+    }
+
+    static public bool isActive(string name)
+    {
+        return activeBuff[name];
     }
 
 }
