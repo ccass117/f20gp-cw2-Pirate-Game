@@ -55,6 +55,10 @@ public class ShipController : MonoBehaviour
         {
             cannons.InitializeCannons();
         }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            BuffController.activateBuff("Calm Winds");
+        }
     }
 
     private void FixedUpdate()
@@ -125,7 +129,7 @@ public class ShipController : MonoBehaviour
         {
             cannons.FireRight();
         }
-    }   
+    }
 
     void windEffect()
     {

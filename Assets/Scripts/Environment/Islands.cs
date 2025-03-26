@@ -14,7 +14,7 @@ public class Islands
 
         // generate tile as edge bit encodedints 
         a = generateEdgeInts(a);
-        printBlob(a);
+        //printBlob(a);
 
         // map the tiles to base tile + transform (tile, flipHoriz, rotation CW 90º)
         List<List<(int, bool, int)>> b = mapTilesToBase(a);
