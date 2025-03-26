@@ -1,2 +1,14 @@
 fileFormatVersion: 2
 guid: e0f4dcceadd42ff478b2d4c0c1276219
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - target: {instanceID: 0}
+  - cannonPrefab: {fileID: 3384886554356780695, guid: c0edd61e55929bc4fabf455cd627b6e9, type: 3}
+  - cannonballPrefab: {fileID: 6648455457723268105, guid: 2ff3527d9ac4eb043937708577e764b4, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

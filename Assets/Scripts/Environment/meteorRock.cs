@@ -2,21 +2,19 @@ using UnityEngine;
 
 public class meteorRock : MonoBehaviour
 {
-    AudioSource splash;
     bool splashed = false;
+    public GameObject splashPrefab;
     // Update is called once per frame
 
     private void Start()
     {
-        splash = GetComponent<AudioSource>();
-
     }
     private void Update()
     {
         if (transform.position.y <= 0 && !splashed)
         {
+            Instantiate(splashPrefab, new Vector3(transform.position.x, 0.5f, transform.position.z), Quaternion.identity);
             splashed = !splashed;
-            splash.Play();
         }
         
         if (transform.position.y <= -50)
