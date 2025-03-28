@@ -30,10 +30,8 @@ public class PowerUpSceneManager : MonoBehaviour
 
     void Start()
     {
-        // Register three dummy buffs for testing.
         RegisterDummyBuffs();
 
-        // Use reflection to access BuffController's private buffStore dictionary.
         Type buffControllerType = typeof(BuffController);
         FieldInfo buffStoreField = buffControllerType.GetField("buffStore", BindingFlags.NonPublic | BindingFlags.Static);
         if (buffStoreField == null)
@@ -41,7 +39,6 @@ public class PowerUpSceneManager : MonoBehaviour
             Debug.LogError("Could not find buffStore field in BuffController.");
             return;
         }
-        // Cast directly to Dictionary<string, Buff>.
         var buffStore = buffStoreField.GetValue(null) as Dictionary<string, Buff>;
         if (buffStore == null)
         {
@@ -49,7 +46,6 @@ public class PowerUpSceneManager : MonoBehaviour
             return;
         }
 
-        // Create a list of all buffs that are not currently active.
         foreach (var kvp in buffStore)
         {
             string buffName = kvp.Key;
@@ -61,7 +57,6 @@ public class PowerUpSceneManager : MonoBehaviour
             }
         }
         
-        // Randomly select three buffs from the available list.
         List<BuffData> selectedBuffs = new List<BuffData>();
         int countToSelect = Mathf.Min(3, availableBuffs.Count);
         System.Random rnd = new System.Random();
@@ -73,14 +68,12 @@ public class PowerUpSceneManager : MonoBehaviour
                 selectedBuffs.Add(candidate);
         }
         
-        // Check we have three toggles assigned.
         if (buffToggles == null || buffToggles.Length < 3)
         {
             Debug.LogError("Please assign exactly 3 toggles in the Inspector.");
             return;
         }
         
-        // Update the UI toggles with the selected buff names and descriptions.
         for (int i = 0; i < 3; i++)
         {
             string displayText = "";
@@ -94,7 +87,6 @@ public class PowerUpSceneManager : MonoBehaviour
                 toggleLabel.text = displayText;
         }
         
-        // Attach the Accept button listener.
         if (acceptButton != null)
         {
             acceptButton.onClick.AddListener(() => OnAccept(selectedBuffs));
@@ -150,7 +142,6 @@ public class PowerUpSceneManager : MonoBehaviour
                 Debug.Log("PowerUpSceneManager: Selected Buff - " + buffName);
                 BuffController.activateBuff(buffName);
                 
-                // Retrieve the next level number from PlayerPrefs.
                 int nextLevel = PlayerPrefs.GetInt("NextLevel", 1);
                 if (nextLevel > 0 && nextLevel <= 12)
                 {
