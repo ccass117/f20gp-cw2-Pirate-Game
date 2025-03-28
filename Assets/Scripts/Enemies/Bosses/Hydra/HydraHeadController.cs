@@ -1,0 +1,199 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class HydraHeadController : MonoBehaviour
+{
+    [Header("Attack Timing")]
+    public float minAttackInterval = 5f; 
+    public float maxAttackInterval = 10f; 
+    private float attackTimer;
+
+    [Header("Attack Options Toggles")]
+    public bool canAttack0 = true;   
+    public bool canAttack1 = true;   
+    public bool canAttack2 = true;      
+
+    [Header("Distance Settings")]
+    [Tooltip("Distance threshold below which Attack 0 is favored.")]
+    public float closeDistanceThreshold = 5f;
+
+    [Header("Attack 1 (Fire Breath) Settings")]
+    [Tooltip("Prefab to spawn for Attack 1.")]
+    public GameObject attack1Prefab;
+    [Tooltip("Transform representing the head's mouth.")]
+    public Transform mouthTransform;
+    [Tooltip("Scale factor for the spawned Attack 1 prefab.")]
+    public float attack1PrefabScale = 1f;
+    [Tooltip("Length of the Attack 1 animation (in seconds) for auto-destruction of the spawned prefab.")]
+    public float attack1AnimationLength = 3f;
+
+    [Header("Fire Cone Settings")]
+    [Tooltip("Full cone angle (in degrees) that defines the fire's spread.")]
+    public float fireConeAngle = 30f;
+    [Tooltip("Distance (in units) that the fire effect covers.")]
+    public float fireConeRange = 5f;
+    [Tooltip("Additional horizontal rotation offset (in degrees) for fine-tuning the fire's direction.")]
+    public float fireDirectionOffset = 0f;
+    [Tooltip("Vertical angle offset (in degrees) to tilt the fire cone (negative tilts downward).")]
+    public float fireVerticalAngle = -15f;
+
+    [Header("Attack 2 Settings")]
+    [Tooltip("Prefab to spawn for Attack 2.")]
+    public GameObject attack2Prefab;
+    [Tooltip("Time in seconds used for predicting the player's position.")]
+    public float predictionTime = 1f;
+
+    private Animator anim;
+    private Transform player;
+
+    void Start()
+    {
+        anim = GetComponent<Animator>();
+        GameObject playerGO = GameObject.FindGameObjectWithTag("Player");
+        if (playerGO != null)
+            player = playerGO.transform;
+        else
+            Debug.LogWarning(gameObject.name + ": Player not found!");
+
+        ResetAttackTimer();
+    }
+
+    void Update()
+    {
+        attackTimer -= Time.deltaTime;
+        if (attackTimer <= 0f)
+        {
+            Attack();
+            ResetAttackTimer();
+        }
+    }
+
+    void Attack()
+    {
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        Dictionary<int, float> weights = new Dictionary<int, float>();
+        if (canAttack0)
+            weights[0] = (distance < closeDistanceThreshold) ? 0.7f : 0.2f;
+        if (canAttack1)
+            weights[1] = (distance < closeDistanceThreshold) ? 0.15f : 0.4f;
+        if (canAttack2)
+            weights[2] = (distance < closeDistanceThreshold) ? 0.15f : 0.4f;
+
+        if (weights.Count == 0)
+        {
+            Debug.LogWarning(gameObject.name + ": No attacks enabled, skipping attack.");
+            return;
+        }
+
+        float totalWeight = 0f;
+        foreach (float w in weights.Values)
+            totalWeight += w;
+        float randomValue = Random.Range(0f, totalWeight);
+        int selectedAttack = -1;
+        foreach (var pair in weights)
+        {
+            randomValue -= pair.Value;
+            if (randomValue <= 0f)
+            {
+                selectedAttack = pair.Key;
+                break;
+            }
+        }
+        if (selectedAttack == -1)
+            selectedAttack = 0;
+
+        if (selectedAttack == 1)
+        {
+            anim.SetInteger("AttackIndex", 1);
+            anim.SetTrigger("AttackTrigger");
+            Debug.Log(gameObject.name + ": Attack 1 triggered. Animation event will spawn fire prefab.");
+        }
+        else if (selectedAttack == 2)
+        {
+            if (attack2Prefab == null)
+            {
+                Debug.LogWarning(gameObject.name + ": Attack 2 prefab not assigned.");
+            }
+            else
+            {
+                Vector3 predictedPosition = player.position;
+                Rigidbody playerRb = player.GetComponent<Rigidbody>();
+                if (playerRb != null)
+                    predictedPosition += playerRb.linearVelocity * predictionTime;
+                else
+                    predictedPosition += player.forward * (predictionTime * 3f);
+                Quaternion spawnRot = Quaternion.LookRotation(player.forward);
+                Instantiate(attack2Prefab, predictedPosition, spawnRot);
+                Debug.Log(gameObject.name + ": Attack 2 triggered. Spawned prefab at predicted position " + predictedPosition);
+            }
+        }
+        else
+        {
+            anim.SetInteger("AttackIndex", 0);
+            anim.SetTrigger("AttackTrigger");
+            Debug.Log(gameObject.name + ": Attack 0 triggered via Animator.");
+        }
+    }
+
+    void ResetAttackTimer()
+    {
+        attackTimer = Random.Range(minAttackInterval, maxAttackInterval);
+    }
+
+    public void SpawnAttack1Prefab()
+    {
+        if (attack1Prefab == null || mouthTransform == null)
+        {
+            Debug.LogWarning(gameObject.name + ": Attack 1 prefab or mouthTransform not assigned.");
+            return;
+        }
+        
+        Quaternion baseRot = mouthTransform.rotation;
+        
+        Quaternion horizontalOffset = Quaternion.Euler(0, fireDirectionOffset, 0);
+        Quaternion verticalOffset = Quaternion.Euler(fireVerticalAngle, 0, 0);
+        
+        Quaternion finalRot = verticalOffset * horizontalOffset * baseRot;
+        
+        GameObject instance = Instantiate(attack1Prefab, mouthTransform.position, finalRot, mouthTransform);
+        instance.transform.localPosition = Vector3.zero;
+        instance.transform.localScale = Vector3.one * attack1PrefabScale;
+        
+        Debug.Log(gameObject.name + ": SpawnAttack1Prefab - Spawned fire prefab at mouth with final rotation: " + finalRot.eulerAngles);
+        
+        Destroy(instance, attack1AnimationLength);
+    }
+
+    #if UNITY_EDITOR
+    void OnDrawGizmosSelected()
+    {
+        if (mouthTransform != null)
+        {
+            Gizmos.color = Color.red;
+            Vector3 origin = mouthTransform.position;
+            
+            Quaternion baseRot = mouthTransform.rotation;
+            Quaternion horizontalOffset = Quaternion.Euler(0, fireDirectionOffset, 0);
+            Quaternion verticalOffset = Quaternion.Euler(fireVerticalAngle, 0, 0);
+            Quaternion finalRot = verticalOffset * horizontalOffset * baseRot;
+            Vector3 finalDir = finalRot * Vector3.forward;
+            
+            Gizmos.DrawLine(origin, origin + finalDir * fireConeRange);
+            
+            float halfAngle = fireConeAngle * 0.5f;
+            int segments = 20;
+            Vector3 prevPoint = origin + (Quaternion.Euler(0, -halfAngle, 0) * finalDir) * fireConeRange;
+            for (int i = 1; i <= segments; i++)
+            {
+                float t = (float)i / segments;
+                float currentAngle = Mathf.Lerp(-halfAngle, halfAngle, t);
+                Quaternion rot = Quaternion.Euler(0, currentAngle, 0);
+                Vector3 nextPoint = origin + (rot * finalDir) * fireConeRange;
+                Gizmos.DrawLine(prevPoint, nextPoint);
+                prevPoint = nextPoint;
+            }
+        }
+    }
+    #endif
+}
