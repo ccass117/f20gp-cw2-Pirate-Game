@@ -68,7 +68,6 @@ public class ShipController : MonoBehaviour
 
     void playerMovement()
     {
-        // Sail Control (W/S)
         if (!anchored)
         {
             if (Input.GetKey(KeyCode.W))
@@ -77,12 +76,10 @@ public class ShipController : MonoBehaviour
                 currentRiggingSpeed = Mathf.Max(speed, currentRiggingSpeed - riggingSpeed * Time.deltaTime);
         }
 
-        // Rudder Control (A/D)
         targetRudderAngle = 0;
         if (Input.GetKey(KeyCode.A)) targetRudderAngle = maxRudderAngle;
         if (Input.GetKey(KeyCode.D)) targetRudderAngle = -maxRudderAngle;
 
-        // Siren influence override.
         if (sirenInfluenceActive && sirenTarget != null)
         {
             Vector3 toSiren = sirenTarget.position - transform.position;
@@ -100,7 +97,6 @@ public class ShipController : MonoBehaviour
             rudderSpeed * Time.deltaTime
         );
 
-        // Anchor Control (Space)
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (!anchored && !isRaisingAnchor)
@@ -120,7 +116,6 @@ public class ShipController : MonoBehaviour
 
     void playerWeapons()
     {
-        // Cannon firing
         if (Input.GetKeyDown(KeyCode.Q))
         {
             cannons.FireLeft();

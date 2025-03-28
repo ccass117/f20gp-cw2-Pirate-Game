@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Cannonball
   - Enemy
+  - Boss
+  - MegalodonHead
   - fireball shadow
   layers:
   - Default
@@ -16,8 +18,8 @@ TagManager:
   - UI
   - Player
   - Enemy
-  - 
-  - 
+  - MegalodonHead
+  - MegalodonBody
   - 
   - 
   - 
