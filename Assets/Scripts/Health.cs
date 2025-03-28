@@ -32,13 +32,6 @@ public class Health : MonoBehaviour
     [Tooltip("Minimum speed attackers need to be moving to damage this object")]
     public float defenderSpeedThreshold = 0f;
 
-    [Tooltip("If true, head region blocks damage but deals damage on contact")]
-    [SerializeField] private bool useHeadHitDetection = false;
-    [Tooltip("Layer for objects that should collide with this object")]
-    public LayerMask collisionLayers;
-    [Tooltip("If true, this object will block movement like a wall")]
-    public bool isSolidObstacle = true;
-
     void Awake()
     {
         currentHealth = maxHealth;
