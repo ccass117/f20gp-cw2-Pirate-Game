@@ -34,12 +34,12 @@ public class LevelTransitionManager : MonoBehaviour
             if (allInactive)
             {
                 levelCompleted = true;
-                TransitionToNextLevel();
+                TransitionToPowerUpScene();
             }
         }
     }
 
-    void TransitionToNextLevel()
+    void TransitionToPowerUpScene()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;
         int currentLevel = 0;
@@ -48,9 +48,11 @@ public class LevelTransitionManager : MonoBehaviour
             int nextLevel = currentLevel + 1;
             if (nextLevel <= 12)
             {
-                string nextSceneName = "level_" + nextLevel;
-                Debug.Log("All enemies defeated! Transitioning to " + nextSceneName);
-                SceneManager.LoadScene(nextSceneName);
+                // Store next level number for the power-up scene.
+                PlayerPrefs.SetInt("NextLevel", nextLevel);
+                PlayerPrefs.Save();
+                Debug.Log("All enemies defeated! Transitioning to PowerUpScene for next level: " + nextLevel);
+                SceneManager.LoadScene("powerup");
             }
             else
             {
