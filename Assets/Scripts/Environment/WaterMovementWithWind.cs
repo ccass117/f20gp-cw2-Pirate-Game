@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class WaterMovementWithWind : MonoBehaviour
 {
-    private const float Boundary = 10f; //one tile size is 10 units
-    public float windInfluence = 0.5f; //how much the wind affects the water
+    private const float Boundary = 10f; 
+    public float windInfluence = 0.5f; 
 
     void Update()
     {

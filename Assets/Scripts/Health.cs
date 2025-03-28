@@ -21,16 +21,35 @@ public class Health : MonoBehaviour
     [Tooltip("If true, this object is considered a projectile (like a cannonball)")]
     public bool isProjectile = false;
 
+    [Header("Damage Cooldown")]
+    [Tooltip("Minimum time between taking damage (0 = no cooldown)")]
+    public float damageCooldown = 0.5f;
+    private float lastDamageTime = -Mathf.Infinity;
+
+    [Header("Speed Thresholds")]
+    [Tooltip("Minimum speed this object needs to move to deal damage")]
+    public float attackerSpeedThreshold = 0f;
+    [Tooltip("Minimum speed attackers need to be moving to damage this object")]
+    public float defenderSpeedThreshold = 0f;
+
     void Awake()
     {
         currentHealth = maxHealth;
     }
-
-    public void TakeDamage(float amount)
+    
+    public void TakeDamage(float amount, GameObject damageSource = null)
     {
+        if (damageCooldown > 0 && Time.time < lastDamageTime + damageCooldown)
+        {
+            return;
+        }
+
         float finalDamage = amount * damageResistance;
         currentHealth -= finalDamage;
-        Debug.Log($"{gameObject.name} took {finalDamage} damage. Remaining health: {currentHealth}");
+        lastDamageTime = Time.time;
+        
+        string sourceName = damageSource != null ? damageSource.name : "unknown source";
+        
         if (currentHealth <= 0)
         {
             Die();
@@ -56,15 +75,20 @@ public class Health : MonoBehaviour
     public void DamageHandshake(Health other, float mySpeed, float otherSpeed)
     {
         float damageToMe = (mySpeed + otherSpeed) * other.damageMultiplier;
-        TakeDamage(damageToMe);
+        TakeDamage(damageToMe, other.gameObject);
     }
 
-    void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
         Rigidbody rbSelf = GetComponent<Rigidbody>();
         float mySpeed = (rbSelf != null) ? rbSelf.linearVelocity.magnitude : 0f;
         float otherSpeed = (collision.rigidbody != null) ? collision.rigidbody.linearVelocity.magnitude : 0f;
         Health otherHealth = collision.gameObject.GetComponent<Health>();
+
+        bool attackerValid = mySpeed >= attackerSpeedThreshold;
+        bool defenderValid = otherSpeed >= defenderSpeedThreshold;
+        
+        if (!attackerValid && !defenderValid) return;
 
         if (isProjectile || (otherHealth != null && otherHealth.isProjectile))
         {
@@ -75,15 +99,16 @@ public class Health : MonoBehaviour
             if (!isProjectile && otherHealth != null && otherHealth.isProjectile)
             {
                 float projectileDamage = otherHealth.damageMultiplier;
-                TakeDamage(projectileDamage);
+                TakeDamage(projectileDamage, otherHealth.gameObject);
                 return;
             }
             if (isProjectile && otherHealth != null && otherHealth.isProjectile)
             {
-                TakeDamage(damageMultiplier);
+                TakeDamage(damageMultiplier, otherHealth.gameObject);
                 return;
             }
         }
+
         else
         {
             if (otherHealth != null)
@@ -93,7 +118,7 @@ public class Health : MonoBehaviour
             else
             {
                 float damage = (mySpeed + otherSpeed) * 1f;
-                TakeDamage(damage);
+                TakeDamage(damage, collision.gameObject);
             }
         }
     }
