@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7995817676538341497}
   - component: {fileID: 2004998968721264461}
   - component: {fileID: 4755948934412297457}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: meteor
   m_TagString: Cannonball
   m_Icon: {fileID: 0}
@@ -156,6 +156,9 @@ MonoBehaviour:
   damageResistance: 0
   damageMultiplier: 5
   isProjectile: 1
+  damageCooldown: 0.5
+  attackerSpeedThreshold: 0
+  defenderSpeedThreshold: 0
 --- !u!114 &4755948934412297457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,7 +183,7 @@ GameObject:
   - component: {fileID: 7950638197215553483}
   - component: {fileID: 11958188585062521}
   - component: {fileID: 7130671723010432652}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5014,7 +5017,7 @@ GameObject:
   - component: {fileID: 4929430355613723350}
   - component: {fileID: 2428570369185434502}
   - component: {fileID: 3849022062228455885}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: shadow
   m_TagString: fireball shadow
   m_Icon: {fileID: 0}
@@ -5151,7 +5154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3604674562489456381}
   - component: {fileID: 1479911053178783214}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: fireball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
