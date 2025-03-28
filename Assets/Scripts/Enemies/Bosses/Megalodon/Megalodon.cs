@@ -11,7 +11,6 @@ public class Megalodon : MonoBehaviour
     public float circleRadius = 15f;
     public float circlingSpeed = 1f;
     [SerializeField] private float movementSmoothTime = 0.3f;
-    [SerializeField] private float rotationSmoothTime = 0.1f;
     [SerializeField] private float maxRotationSpeed = 270f;
     [SerializeField] private float minMovementForRotation = 0.1f;
 
@@ -79,7 +78,6 @@ public class Megalodon : MonoBehaviour
     private Vector3 recoveryTarget;
     private float originalGroundY;
     private Vector3 currentVelocity;
-    private float rotationVelocity;
     private float currentOrbitAngle;
     private Vector3 smoothedMovementDirection;
     private float currentRadius;
@@ -246,22 +244,18 @@ public class Megalodon : MonoBehaviour
     {
         attackTimeRemaining -= Time.deltaTime;
         
-        // Move towards the precalculated attack target
         Vector3 newPos = Vector3.MoveTowards(
             transform.position, 
             attackTargetPosition, 
             attackSpeed * Time.deltaTime
         );
         
-        // Maintain vertical position
         newPos.y = transform.position.y;
         transform.position = newPos;
 
-        // Calculate ideal facing direction
         Vector3 moveDir = (attackTargetPosition - transform.position).normalized;
         if (moveDir.sqrMagnitude > 0.001f)
         {
-            // Use faster rotation during attack
             Quaternion targetRotation = Quaternion.LookRotation(moveDir) * Quaternion.Euler(rotationOffset);
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
@@ -270,7 +264,6 @@ public class Megalodon : MonoBehaviour
             );
         }
 
-        // End attack early if we reach target
         if (Vector3.Distance(transform.position, attackTargetPosition) < 1f || attackTimeRemaining <= 0f)
         {
             EndAttack();
@@ -298,7 +291,6 @@ public class Megalodon : MonoBehaviour
     {
         if (player == null) return Vector3.zero;
         
-        // Check for different movement components
         if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
             return rb.linearVelocity;
         if (player.TryGetComponent<CharacterController>(out CharacterController cc))
@@ -316,14 +308,12 @@ public class Megalodon : MonoBehaviour
         agent.speed = phase2Active ? phase2AttackSpeed : attackSpeed;
         attackHitbox.enabled = true;
         
-        // Calculate attack target ONCE at attack start with prediction
         Vector3 playerVelocity = GetPlayerVelocity();
         Vector3 predictedPosition = player.position + playerVelocity * predictionTime;
         Vector3 attackDirection = (predictedPosition - transform.position).normalized;
         attackTargetPosition = predictedPosition + attackDirection * 
             (phase2Active ? phase2OvershootMultiplier : baseOvershootMultiplier);
 
-        // Immediately face the attack direction at start
         Quaternion immediateRotation = Quaternion.LookRotation(attackDirection) * Quaternion.Euler(rotationOffset);
         transform.rotation = immediateRotation;
     }
@@ -343,10 +333,8 @@ public class Megalodon : MonoBehaviour
             remainingChainAttacks = phase2AttackChainCount;
             isAttacking = false;
             
-            // Immediately start recovery after attack
             StartRecovery();
             
-            // Reset attack timer but keep movement active
             attackTimer = phase2Active ? phase2AttackInterval : originalAttackInterval;
         }
     }
@@ -376,7 +364,6 @@ public class Megalodon : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // Just handle health impacts here
         if (bodyHealth != null)
             bodyHealth.OnCollisionEnter(collision);
     }
@@ -386,15 +373,12 @@ public class Megalodon : MonoBehaviour
         if (isRecovering) return;
         isRecovering = true;
         
-        // Calculate bounce direction based on player position
         Vector3 awayDirection = (transform.position - player.position).normalized;
         recoveryTarget = transform.position + awayDirection * bounceDistance;
         
-        // Immediate rotation towards bounce direction
         Quaternion desiredRot = Quaternion.LookRotation(awayDirection) * Quaternion.Euler(rotationOffset);
         transform.rotation = desiredRot;
         
-        // Shorten recovery duration for faster return to circling
         StartCoroutine(RecoveryBounce());
     }
 
@@ -403,20 +387,17 @@ public class Megalodon : MonoBehaviour
         float timer = 0;
         Vector3 startPos = transform.position;
         
-        // Add vertical lift during bounce
         Vector3 bounceEndPos = recoveryTarget + Vector3.up * 2f; 
         
         while (timer < recoveryDuration)
         {
             timer += Time.deltaTime;
-            // Add arc to bounce movement
             Vector3 arcPos = Vector3.Lerp(startPos, bounceEndPos, timer/recoveryDuration);
-            arcPos.y += Mathf.Sin(timer/recoveryDuration * Mathf.PI) * 3f; // Height curve
+            arcPos.y += Mathf.Sin(timer/recoveryDuration * Mathf.PI) * 3f;
             transform.position = arcPos;
             yield return null;
         }
         
-        // Force new pattern and reset orbit
         GenerateNewPattern();
         Vector3 toPlayer = transform.position - player.position;
         currentOrbitAngle = Mathf.Atan2(toPlayer.z, toPlayer.x);
