@@ -9,6 +9,9 @@ public class IslandInstantiator : MonoBehaviour
     public int maxHeight = 5;
     public int mass = 10;
 
+    public List<Material> outerMat;
+    public List<Material> innerMat;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -54,6 +57,7 @@ public class IslandInstantiator : MonoBehaviour
 
                 // actually instantiate the right prefab
                 GameObject b = Instantiate(item);
+                setMaterials(b);
 
                 // change positions rotation and flip
                 b.transform.position = new Vector3(selfT.position.x + x * 6 - (maxWidth * 3), 0, selfT.position.z + y * -6 + (maxHeight * 3));
@@ -66,4 +70,24 @@ public class IslandInstantiator : MonoBehaviour
             }
         }
     }
+
+    void setMaterials(GameObject island)
+    {
+        Renderer[] renderers = island.GetComponentsInChildren<Renderer>();
+        foreach (Renderer rend in renderers)
+        {
+            // replace all inner mats with inner material
+            if (rend.CompareTag("innerMat"))
+            {
+                rend.SetMaterials(innerMat);
+            }
+            // replace all outer mats with outer material
+            else if (rend.CompareTag("outerMat"))
+            {
+                rend.SetMaterials(outerMat);
+            }
+        }
+
+    }
 }
+

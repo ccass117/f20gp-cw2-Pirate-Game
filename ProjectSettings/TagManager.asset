@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - Boss
   - MegalodonHead
+  - fireball shadow
   layers:
   - Default
   - TransparentFX

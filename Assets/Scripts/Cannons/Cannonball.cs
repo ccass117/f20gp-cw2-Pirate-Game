@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Cannonball : MonoBehaviour
 {
-    public AudioClip splashSound;
     public float gravityMultiplier = 1f;
+    public GameObject splashPrefab;
     public AudioClip hitSound;
     private Rigidbody rb;
     private AudioSource audioSource;
@@ -48,7 +48,7 @@ public class Cannonball : MonoBehaviour
 
     private IEnumerator splashAndDestroy()
     {
-        PlaySound(splashSound);
+        Instantiate(splashPrefab, new Vector3(transform.position.x, 0.5f, transform.position.z), Quaternion.identity);
         yield return new WaitForSeconds(1.5f);
         Destroy(gameObject);
     }
