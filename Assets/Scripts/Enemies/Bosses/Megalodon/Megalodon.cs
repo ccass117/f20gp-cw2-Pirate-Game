@@ -9,7 +9,11 @@ public class Megalodon : MonoBehaviour
 
     [Header("Circling Behavior")]
     public float circleRadius = 15f;
-    public float circlingSpeed;
+    public float circlingSpeed = 1f;
+    [SerializeField] private float movementSmoothTime = 0.3f;
+    [SerializeField] private float rotationSmoothTime = 0.1f;
+    [SerializeField] private float maxRotationSpeed = 270f;
+    [SerializeField] private float minMovementForRotation = 0.1f;
 
     [Header("Attack Behavior")]
     public float attackInterval = 10f;
@@ -27,109 +31,118 @@ public class Megalodon : MonoBehaviour
     public float chainAttackDelay = 1f;
     public float phase2OvershootMultiplier = 1.5f;
 
-    [Header("Bounce Settings")]
-    public float bounceDistance = 10f;          // How far to bounce away from the player
-    public float bounceRecoveryTime = 2f;         // Duration to remain in bounce state
+    [Header("Orbit Variation")]
+    public float radiusVariation = 3f;
+    public float radiusChangeInterval = 2f;
+    public float angleVariation = 30f;
+    public float patternChangeInterval = 4f;
+
+    [Header("Lateral Movement")]
+    public float lateralAmplitude = 2f;
+    public float lateralFrequency = 0.5f;
+
+    [Header("Dynamic Speed")]
+    public float speedVariation = 2f;
+    public float minFollowDistance = 8f;
+    public float maxFollowDistance = 20f;
+
+    [Header("Bounce/Recovery Settings")]
+    public float bounceDistance = 10f;
+    public float recoveryDuration = 2f;
 
     [Header("Model Settings")]
-    public Vector3 rotationOffset = new Vector3(0, 90, 0);  // Adjust so the model's front faces movement direction
+    public Vector3 rotationOffset = new Vector3(0, 90, 0);
 
-    private NavMeshAgent agent;
-    private float attackTimer;
-    private float attackTimeRemaining;
-    public bool isAttacking { get; private set; }
-    private float orbitAngle;
-    private Vector3 attackTargetPosition;
-    private bool phase2Active;
-    private int remainingChainAttacks;
-    private float originalAttackInterval;
-    private float originalAttackSpeed;
+    [Header("Vertical Motion Settings")]
+    public float bobbingAmplitude = 0.5f;
+    public float bobbingFrequency = 1f;
+    public float attackLift = 2f;
+    public float verticalSmoothSpeed = 5f;
 
     [Header("Components & Settings")]
     [SerializeField] private Collider mainBodyCollider;
     [SerializeField] private Collider attackHitbox;
     [SerializeField] private float positionSyncThreshold = 0.1f;
     [SerializeField] private Transform bodyChild;
-    [SerializeField] private Health bodyHealth;  // Health component on the body child
+    [SerializeField] private Health bodyHealth;
 
+    private NavMeshAgent agent;
+    private float attackTimer;
+    private float attackTimeRemaining;
+    public bool isAttacking { get; private set; }
+    private bool phase2Active;
+    private int remainingChainAttacks;
+    private float originalAttackInterval;
+    private float originalAttackSpeed;
     private Vector3 lastFramePosition;
-
-    // Bounce state variables:
-    private bool isBouncing = false;
-    private Vector3 bounceTarget;
+    private bool isRecovering = false;
+    private Vector3 recoveryTarget;
+    private float originalGroundY;
+    private Vector3 currentVelocity;
+    private float rotationVelocity;
+    private float currentOrbitAngle;
+    private Vector3 smoothedMovementDirection;
+    private float currentRadius;
+    private float baseCirclingSpeed;
+    private float patternTimer;
+    private float radiusTimer;
+    private Vector3 orbitOffset;
+    private float lateralOffset;
+    private Vector3 attackTargetPosition;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.updateRotation = false; // We'll control rotation manually.
+        agent.updatePosition = false;
         if (!mainBodyCollider) mainBodyCollider = GetComponentInChildren<Collider>();
 
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null)
-                player = p.transform;
-            else
-                Debug.LogWarning("Megalodon: Player not found.");
+            if (p != null) player = p.transform;
         }
+
         attackHitbox.enabled = false;
         originalAttackInterval = attackInterval;
         originalAttackSpeed = attackSpeed;
         attackTimer = attackInterval;
         agent.speed = normalSpeed;
-        circlingSpeed = normalSpeed / circleRadius;
+        originalGroundY = transform.position.y;
+        lastFramePosition = transform.position;
 
-        SyncBodyPosition();
+        currentRadius = circleRadius;
+        baseCirclingSpeed = circlingSpeed;
+        GenerateNewPattern();
     }
 
     void Update()
     {
-        // If in bounce state, override normal behavior.
-        if (isBouncing)
+        if (isRecovering)
         {
-            agent.SetDestination(bounceTarget);
-            if (agent.velocity.sqrMagnitude > 0.1f)
-            {
-                Quaternion bounceRot = Quaternion.LookRotation(agent.velocity.normalized) * Quaternion.Euler(rotationOffset);
-                transform.rotation = Quaternion.Slerp(transform.rotation, bounceRot, Time.deltaTime * 10f);
-            }
-            // During bounce, do nothing else.
+            HandleRecovery();
             return;
         }
 
-        // Disable boss if health reaches zero.
         if (bodyHealth != null && bodyHealth.GetCurrentHealth() <= 0)
         {
             gameObject.SetActive(false);
             return;
         }
 
-        // Phase 2 transition.
         if (!phase2Active && (bodyHealth.GetCurrentHealth() / bodyHealth.maxHealth) <= phase2Threshold)
         {
             EnterPhase2();
         }
 
-        if (Vector3.Distance(transform.position, lastFramePosition) > positionSyncThreshold)
-        {
-            SyncBodyPosition();
-            lastFramePosition = transform.position;
-        }
+        HandleVerticalMovement();
+        SyncBodyPosition();
 
         if (!isAttacking)
         {
+            HandleCirclingBehavior();
+            HandlePatternUpdates();
             attackTimer -= Time.deltaTime;
-            orbitAngle += circlingSpeed * Time.deltaTime;
-            Vector3 targetPos = player.position + new Vector3(Mathf.Cos(orbitAngle), 0f, Mathf.Sin(orbitAngle)) * circleRadius;
-            agent.SetDestination(targetPos);
-
-            // Face movement direction.
-            if (agent.velocity.sqrMagnitude > 0.1f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(agent.velocity.normalized) * Quaternion.Euler(rotationOffset);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
-            }
-
+            
             if (attackTimer <= 0f)
             {
                 StartAttack();
@@ -137,25 +150,163 @@ public class Megalodon : MonoBehaviour
         }
         else
         {
-            attackTimeRemaining -= Time.deltaTime;
-            agent.SetDestination(attackTargetPosition);
-            if (agent.velocity.sqrMagnitude > 0.1f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(agent.velocity.normalized) * Quaternion.Euler(rotationOffset);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
-            }
-            if (attackTimeRemaining <= 0f)
-            {
-                EndAttack();
-            }
+            HandleAttackBehavior();
         }
     }
 
-    // Keep the body child at the parent's origin.
-    private void SyncBodyPosition()
+    void HandlePatternUpdates()
     {
-        if (bodyChild != null)
+        patternTimer -= Time.deltaTime;
+        radiusTimer -= Time.deltaTime;
+
+        if (patternTimer <= 0)
+        {
+            GenerateNewPattern();
+            patternTimer = patternChangeInterval + Random.Range(-1f, 1f);
+        }
+
+        if (radiusTimer <= 0)
+        {
+            currentRadius = Mathf.Clamp(
+                circleRadius + Random.Range(-radiusVariation, radiusVariation),
+                minFollowDistance,
+                maxFollowDistance
+            );
+            radiusTimer = radiusChangeInterval;
+        }
+    }
+
+    void GenerateNewPattern()
+    {
+        orbitOffset = new Vector3(
+            Random.Range(-angleVariation, angleVariation),
+            0,
+            Random.Range(-angleVariation, angleVariation)
+        );
+
+        lateralFrequency = Random.Range(0.3f, 0.8f);
+        lateralAmplitude = Random.Range(1f, 3f);
+
+        if (Random.value > 0.8f)
+        {
+            circlingSpeed = baseCirclingSpeed * Random.Range(0.8f, 1.2f) * (Random.value > 0.5f ? 1 : -1);
+        }
+    }
+
+    void HandleCirclingBehavior()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        agent.speed = Mathf.Lerp(
+            normalSpeed + speedVariation,
+            normalSpeed - speedVariation,
+            Mathf.InverseLerp(minFollowDistance, maxFollowDistance, distanceToPlayer)
+        );
+
+        Vector3 baseOrbitPos = player.position + 
+            (transform.position - player.position).normalized * currentRadius;
+
+        lateralOffset = Mathf.Sin(Time.time * lateralFrequency) * lateralAmplitude;
+        Vector3 lateralDirection = Vector3.Cross(Vector3.up, (player.position - transform.position).normalized);
+        Vector3 variedOrbitPos = baseOrbitPos + lateralDirection * lateralOffset + orbitOffset;
+
+        Vector3 newPos = Vector3.SmoothDamp(
+            transform.position,
+            variedOrbitPos,
+            ref currentVelocity,
+            movementSmoothTime,
+            agent.speed
+        );
+
+        Vector3 actualMovement = (newPos - transform.position).normalized;
+        if (actualMovement.sqrMagnitude > 0.001f)
+        {
+            smoothedMovementDirection = Vector3.Slerp(
+                smoothedMovementDirection,
+                actualMovement,
+                Time.deltaTime * 15f
+            );
+        }
+
+        if (currentVelocity.magnitude > minMovementForRotation)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(smoothedMovementDirection) * 
+                                       Quaternion.Euler(rotationOffset);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                Time.deltaTime * Mathf.Clamp(currentVelocity.magnitude * 2f, 5f, 15f)
+            );
+        }
+
+        newPos.y = transform.position.y;
+        transform.position = newPos;
+    }
+
+    void HandleAttackBehavior()
+    {
+        attackTimeRemaining -= Time.deltaTime;
+        
+        // Move towards the precalculated attack target
+        Vector3 newPos = Vector3.MoveTowards(
+            transform.position, 
+            attackTargetPosition, 
+            attackSpeed * Time.deltaTime
+        );
+        
+        // Maintain vertical position
+        newPos.y = transform.position.y;
+        transform.position = newPos;
+
+        // Calculate ideal facing direction
+        Vector3 moveDir = (attackTargetPosition - transform.position).normalized;
+        if (moveDir.sqrMagnitude > 0.001f)
+        {
+            // Use faster rotation during attack
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir) * Quaternion.Euler(rotationOffset);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                maxRotationSpeed * Time.deltaTime
+            );
+        }
+
+        // End attack early if we reach target
+        if (Vector3.Distance(transform.position, attackTargetPosition) < 1f || attackTimeRemaining <= 0f)
+        {
+            EndAttack();
+        }
+    }
+
+    void HandleVerticalMovement()
+    {
+        float targetY = originalGroundY + (isAttacking ? attackLift : bobbingAmplitude * Mathf.Sin(Time.time * bobbingFrequency));
+        Vector3 pos = transform.position;
+        pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * verticalSmoothSpeed);
+        transform.position = pos;
+    }
+
+    void SyncBodyPosition()
+    {
+        if (Vector3.Distance(transform.position, lastFramePosition) > positionSyncThreshold && bodyChild != null)
+        {
             bodyChild.localPosition = Vector3.zero;
+            lastFramePosition = transform.position;
+        }
+    }
+
+    Vector3 GetPlayerVelocity()
+    {
+        if (player == null) return Vector3.zero;
+        
+        // Check for different movement components
+        if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            return rb.linearVelocity;
+        if (player.TryGetComponent<CharacterController>(out CharacterController cc))
+            return cc.velocity;
+        if (player.TryGetComponent<NavMeshAgent>(out NavMeshAgent nma))
+            return nma.velocity;
+        
+        return Vector3.zero;
     }
 
     void StartAttack()
@@ -164,19 +315,17 @@ public class Megalodon : MonoBehaviour
         attackTimeRemaining = attackDuration;
         agent.speed = phase2Active ? phase2AttackSpeed : attackSpeed;
         attackHitbox.enabled = true;
-
-        // Predict target position.
+        
+        // Calculate attack target ONCE at attack start with prediction
         Vector3 playerVelocity = GetPlayerVelocity();
         Vector3 predictedPosition = player.position + playerVelocity * predictionTime;
-        float currentOvershoot = phase2Active ? phase2OvershootMultiplier : baseOvershootMultiplier;
-        attackTargetPosition = predictedPosition + (predictedPosition - transform.position).normalized * currentOvershoot;
+        Vector3 attackDirection = (predictedPosition - transform.position).normalized;
+        attackTargetPosition = predictedPosition + attackDirection * 
+            (phase2Active ? phase2OvershootMultiplier : baseOvershootMultiplier);
 
-        // Snap target to NavMesh.
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(attackTargetPosition, out hit, 2f, NavMesh.AllAreas))
-        {
-            attackTargetPosition = hit.position;
-        }
+        // Immediately face the attack direction at start
+        Quaternion immediateRotation = Quaternion.LookRotation(attackDirection) * Quaternion.Euler(rotationOffset);
+        transform.rotation = immediateRotation;
     }
 
     void EndAttack()
@@ -185,18 +334,20 @@ public class Megalodon : MonoBehaviour
         {
             remainingChainAttacks--;
             attackTimer = chainAttackDelay;
-            agent.speed = phase2AttackSpeed;
             StartAttack();
         }
         else
         {
             attackHitbox.enabled = false;
-            attackTimer = phase2Active ? phase2AttackInterval : originalAttackInterval;
-            agent.speed = phase2Active ? phase2AttackSpeed : originalAttackSpeed;
+            agent.speed = normalSpeed;
             remainingChainAttacks = phase2AttackChainCount;
-            Vector3 dir = transform.position - player.position;
-            orbitAngle = Mathf.Atan2(dir.z, dir.x);
             isAttacking = false;
+            
+            // Immediately start recovery after attack
+            StartRecovery();
+            
+            // Reset attack timer but keep movement active
+            attackTimer = phase2Active ? phase2AttackInterval : originalAttackInterval;
         }
     }
 
@@ -206,66 +357,71 @@ public class Megalodon : MonoBehaviour
         attackInterval = phase2AttackInterval;
         attackSpeed = phase2AttackSpeed;
         remainingChainAttacks = phase2AttackChainCount;
-        if (!isAttacking)
-        {
-            StartAttack();
-        }
+        circleRadius *= 0.8f;
+        minFollowDistance *= 0.7f;
+        if (!isAttacking) StartAttack();
     }
 
-    Vector3 GetPlayerVelocity()
+    void HandleRecovery()
     {
-        if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
-            return rb.linearVelocity;
-        if (player.TryGetComponent<CharacterController>(out CharacterController cc))
-            return cc.velocity;
-        if (player.TryGetComponent<NavMeshAgent>(out NavMeshAgent nma))
-            return nma.velocity;
-        return Vector3.zero;
+        transform.position = Vector3.Lerp(transform.position, recoveryTarget, Time.deltaTime / recoveryDuration);
+        Quaternion desiredRot = Quaternion.LookRotation((transform.position - player.position).normalized) * Quaternion.Euler(rotationOffset);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRot, Time.deltaTime * 10f);
+        if (Vector3.Distance(transform.position, recoveryTarget) < 0.5f)
+        {
+            isRecovering = false;
+            attackTimer = originalAttackInterval;
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        // When colliding with the player, enter bounce state.
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            BounceAway();
-            return;
-        }
-
+        // Just handle health impacts here
         if (bodyHealth != null)
             bodyHealth.OnCollisionEnter(collision);
     }
 
-    void BounceAway()
+    void StartRecovery()
     {
-        // Prevent multiple bounces.
-        if (isBouncing) return;
-        isBouncing = true;
-
-        // Cancel any current attack.
-        isAttacking = false;
-        attackHitbox.enabled = false;
-
-        // Calculate bounce target away from the player.
+        if (isRecovering) return;
+        isRecovering = true;
+        
+        // Calculate bounce direction based on player position
         Vector3 awayDirection = (transform.position - player.position).normalized;
-        bounceTarget = transform.position + awayDirection * bounceDistance;
-
-        // Immediately rotate to face away.
-        transform.rotation = Quaternion.LookRotation(awayDirection) * Quaternion.Euler(rotationOffset);
-
-        // Optionally, set the agent speed for bouncing.
-        agent.speed = normalSpeed;
-
-        // Start a cooldown coroutine to remain in bounce state for a fixed duration.
-        StartCoroutine(BounceRecovery());
+        recoveryTarget = transform.position + awayDirection * bounceDistance;
+        
+        // Immediate rotation towards bounce direction
+        Quaternion desiredRot = Quaternion.LookRotation(awayDirection) * Quaternion.Euler(rotationOffset);
+        transform.rotation = desiredRot;
+        
+        // Shorten recovery duration for faster return to circling
+        StartCoroutine(RecoveryBounce());
     }
 
-    IEnumerator BounceRecovery()
+    IEnumerator RecoveryBounce()
     {
-        // Wait for the bounce recovery period.
-        yield return new WaitForSeconds(bounceRecoveryTime);
-        isBouncing = false;
-        // Reset attack timer so the shark doesn't immediately re-attack.
-        attackTimer = originalAttackInterval;
+        float timer = 0;
+        Vector3 startPos = transform.position;
+        
+        // Add vertical lift during bounce
+        Vector3 bounceEndPos = recoveryTarget + Vector3.up * 2f; 
+        
+        while (timer < recoveryDuration)
+        {
+            timer += Time.deltaTime;
+            // Add arc to bounce movement
+            Vector3 arcPos = Vector3.Lerp(startPos, bounceEndPos, timer/recoveryDuration);
+            arcPos.y += Mathf.Sin(timer/recoveryDuration * Mathf.PI) * 3f; // Height curve
+            transform.position = arcPos;
+            yield return null;
+        }
+        
+        // Force new pattern and reset orbit
+        GenerateNewPattern();
+        Vector3 toPlayer = transform.position - player.position;
+        currentOrbitAngle = Mathf.Atan2(toPlayer.z, toPlayer.x);
+        
+        isRecovering = false;
+        attackTimer = phase2Active ? phase2AttackInterval : originalAttackInterval;
     }
 }
