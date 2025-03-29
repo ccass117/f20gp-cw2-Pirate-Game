@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using System.Collections;
+
 public class MusicMgr : MonoBehaviour
 {
     public AudioSource world_1_theme;
@@ -10,6 +12,7 @@ public class MusicMgr : MonoBehaviour
     public AudioSource world_3_theme;
     public AudioSource world_3_boss;
     private AudioSource currentAudioSource;
+    private ShipController playerShip;
 
     private Dictionary<string, AudioSource> sceneMusicMap = new Dictionary<string, AudioSource>();
 
@@ -35,6 +38,7 @@ public class MusicMgr : MonoBehaviour
 
     }
 
+
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -44,6 +48,7 @@ public class MusicMgr : MonoBehaviour
     {
         Debug.Log("Loaded scene: " + scene.name);
         ChangeMusic(scene.name);
+        FindPlayer();
     }
 
     private void ChangeMusic(string sceneName)
@@ -63,11 +68,58 @@ public class MusicMgr : MonoBehaviour
 
             currentAudioSource = newAudioSource;
             currentAudioSource.Play();
+
             Debug.Log("Playing new music for: " + sceneName);
         }
         else
         {
             Debug.LogWarning("No music assigned for scene: " + sceneName);
         }
+    }
+
+    private void FindPlayer()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerObject != null)
+        {
+            playerShip = playerObject.GetComponent<ShipController>();
+
+            if (playerShip != null)
+            {
+                StartCoroutine(CheckSirenInfluence());
+            }
+        }
+    }
+
+    private IEnumerator CheckSirenInfluence()
+    {
+        while (playerShip != null)
+        {
+            if (playerShip.sirenInfluenceActive)
+            {
+                StartCoroutine(FadeAudioVolume(0.1f, 0.5f));
+            }
+            else
+            {
+                StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
+            }
+            yield return new WaitForSeconds(0.1f); // Check every 0.1 seconds
+        }
+    }
+
+    private IEnumerator FadeAudioVolume(float targetVolume, float duration)
+    {
+        float startVolume = currentAudioSource.volume;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            currentAudioSource.volume = Mathf.Lerp(startVolume, targetVolume, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        currentAudioSource.volume = targetVolume;
     }
 }
