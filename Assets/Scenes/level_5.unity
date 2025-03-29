@@ -1738,6 +1738,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1175421334557358082, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
+      propertyPath: m_ClearFlags
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1175421334557358082, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
+      propertyPath: m_BackGroundColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1175421334557358082, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.14509805
+      objectReference: {fileID: 0}
+    - target: {fileID: 1175421334557358082, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.5647059
+      objectReference: {fileID: 0}
+    - target: {fileID: 1175421334557358082, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.2392157
+      objectReference: {fileID: 0}
     - target: {fileID: 1881626881048166836, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: m_Drag
       value: 2
@@ -1824,7 +1844,7 @@ PrefabInstance:
       objectReference: {fileID: 283950651}
     - target: {fileID: 8227602360300738300, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: m_VersionIndex
-      value: 1242
+      value: 1251
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

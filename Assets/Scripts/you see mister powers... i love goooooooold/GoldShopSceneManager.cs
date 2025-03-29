@@ -8,6 +8,7 @@ public class GoldShopSceneManager : MonoBehaviour
     [Header("UI References")]
     [Tooltip("Text displaying the player's current gold.")]
     public TextMeshProUGUI currentGoldText;
+    public TextMeshProUGUI totalCost;
     
     [Header("Health Upgrade UI")]
     public TextMeshProUGUI healthTierText;
@@ -127,22 +128,22 @@ public class GoldShopSceneManager : MonoBehaviour
     void UpdateUI()
     {
         int currentGold = GoldManager.Instance != null ? GoldManager.Instance.Gold : 0;
-        currentGoldText.text = "Gold: " + currentGold;
+        currentGoldText.text = currentGold.ToString();
         
-        healthTierText.text = "Health: " + currentHealthTiers + " + " + additionalHealthTiers;
-        healthCostText.text = "Cost: " + (additionalHealthTiers * costPerHealthTier);
+        healthTierText.text = currentHealthTiers + " + " + additionalHealthTiers;
+        healthCostText.text = (additionalHealthTiers * costPerHealthTier).ToString();
         
-        speedTierText.text = "Speed: " + currentSpeedTiers + " + " + additionalSpeedTiers;
-        speedCostText.text = "Cost: " + (additionalSpeedTiers * costPerSpeedTier);
+        speedTierText.text = currentSpeedTiers + " + " + additionalSpeedTiers;
+        speedCostText.text = (additionalSpeedTiers * costPerSpeedTier).ToString();
         
-        reloadTierText.text = "Reload: " + currentReloadTiers + " + " + additionalReloadTiers;
-        reloadCostText.text = "Cost: " + (additionalReloadTiers * costPerReloadTier);
+        reloadTierText.text = currentReloadTiers + " + " + additionalReloadTiers;
+        reloadCostText.text = (additionalReloadTiers * costPerReloadTier).ToString();
         
-        windTierText.text = "Wind Resist: " + currentWindTiers + " + " + additionalWindTiers;
-        windCostText.text = "Cost: " + (additionalWindTiers * costPerWindTier);
+        windTierText.text = currentWindTiers + " + " + additionalWindTiers;
+        windCostText.text = (additionalWindTiers * costPerWindTier).ToString();
         
-        turnSpeedTierText.text = "Turn Speed: " + currentTurnSpeedTiers + " + " + additionalTurnSpeedTiers;
-        turnSpeedCostText.text = "Cost: " + (additionalTurnSpeedTiers * costPerTurnSpeedTier);
+        turnSpeedTierText.text = currentTurnSpeedTiers + " + " + additionalTurnSpeedTiers;
+        turnSpeedCostText.text = (additionalTurnSpeedTiers * costPerTurnSpeedTier).ToString();
         
         if (extraCannonPurchased)
         {
@@ -154,6 +155,23 @@ public class GoldShopSceneManager : MonoBehaviour
             extraCannonText.text = "Extra Cannon: " + (wantsExtraCannon ? "Selected (" + extraCannonCost + " gold)" : "Not Selected (" + extraCannonCost + " gold)");
             extraCannonButton.interactable = true;
         }
+
+        int totalAdditionalCost = (additionalHealthTiers * costPerHealthTier) +
+                                  (additionalSpeedTiers * costPerSpeedTier) +
+                                  (additionalReloadTiers * costPerReloadTier) +
+                                  (additionalWindTiers * costPerWindTier) +
+                                  (additionalTurnSpeedTiers * costPerTurnSpeedTier) +
+                                  ((!extraCannonPurchased && wantsExtraCannon) ? extraCannonCost : 0);
+
+        totalCost.text = ("Total:" + totalAdditionalCost);
+        if (totalAdditionalCost > GoldManager.Instance.Gold)
+        {
+            totalCost.color = Color.red;
+        } else
+        {
+            totalCost.color= Color.white;
+        }
+
     }
     
     void OnPurchase()
@@ -162,6 +180,7 @@ public class GoldShopSceneManager : MonoBehaviour
                                   (additionalSpeedTiers * costPerSpeedTier) +
                                   (additionalReloadTiers * costPerReloadTier) +
                                   (additionalWindTiers * costPerWindTier) +
+                                  (additionalTurnSpeedTiers * costPerTurnSpeedTier) +
                                   ( (!extraCannonPurchased && wantsExtraCannon) ? extraCannonCost : 0 );
         
         if (GoldManager.Instance == null)
