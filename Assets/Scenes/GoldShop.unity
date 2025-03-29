@@ -1715,7 +1715,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -420, y: 200}
+  m_AnchoredPosition: {x: -365, y: 145}
   m_SizeDelta: {x: 298.8254, y: 35.7137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &402769538
@@ -1991,7 +1991,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -420, y: 125}
+  m_AnchoredPosition: {x: -365, y: 70}
   m_SizeDelta: {x: 298.8254, y: 35.7137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &451723728
@@ -2386,7 +2386,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -236, y: -275}
+  m_AnchoredPosition: {x: -181, y: -330}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &607220559
@@ -3134,7 +3134,9 @@ MonoBehaviour:
   turnSpeedPlusButton: {fileID: 1220442744}
   turnSpeedMinusButton: {fileID: 258598887}
   extraCannonText: {fileID: 2086811803}
-  extraCannonButton: {fileID: 109027566}
+  extraCannonCostText: {fileID: 1752974179}
+  extraCannonPlusButton: {fileID: 109027566}
+  extraCannonMinusButton: {fileID: 2051223187}
   purchaseButton: {fileID: 607220559}
   resetButton: {fileID: 2055150933}
   maxHealthTiers: 10
@@ -3152,6 +3154,7 @@ MonoBehaviour:
   maxTurnSpeedTiers: 10
   costPerTurnSpeedTier: 150
   turnSpeedIncreasePerTier: 1
+  maxExtraCannons: 1
   extraCannonCost: 5000
 --- !u!4 &814971210
 Transform:
@@ -3215,7 +3218,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -521, y: 269}
+  m_AnchoredPosition: {x: -466, y: 214}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &859940934
@@ -3294,7 +3297,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -420, y: 50}
+  m_AnchoredPosition: {x: -365, y: -5}
   m_SizeDelta: {x: 298.8254, y: 35.7137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &865748970
@@ -3566,7 +3569,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 173}
+  m_AnchoredPosition: {x: 0, y: 115}
   m_SizeDelta: {x: 1377, y: 1171}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &881770021
@@ -4417,7 +4420,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -420, y: -100}
+  m_AnchoredPosition: {x: -365, y: -155}
   m_SizeDelta: {x: 298.8254, y: 35.7137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1110561142
@@ -5888,7 +5891,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -420, y: -175}
+  m_AnchoredPosition: {x: -365, y: -230}
   m_SizeDelta: {x: 298.8254, y: 35.7137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1654879266
@@ -6277,7 +6280,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -420, y: -25}
+  m_AnchoredPosition: {x: -365, y: -80}
   m_SizeDelta: {x: 298.8254, y: 35.7137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1736785722
@@ -7094,7 +7097,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -41, y: -279}
+  m_AnchoredPosition: {x: 14, y: -334}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1965825819
@@ -7353,7 +7356,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 159, y: -275}
+  m_AnchoredPosition: {x: 214, y: -330}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2055150933
@@ -10255,7 +10258,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 5, y: -6, z: 0}
@@ -10321,7 +10324,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: -3, y: -5, z: 0}
@@ -10387,7 +10390,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 3, y: -5, z: 0}
@@ -10915,7 +10918,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5
+      m_AnimationSpeed: 5.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: -5, y: -1, z: 0}
@@ -10970,7 +10973,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 0, y: -1, z: 0}
@@ -11124,7 +11127,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5
+      m_AnimationSpeed: 5.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 0, y: 0, z: 0}
@@ -11960,7 +11963,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 6, y: 5, z: 0}
@@ -11993,7 +11996,7 @@ Tilemap:
       - {fileID: -822994092, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: 1878401218, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
       - {fileID: -139412291, guid: df6fca7a4a39ecf4a9b6601827a7e933, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: -5, y: 6, z: 0}
