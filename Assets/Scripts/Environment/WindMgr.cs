@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WindMgr : MonoBehaviour
 {
@@ -19,6 +21,8 @@ public class WindMgr : MonoBehaviour
 
     void Awake() //I changed this to awake from start, so it starts on scene start not script instance run
     {
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
         BuffController.registerBuff("Calm Winds", "Make winds affect the player less", delegate () { windStrength = 0.5f; }, delegate () { windStrength = 1f; });
 
@@ -92,5 +96,16 @@ public class WindMgr : MonoBehaviour
     private float getWindAngle()
     {
         return Mathf.Atan2(windDir.z, windDir.x) * Mathf.Rad2Deg;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        HashSet<string> windLevel1 = new() { "level_1", "level_2", "level_3", "level_4", "level_9", "level_10", "level_11", "level_12" };
+        HashSet<string> windLevel2 = new() { "level_5", "level_6", "level_8" };
+        HashSet<string> windLevel3 = new() { "level_7" };
+
+        if (windLevel1.Contains(scene.name)) { windStrength = 1f; }        
+        else if (windLevel2.Contains(scene.name)) { windStrength = 2f; }
+        else if (windLevel3.Contains(scene.name)) { windStrength = 2.75f; }
     }
 }
