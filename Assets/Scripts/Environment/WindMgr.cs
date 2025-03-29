@@ -100,8 +100,11 @@ public class WindMgr : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //default strenght levels
         HashSet<string> windLevel1 = new() { "level_1", "level_2", "level_3", "level_4", "level_9", "level_10", "level_11", "level_12" };
+        //first 2 stormy levels and boss
         HashSet<string> windLevel2 = new() { "level_5", "level_6", "level_8" };
+        //level 7 (fnuuy strong wind go brrrrrrrrrrrrrr)
         HashSet<string> windLevel3 = new() { "level_7" };
 
         if (windLevel1.Contains(scene.name)) { windStrength = 1f; }        
