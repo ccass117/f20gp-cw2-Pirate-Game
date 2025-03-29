@@ -21,6 +21,9 @@ public class WindMgr : MonoBehaviour
     {
 
         BuffController.registerBuff("Calm Winds", "Make winds affect the player less", delegate () { windStrength = 0.5f; }, delegate () { windStrength = 1f; });
+        BuffController.registerBuff("Rocket Boost", "Allows you to rocket forward every 15 seconds, giving a burst of speed", delegate () { RocketBoost.ActivateRocketBoost(); }, delegate () { RocketBoost.DeactivateRocketBoost(); });
+        BuffController.registerBuff("Gaon Cannon", "Fires a high damage laser from the front of your ship every 20 seconds", delegate { GaonCannon.ActivateLaserBuff(); }, delegate { GaonCannon.DeactivateLaserBuff(); });
+
 
         //makes sure that there is only gonna be one instance of wind for when we start changing scenes later
         if (Instance == null)
