@@ -7,43 +7,46 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/level_1.unity
-    guid: 5fc1022c81c0304439f8cf01a19a25cc
+    guid: b8e2b2da2e033cf4d8aee62d59a3d625
   - enabled: 1
     path: Assets/Scenes/level_2.unity
-    guid: b687d075c93498544b4a1308caedec5c
+    guid: e629422d4881cae4aa7534ee8bab3fdd
   - enabled: 1
     path: Assets/Scenes/level_3.unity
-    guid: 6e212c7d9e40dfe448f6f725e1b51db8
+    guid: a98823b49828d8246ac8b5e544fb6247
   - enabled: 1
     path: Assets/Scenes/level_4.unity
-    guid: da3aca31d42fca34fb785261295ec74b
+    guid: 13769e0974da75a47aae37a64b236e7a
   - enabled: 1
     path: Assets/Scenes/level_5.unity
-    guid: 709c5b81dffd46b44b41706afc59b360
+    guid: 06d8f92848afa81479187db68dca4ea5
   - enabled: 1
     path: Assets/Scenes/level_6.unity
-    guid: 442e67601dee8b0449677be3073e207f
+    guid: ce0707ef2fe2dc7418314125340619e7
   - enabled: 1
     path: Assets/Scenes/level_7.unity
-    guid: 6a4ba30b290933b4aa6497a24d3db596
+    guid: 1dd033ff4688b8448b6bfba7debec6d6
   - enabled: 1
     path: Assets/Scenes/level_8.unity
-    guid: 64d74f89672a9494e84f2f91bed49fd7
+    guid: c8e57f4d49bc3904987c1790fcc72397
   - enabled: 1
     path: Assets/Scenes/level_9.unity
-    guid: 1e13b8246ed4c2146b3b2555751837cc
+    guid: 514da997b8adcea4ca55785fbb124cdf
   - enabled: 1
     path: Assets/Scenes/level_10.unity
-    guid: 4a7b1d3579331e44392cfba48b260d4a
+    guid: 5a627d7b52120094ab102ddd27ecf0f1
   - enabled: 1
     path: Assets/Scenes/level_11.unity
-    guid: 817a534ddf1a2b24f89d540f484c2a8d
+    guid: 4d5ce2553c55c2141b3e7598b54fa87b
   - enabled: 1
     path: Assets/Scenes/level_12.unity
-    guid: 79cfd6f97f2119f46a86ae2d08ae48df
+    guid: b55ef6df3f6432e4382ec7a53b63e141
   - enabled: 1
     path: Assets/Scenes/powerup.unity
     guid: 0fd711945d306f3479ce5f7499b26d82
+  - enabled: 1
+    path: Assets/Scenes/GoldShop.unity
+    guid: b7fcb90f9fe0277488b05567fac77eed
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

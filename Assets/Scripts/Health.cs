@@ -26,6 +26,10 @@ public class Health : MonoBehaviour
     public float damageCooldown = 0.5f;
     private float lastDamageTime = -Mathf.Infinity;
 
+    [Header("Gold Drop")]
+    [Tooltip("Amount of gold this enemy drops on death")]
+    public int goldAmount = 0;
+
     [Header("Speed Thresholds")]
     [Tooltip("Minimum speed this object needs to move to deal damage")]
     public float attackerSpeedThreshold = 0f;
@@ -63,6 +67,10 @@ public class Health : MonoBehaviour
 
     private void Die()
     {
+        if (GoldManager.Instance != null)
+        {
+            GoldManager.Instance.AddGold(goldAmount);
+        }
         Debug.Log($"{gameObject.name} has died.");
         gameObject.SetActive(false);
     }
