@@ -499,6 +499,7 @@ GameObject:
   - component: {fileID: 3558046279313605034}
   - component: {fileID: 5804434220599336474}
   - component: {fileID: 810277927123364101}
+  - component: {fileID: -1057681644101350878}
   m_Layer: 6
   m_Name: Player 1
   m_TagString: Player
@@ -839,6 +840,10 @@ MonoBehaviour:
   damageResistance: 1
   damageMultiplier: 1
   isProjectile: 0
+  damageCooldown: 0.5
+  goldAmount: 0
+  attackerSpeedThreshold: 0
+  defenderSpeedThreshold: 0
 --- !u!136 &810277927123364101
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -862,6 +867,20 @@ CapsuleCollider:
   m_Height: 4.81
   m_Direction: 2
   m_Center: {x: 0, y: 0.27, z: -0.8}
+--- !u!114 &-1057681644101350878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5576887064709836160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc98e4b78074f340868d665b03cc59b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthIncreasePerTier: 5
+  speedIncreasePerTier: 1
 --- !u!1001 &3324889247543741654
 PrefabInstance:
   m_ObjectHideFlags: 0
