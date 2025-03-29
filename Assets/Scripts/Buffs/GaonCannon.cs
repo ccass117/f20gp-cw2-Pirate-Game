@@ -25,14 +25,10 @@ public class GaonCannon : MonoBehaviour
     {
         canShoot = false;
         
-        // Since this script is attached to the player's ship,
-        // instantiate the laser as a child so it moves with the ship.
         if (laserPrefab != null)
         {
             GameObject laserInstance = Instantiate(laserPrefab, transform);
-            // Set local position to the specified spawnOffset.
             laserInstance.transform.localPosition = spawnOffset;
-            // Reset local rotation so the laser faces the ship's forward.
             laserInstance.transform.localRotation = Quaternion.identity;
             Debug.Log("Laser fired from local position " + spawnOffset);
         }
@@ -47,12 +43,10 @@ public class GaonCannon : MonoBehaviour
 
     public void Initialize()
     {
-        // If no laserPrefab is assigned, load it from Resources.
         if (laserPrefab == null)
             laserPrefab = Resources.Load<GameObject>("LaserPrefabName");
     }
 
-    // Static method to activate the Laser Buff.
     public static void ActivateLaserBuff()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -65,7 +59,6 @@ public class GaonCannon : MonoBehaviour
         AddLaserBuffComponent(player);
     }
 
-    // Static method to deactivate the Laser Buff.
     public static void DeactivateLaserBuff()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
