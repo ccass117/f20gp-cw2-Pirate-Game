@@ -15,7 +15,7 @@ public class ShipController : MonoBehaviour
     public float turnDamping = 0.9f;
     public float anchorRaiseTime = 3f;
     public float maxTurnBoost = 2f;
-    public float sirenTurnStrength = 0.75f;
+    public float sirenTurnStrength = 1.2f;
 
     [Header("Read Only")]
     [SerializeField] public float targetRudderAngle;

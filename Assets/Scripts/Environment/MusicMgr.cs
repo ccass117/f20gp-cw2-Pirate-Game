@@ -5,6 +5,7 @@ using System.Collections;
 
 public class MusicMgr : MonoBehaviour
 {
+    public static MusicMgr Instance { get; private set; }
     public AudioSource world_1_theme;
     public AudioSource world_1_boss;
     public AudioSource world_2_theme;
@@ -19,7 +20,16 @@ public class MusicMgr : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
         SceneManager.sceneLoaded += OnSceneLoaded;
 
         // Initialize dictionary with AudioSources

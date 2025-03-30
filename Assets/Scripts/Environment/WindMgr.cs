@@ -12,6 +12,7 @@ public class WindMgr : MonoBehaviour
     private float transitionTime;
     private float targetWindDir;
     public float targetWindAngle;
+    private GameObject player;
 
     public Vector3 windDir = Vector3.forward;
     public float windStrength = 1f; //Added wind strength!
@@ -24,9 +25,16 @@ public class WindMgr : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded;
 
+
         BuffController.registerBuff("Calm Winds", "Make winds affect the player less", delegate () { windStrength = 0.5f; }, delegate () { windStrength = 1f; });
         BuffController.registerBuff("Rocket Boost", "Allows you to rocket forward every 15 seconds, giving a burst of speed", delegate () { RocketBoost.ActivateRocketBoost(); }, delegate () { RocketBoost.DeactivateRocketBoost(); });
         BuffController.registerBuff("Gaon Cannon", "Fires a high damage laser from the front of your ship every 20 seconds", delegate { GaonCannon.ActivateLaserBuff(); }, delegate { GaonCannon.DeactivateLaserBuff(); });
+        /*BuffController.registerBuff("PEDs", "Reduces time taken to raise the anchor", delegate { shipController.anchorRaiseTime -= 0.75f; }, delegate () { shipController.anchorRaiseTime += 0.75f; });
+        BuffController.registerBuff("Suspicious Needle", "Greatly reduces time taken to raise the anchor", delegate { shipController.anchorRaiseTime -= 1.25f; }, delegate () { shipController.anchorRaiseTime += 1.25f; });
+        BuffController.registerBuff("Noise Cancelling Earbuds", "Reduces the effect of Sirens' pull", delegate { shipController.sirenTurnStrength -= 0.4f; }, delegate () { shipController.sirenTurnStrength += 0.4f; });
+        BuffController.registerBuff("Sobered up", "Negate the effect of Sirens' pull", delegate { shipController.sirenTurnStrength = 0; }, delegate () { shipController.sirenTurnStrength += 1.2f; });
+        */
+        
 
 
         //makes sure that there is only gonna be one instance of wind for when we start changing scenes later
