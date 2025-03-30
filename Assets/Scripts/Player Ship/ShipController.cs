@@ -21,8 +21,8 @@ public class ShipController : MonoBehaviour
     [SerializeField] public float targetRudderAngle;
     [SerializeField] public float currentRiggingSpeed;
     [SerializeField] private float currentRudderAngle = 0f;
-    [SerializeField] private bool anchored = false;
-    [SerializeField] private bool isRaisingAnchor = false;
+    public bool anchored = false;
+    public bool isRaisingAnchor = false;
     [SerializeField] private Vector3 wind = Vector3.zero;
     [SerializeField] private float anchorTurnMomentum = 0f;
 
@@ -35,6 +35,9 @@ public class ShipController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 currentVelocity;
     private Cannons cannons;
+    
+    [Header("Wind Resistance")]
+    public float windResistance = 1f;
 
     void Start()
     {
@@ -49,16 +52,6 @@ public class ShipController : MonoBehaviour
         playerMovement();
         windEffect();
         playerWeapons();
-
-        // TEMPORARY DEV CHEAT: PRESS SPACE TO RE-INITIALISE CANNONS
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            cannons.InitializeCannons();
-        }
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            BuffController.activateBuff("Calm Winds");
-        }
     }
 
     private void FixedUpdate()
@@ -128,7 +121,7 @@ public class ShipController : MonoBehaviour
 
     void windEffect()
     {
-        wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength;
+        wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength * windResistance;
     }
 
     void applyForces()

@@ -7,7 +7,7 @@ public class Health : MonoBehaviour
     public float maxHealth = 20f;
     
     [SerializeField, Tooltip("Current health of the object")]
-    private float currentHealth;
+    public float currentHealth;
 
     [Header("Damage Multipliers")]
     [Tooltip("Damage resistance multiplier e.g. 1 = full damage taken, 0.5 = 50%, 0 = doesn't take damage")]
@@ -25,6 +25,10 @@ public class Health : MonoBehaviour
     [Tooltip("Minimum time between taking damage (0 = no cooldown)")]
     public float damageCooldown = 0.5f;
     private float lastDamageTime = -Mathf.Infinity;
+
+    [Header("Gold Drop")]
+    [Tooltip("Amount of gold this enemy drops on death")]
+    public int goldAmount = 0;
 
     [Header("Speed Thresholds")]
     [Tooltip("Minimum speed this object needs to move to deal damage")]
@@ -63,6 +67,10 @@ public class Health : MonoBehaviour
 
     private void Die()
     {
+        if (GoldManager.Instance != null)
+        {
+            GoldManager.Instance.AddGold(goldAmount);
+        }
         Debug.Log($"{gameObject.name} has died.");
         gameObject.SetActive(false);
     }
