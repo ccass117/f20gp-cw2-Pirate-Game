@@ -4,19 +4,21 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private LevelLoader levelLoader;
     [SerializeField] private RectTransform titleText;
-    [SerializeField] private RectTransform startBtn;
+    [SerializeField] private RectTransform startBtn; // UI element
     [SerializeField] private RectTransform quitBtn;
+
     [SerializeField] private AudioSource clickStartSound;
     [SerializeField] private Animator cameraAnim;
 
-    [SerializeField] private Button startButton;
+    [SerializeField] private Button startButton; // control button interactability
     [SerializeField] private Button quitButton;
 
-    private float moveTime = 1.8f;
+    [SerializeField] private LevelLoader levelLoader;
+
     private RectTransform canvasSize;
     private float canvasWidth;
+    private float moveTime = 1.8f;
 
     private void Start()
     {

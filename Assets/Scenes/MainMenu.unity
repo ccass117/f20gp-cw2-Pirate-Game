@@ -1048,7 +1048,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5fc00203704e164f95d542737b044a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelLoader: {fileID: 2140306687}
   titleText: {fileID: 1952876290}
   startBtn: {fileID: 1764505112}
   quitBtn: {fileID: 781116680}
@@ -1056,6 +1055,7 @@ MonoBehaviour:
   cameraAnim: {fileID: 770087630}
   startButton: {fileID: 1764505113}
   quitButton: {fileID: 781116681}
+  levelLoader: {fileID: 2140306687}
 --- !u!82 &899667694
 AudioSource:
   m_ObjectHideFlags: 0

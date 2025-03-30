@@ -63,11 +63,6 @@ public class MoveShip : MonoBehaviour
         // if lvls = 1 -> "level_" + (1 + 1) = "level_2"
         // if lvls = 2 -> "level_" + (2 + 1) = "level_3" etc.
     }
-
-    void LoadEndgame()
-    {
-        loadLevel.LoadLevel("Endgame"); // scene to be created
-    }
 }
 
 
