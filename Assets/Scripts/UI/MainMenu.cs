@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private RectTransform startBtn; // UI element
     [SerializeField] private RectTransform quitBtn;
 
-    [SerializeField] private AudioSource clickStartSound;
+    [SerializeField] private AudioSource clickStartSound; // cannonball firing sound for when start is clicked
     [SerializeField] private Animator cameraAnim;
 
     [SerializeField] private Button startButton; // control button interactability
@@ -18,13 +18,14 @@ public class MainMenu : MonoBehaviour
 
     private RectTransform canvasSize;
     private float canvasWidth;
-    private float moveTime = 1.8f;
+    private float moveTime = 1.8f; // how long it takes for the UI elements to move
 
     private void Start()
     {
         canvasSize = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
         canvasWidth = canvasSize.rect.width;
 
+        // set these to non-interactable at first
         startButton.interactable = false;
         quitButton.interactable = false;
 
@@ -43,6 +44,7 @@ public class MainMenu : MonoBehaviour
         clickStartSound.Play();
         UIAnimator.AnimateUIOut(titleText, new RectTransform[] { startBtn, quitBtn }, canvasWidth);
 
+        // give time for anims to finish before loading next scene
         DOVirtual.DelayedCall(moveTime + 0.5f, () =>
         {
             DOTween.KillAll();

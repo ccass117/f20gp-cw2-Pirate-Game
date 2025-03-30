@@ -16,7 +16,7 @@ public class MapPoints : MonoBehaviour
     public Vector3 GetNextPoint(int i)
     {
         // returns correctly if index is within bounds
-        if (i < points.Count)
+        if (i < points.Count - 1)
         {
             return points[i].position;
         }
