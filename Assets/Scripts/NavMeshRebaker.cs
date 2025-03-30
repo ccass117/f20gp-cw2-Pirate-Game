@@ -10,7 +10,7 @@ public class NavMeshRebaker : MonoBehaviour
     void Start()
     {
         surface = GetComponent<NavMeshSurface>();
-        StartCoroutine(delay(0.5f));
+        StartCoroutine(delay(1f));
     }
 
     IEnumerator delay(float delay)
