@@ -8,11 +8,23 @@ public class MapPoints : MonoBehaviour
     private void Start()
     {
         // to handle any number of points on the map
-        foreach (Transform child in transform)
+        foreach (Transform point in transform)
         {
-            points.Add(child);
+            points.Add(point);
         }
     }
+    public Transform GetPoint(int i)
+    {
+        if (i < points.Count)
+        {
+            return points[i];
+        }
+        // if going out of bounds then return last point to prevent error
+        return points[points.Count - 1];
+    }
+
+
+    /*
     public Vector3 GetNextPoint(int i)
     {
         // returns correctly if index is within bounds
@@ -23,4 +35,13 @@ public class MapPoints : MonoBehaviour
         // if going out of bounds then return last point to prevent error
         return points[points.Count - 1].position; 
     }
+    public Transform GetThisPoint(int i)
+    {
+        if (i >= 0 && i < points.Count)
+        {
+            return points[i];
+        }
+        return null;
+    }
+    */
 }
