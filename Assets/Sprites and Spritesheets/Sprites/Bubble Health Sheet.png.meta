@@ -1,0 +1,2187 @@
+fileFormatVersion: 2
+guid: 597983ff94869bf48a9595228f0d1590
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Bubble Health Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1190
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8e22bdec36a07a4fb2630d810566d97
+      internalID: -758765303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1190
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d43eca43139001c4ca0e8082a5908b0e
+      internalID: 2081101470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1190
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf63148997056bf4f857644da7afacf7
+      internalID: -2116563108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1190
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c716cfd1d33ca104db2cbb7a6ce7fca1
+      internalID: 77324102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 1190
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 069475578a15fff4199020c7bd355a68
+      internalID: -1335755330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1120
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 997a228a097cc4e46a160d71528a49ab
+      internalID: 1702294318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1120
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ea2a839f82f89345b6214d734ec98d1
+      internalID: -1730948680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1120
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21e5547bd9bfad14788a252a362ffa60
+      internalID: 1116585727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1120
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e3f841cc361e0549b887c137a1fa81a
+      internalID: -2138508490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 1120
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fc5f8fb5b29d0645a25428850a02efa
+      internalID: -1624380684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1050
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1e2f8cf81a421b47a242566cf479c86
+      internalID: -1207569346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1050
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c32bf90ec3eb295478155822b5667cc4
+      internalID: 1458430800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1050
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cfc8387e826c9b4baf4a3a9d14624b5
+      internalID: 1303421630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1050
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fae07606dffa854d8bb20b3180a3032
+      internalID: 1057434405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 1050
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cb1ae9d9d2701447afcd8b9181ffe62
+      internalID: -1108549759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 980
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30c6d7a43e6e6b14db260d1c82aefea8
+      internalID: 1417069213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 980
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cc18cc50b626b7499e4729abadb21d8
+      internalID: -1446574956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 980
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58b0ec55ea0fd4b4eabd6779d5d7983f
+      internalID: 2085030260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 980
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b6900436dde5d949a4f344c6f858c4a
+      internalID: -1471380196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 980
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 549af3730ab6014498bf579991d5289d
+      internalID: -647138355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 910
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6672a9d2b4db0934084fb46a74417131
+      internalID: -1324387478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_21
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 910
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22aab4c6777e1624b9a6468acca5e0e0
+      internalID: -179922426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_22
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 910
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a5b0415e3acbcd48b54ee84eaab1400
+      internalID: 1855828439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_23
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 910
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7786029905c0bea4d8496deccd74c2bb
+      internalID: -1668768458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_24
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 910
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 205ef5bc19dbc384e8221fbd11d10b20
+      internalID: -983745892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_25
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 840
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88c7506d82f44db4ea81693f8406bf45
+      internalID: 1507954910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_26
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 840
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e3c0d94a8663d2408e36775f9cac06d
+      internalID: -1311945075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_27
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 840
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1bbc8ecb584ee045985c0a780a5b9e1
+      internalID: 308435278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_28
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 840
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ebf60305c0c39e47b3da04bddd0c172
+      internalID: -547023974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_29
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 840
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb6ded71caba3ec44b182074a5f3b56e
+      internalID: -1872005538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 770
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1dfcdc29a19d2ca459f0f7533b34267f
+      internalID: 822331461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_31
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 770
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e1cec60b1f85434f8b2e8d93bd0a97b
+      internalID: 2077911888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_32
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 770
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62712e5f714d25946b8ba8f9483bad5e
+      internalID: -962736781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_33
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 770
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c5fd8c0d10e7d042bc42738dd8d8afb
+      internalID: 1661858961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_34
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 770
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf32c6608a58fe54fad45cbe762a5834
+      internalID: -1759611496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_35
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 700
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a6a19e7b0c43744688bbebe7dc7339d
+      internalID: 429309544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_36
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 700
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7c8e8df18adad341801306e7cf000a5
+      internalID: -405024295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_37
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 700
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ebf207f84f7e6d47bbb7f6f2a56869e
+      internalID: 629199188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_38
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 700
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea8154690af68c74393b6bf3dba971bf
+      internalID: -1849228620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_39
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 700
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d1c0a902122c194ba73045ea93e5c78
+      internalID: -1360124015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 630
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77ec4cdb280742d41953f2a566f61ea9
+      internalID: -893770126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_41
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 630
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9dd3b9cfee5a5ce409a726c9f2eb4478
+      internalID: 506838492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_42
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 630
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f83e6d8e2e6104a48850c4e9b13df70c
+      internalID: -1763195654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_43
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 630
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 210ad8995814bf94992bea875b4eb766
+      internalID: 1156479175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_44
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 630
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34863fdedede81f4194deed26540e57b
+      internalID: -1946996191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 560
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acb624c62793a1844aad43812c9ff30e
+      internalID: -1634478074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_46
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 560
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7afccc144bd0c7d41ae190aa1bc22bca
+      internalID: -1158140917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_47
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 560
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed0dd1c666e3be9408c2efc35a6f1097
+      internalID: 1063947781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_48
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 560
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ceecc85343151fd49af4757a60dd6043
+      internalID: 772527627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_49
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 560
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7df3ef65d3a45544b6d75b7e4a46e23
+      internalID: 449421555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_50
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 490
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41e59997d0183ae41b93fa34464e1275
+      internalID: -20101872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_51
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 490
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d87dddcd843e6641ac6d36263d7dfaa
+      internalID: -705715034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_52
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 490
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f46f91194ac16f4489e343a933d3d47
+      internalID: 315612542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_53
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 490
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d6ba176482ad784ea7175a6e5e9c3a6
+      internalID: -557063172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_54
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 490
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bef461bf3d1dadf48a98c8d3523e4895
+      internalID: 26809585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_55
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 420
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cec4a4570e18cec4684cc5a90bb0fbd5
+      internalID: -734683566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_56
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 420
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 17a9c88ef0e131b47a8835d6fe4c33b9
+      internalID: 2068400422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_57
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 420
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e0046b7737cf4d49bb2a39dbd4201dd
+      internalID: -1021108448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_58
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 420
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 281bf52c7f880994e9c9e170f1ba8d50
+      internalID: -617301452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_59
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 420
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff02bf7e7128f334e9cf448e626fad49
+      internalID: 1526678564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_60
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 350
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61ff2f9968ec7cb45ab38cdfc5f4ca8e
+      internalID: 613443237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_61
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 350
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4be0b405b94bc094cbdfff9253addc2c
+      internalID: 1227659254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_62
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 350
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3f15ed21e8cf3f468e74e8fcfe69278
+      internalID: 1759630913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_63
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 350
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9371717e71b18324296a5cd22b55ee7b
+      internalID: 1032072138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_64
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 350
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40c046905b9c8ef4981d8a8116f7bf5b
+      internalID: -1824946731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_65
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 280
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4c787f4aa66fb1429ca1f1f4924730d
+      internalID: 564511110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_66
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 280
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbbe23018e1dbf24e86962366aca8c92
+      internalID: 1568211889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_67
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 280
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d37e2911bbb6db44a6d568c6aeb674e
+      internalID: -1587202535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_68
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 280
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6b3db1406d6af24e888ea0095605b66
+      internalID: 1517697606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_69
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 280
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbe7356d6e34a834ca1e3fa2637e6203
+      internalID: 58549477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_70
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 210
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac2c2ddb67888054180682a54c2b4623
+      internalID: 984452773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_71
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 210
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f840ad7c616dbc946a202a142e4ba2ef
+      internalID: -1670770967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_72
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 210
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3aca5ed9c4fa39849bd061a21758e9f5
+      internalID: -2093640753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_73
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 210
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07e5aed708c8e494fa40c4d86f680540
+      internalID: 1179498533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_74
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 210
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48cd2570571997a49bda85a18ce1340e
+      internalID: -1259545172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_75
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 140
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d07c385537944a344ada094c90f41b84
+      internalID: -969107273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_76
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 140
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 037e43bf93681fa41a1424c8407f22d7
+      internalID: -319152768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_77
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 140
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05e227e2e15fd70489440fc0bfcb18cb
+      internalID: 1517336493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_78
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 140
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c6ce1f9199d157419491fb3ce54305a
+      internalID: -482686175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_79
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 140
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18c9efdda47288148a111a165ff9acb1
+      internalID: -1806735774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_80
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 70
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03283d258ab441a4c9a845273ede6bf4
+      internalID: 707459063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_81
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 70
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea3475fba3a9a594b8f5e916d6473f93
+      internalID: 800133350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_82
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 70
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 674b25d5f0727bb4797cf42731dfe8f1
+      internalID: 1899547441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_83
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 70
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9050d15a682b51444853c00a09b716c2
+      internalID: 1410624935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_84
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 70
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8579c6379913f804387bd40163e2dd2f
+      internalID: -632137312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_85
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0f66ee3932bbd843aa37a9e7f0cb40a
+      internalID: 1628187995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_86
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb5251a4343c06b44861f15b9e13eeb5
+      internalID: -1402035534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_87
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 0
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74bacdcce547dbb4b93ee3631416b5ee
+      internalID: 1090606227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_88
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 0
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb778a66b81cfbe4e8cca846a765d39d
+      internalID: 978453016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble Health Sheet_89
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 0
+        width: 540
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dfd18b4f0a9e9424faf900ae8e7a922c
+      internalID: -1739849494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: d931f9a7077c4fe4da2eab9e3ff1cb09
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Bubble Health Sheet_0: -758765303
+      Bubble Health Sheet_1: 2081101470
+      Bubble Health Sheet_10: -1207569346
+      Bubble Health Sheet_11: 1458430800
+      Bubble Health Sheet_12: 1303421630
+      Bubble Health Sheet_13: 1057434405
+      Bubble Health Sheet_14: -1108549759
+      Bubble Health Sheet_15: 1417069213
+      Bubble Health Sheet_16: -1446574956
+      Bubble Health Sheet_17: 2085030260
+      Bubble Health Sheet_18: -1471380196
+      Bubble Health Sheet_19: -647138355
+      Bubble Health Sheet_2: -2116563108
+      Bubble Health Sheet_20: -1324387478
+      Bubble Health Sheet_21: -179922426
+      Bubble Health Sheet_22: 1855828439
+      Bubble Health Sheet_23: -1668768458
+      Bubble Health Sheet_24: -983745892
+      Bubble Health Sheet_25: 1507954910
+      Bubble Health Sheet_26: -1311945075
+      Bubble Health Sheet_27: 308435278
+      Bubble Health Sheet_28: -547023974
+      Bubble Health Sheet_29: -1872005538
+      Bubble Health Sheet_3: 77324102
+      Bubble Health Sheet_30: 822331461
+      Bubble Health Sheet_31: 2077911888
+      Bubble Health Sheet_32: -962736781
+      Bubble Health Sheet_33: 1661858961
+      Bubble Health Sheet_34: -1759611496
+      Bubble Health Sheet_35: 429309544
+      Bubble Health Sheet_36: -405024295
+      Bubble Health Sheet_37: 629199188
+      Bubble Health Sheet_38: -1849228620
+      Bubble Health Sheet_39: -1360124015
+      Bubble Health Sheet_4: -1335755330
+      Bubble Health Sheet_40: -893770126
+      Bubble Health Sheet_41: 506838492
+      Bubble Health Sheet_42: -1763195654
+      Bubble Health Sheet_43: 1156479175
+      Bubble Health Sheet_44: -1946996191
+      Bubble Health Sheet_45: -1634478074
+      Bubble Health Sheet_46: -1158140917
+      Bubble Health Sheet_47: 1063947781
+      Bubble Health Sheet_48: 772527627
+      Bubble Health Sheet_49: 449421555
+      Bubble Health Sheet_5: 1702294318
+      Bubble Health Sheet_50: -20101872
+      Bubble Health Sheet_51: -705715034
+      Bubble Health Sheet_52: 315612542
+      Bubble Health Sheet_53: -557063172
+      Bubble Health Sheet_54: 26809585
+      Bubble Health Sheet_55: -734683566
+      Bubble Health Sheet_56: 2068400422
+      Bubble Health Sheet_57: -1021108448
+      Bubble Health Sheet_58: -617301452
+      Bubble Health Sheet_59: 1526678564
+      Bubble Health Sheet_6: -1730948680
+      Bubble Health Sheet_60: 613443237
+      Bubble Health Sheet_61: 1227659254
+      Bubble Health Sheet_62: 1759630913
+      Bubble Health Sheet_63: 1032072138
+      Bubble Health Sheet_64: -1824946731
+      Bubble Health Sheet_65: 564511110
+      Bubble Health Sheet_66: 1568211889
+      Bubble Health Sheet_67: -1587202535
+      Bubble Health Sheet_68: 1517697606
+      Bubble Health Sheet_69: 58549477
+      Bubble Health Sheet_7: 1116585727
+      Bubble Health Sheet_70: 984452773
+      Bubble Health Sheet_71: -1670770967
+      Bubble Health Sheet_72: -2093640753
+      Bubble Health Sheet_73: 1179498533
+      Bubble Health Sheet_74: -1259545172
+      Bubble Health Sheet_75: -969107273
+      Bubble Health Sheet_76: -319152768
+      Bubble Health Sheet_77: 1517336493
+      Bubble Health Sheet_78: -482686175
+      Bubble Health Sheet_79: -1806735774
+      Bubble Health Sheet_8: -2138508490
+      Bubble Health Sheet_80: 707459063
+      Bubble Health Sheet_81: 800133350
+      Bubble Health Sheet_82: 1899547441
+      Bubble Health Sheet_83: 1410624935
+      Bubble Health Sheet_84: -632137312
+      Bubble Health Sheet_85: 1628187995
+      Bubble Health Sheet_86: -1402035534
+      Bubble Health Sheet_87: 1090606227
+      Bubble Health Sheet_88: 978453016
+      Bubble Health Sheet_89: -1739849494
+      Bubble Health Sheet_9: -1624380684
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

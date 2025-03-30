@@ -11,6 +11,7 @@ public class MusicMgr : MonoBehaviour
     public AudioSource world_2_boss;
     public AudioSource world_3_theme;
     public AudioSource world_3_boss;
+    public AudioSource menuMusic;
     private AudioSource currentAudioSource;
     private ShipController playerShip;
 
@@ -23,6 +24,8 @@ public class MusicMgr : MonoBehaviour
 
         // Initialize dictionary with AudioSources
 
+        sceneMusicMap["MainMenu"] = menuMusic;
+        sceneMusicMap["GoldShop"] = menuMusic;
         sceneMusicMap["level_1"] = world_1_theme;
         sceneMusicMap["level_2"] = world_1_theme;
         sceneMusicMap["level_3"] = world_1_theme;
@@ -46,9 +49,21 @@ public class MusicMgr : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("Loaded scene: " + scene.name);
-        ChangeMusic(scene.name);
-        FindPlayer();
+        if (scene.name == "powerup")
+        {
+            StartCoroutine(FadeAudioPitch(0.5f, 0.5f)); // Lower pitch over 0.5 sec
+        }
+        else if (scene.name == "LevelChange")
+        {
+            StartCoroutine(FadeAudioPitch(1.0f, 0.5f)); // Restore pitch over 0.5 sec
+        }
+        else
+        {
+            ChangeMusic(scene.name);
+            FindPlayer();
+        }
+
+        
     }
 
     private void ChangeMusic(string sceneName)
@@ -121,5 +136,19 @@ public class MusicMgr : MonoBehaviour
         }
 
         currentAudioSource.volume = targetVolume;
+    }
+    private IEnumerator FadeAudioPitch(float targetPitch, float duration)
+    {
+        float startPitch = currentAudioSource.pitch;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            currentAudioSource.pitch = Mathf.Lerp(startPitch, targetPitch, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        currentAudioSource.pitch = targetPitch;
     }
 }
