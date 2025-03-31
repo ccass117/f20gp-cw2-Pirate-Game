@@ -2420,7 +2420,7 @@ MonoBehaviour:
   canAttack1: 1
   canAttack2: 0
   closeDistanceThreshold: 15
-  attack1Prefab: {fileID: 4447347356817524097, guid: 21320419b00a19b4fbf78bb4a11bee7c, type: 3}
+  attack1Prefab: {fileID: 5366697530981194537, guid: 21320419b00a19b4fbf78bb4a11bee7c, type: 3}
   mouthTransform: {fileID: 6401630672682684465}
   attack1PrefabScale: 500
   attack1AnimationLength: 1.266667

@@ -16,7 +16,6 @@ public class WindEventDisplay : MonoBehaviour
 
     void Awake()
     {
-        // Singleton pattern for easy access
         if (Instance == null)
         {
             Instance = this;
@@ -26,7 +25,6 @@ public class WindEventDisplay : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // Make sure messageText starts invisible.
         if (messageText != null)
         {
             Color c = messageText.color;
@@ -49,7 +47,6 @@ public class WindEventDisplay : MonoBehaviour
         messageText.text = message;
         Color c = messageText.color;
         
-        // Fade in
         for (float t = 0; t < fadeDuration; t += Time.deltaTime)
         {
             float normalizedTime = t / fadeDuration;
@@ -58,10 +55,8 @@ public class WindEventDisplay : MonoBehaviour
         }
         messageText.color = new Color(c.r, c.g, c.b, 1f);
         
-        // Hold message
         yield return new WaitForSeconds(displayDuration);
         
-        // Fade out
         for (float t = 0; t < fadeDuration; t += Time.deltaTime)
         {
             float normalizedTime = t / fadeDuration;
