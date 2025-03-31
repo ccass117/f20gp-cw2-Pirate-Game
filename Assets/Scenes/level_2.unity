@@ -1617,6 +1617,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3558046279313605034, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
+      propertyPath: cannonsPerSide
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3558046279313605034, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
+      propertyPath: timeBetweenShots
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4999920774958221814, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: sirenInfluenceActive
       value: 0

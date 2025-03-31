@@ -4632,7 +4632,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
       propertyPath: mass
-      value: 50
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
       propertyPath: maxWidth

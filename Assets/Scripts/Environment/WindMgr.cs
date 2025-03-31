@@ -39,10 +39,11 @@ public class WindMgr : MonoBehaviour
         BuffController.registerBuff("Sobered up", "Negate the effect of Sirens' pull", delegate { shipController.sirenTurnStrength = 0; }, delegate () { shipController.sirenTurnStrength += 1.2f; });
         BuffController.registerBuff("Tube of Superglue", "You can't just glue on another cannon and expect it to work", delegate { cannons.cannonsPerSide += 1; cannons.InitializeCannons(); }, delegate () { cannons.cannonsPerSide -= 1; cannons.InitializeCannons(); });
         BuffController.registerBuff("TF2 Engineer", "Add an additional cannon", delegate { cannons.cannonsPerSide += 1; cannons.InitializeCannons(); }, delegate () { cannons.cannonsPerSide -= 1; cannons.InitializeCannons(); });
-        BuffController.registerBuff("Reinforced Hull", "Increases maximum HP by 10", delegate { health.maxHealth += 10f; health.currentHealth += 10f; BuffController.deactivateBuff("Reinforced Hull"); }, delegate () {  });
-        BuffController.registerBuff("Quick Repair", "Heal 10HP", delegate { health.currentHealth += 10f; if (health.currentHealth > health.maxHealth) { health.currentHealth = health.maxHealth; } BuffController.deactivateBuff("Quick Repair"); }, delegate () {  });
-        BuffController.registerBuff("Theseus's Prodigy", "Fully repair your ship... is it even the same one anymore?", delegate { health.currentHealth = health.maxHealth; BuffController.deactivateBuff("Theseus's Prodigy"); }, delegate () {  });
+        BuffController.registerBuff("Reinforced Hull", "Increases maximum HP by 10", delegate { health.maxHealth += 10f; health.currentHealth += 10f; BuffController.deactivateBuff("Reinforced Hull"); }, delegate () { });
+        BuffController.registerBuff("Quick Repair", "Heal 10HP", delegate { health.currentHealth += 10f; if (health.currentHealth > health.maxHealth) { health.currentHealth = health.maxHealth; } BuffController.deactivateBuff("Quick Repair"); }, delegate () { });
+        BuffController.registerBuff("Theseus's Prodigy", "Fully repair your ship... is it even the same one anymore?", delegate { health.currentHealth = health.maxHealth; BuffController.deactivateBuff("Theseus's Prodigy"); }, delegate () { });
         BuffController.registerBuff("Kilogram of feathers", "Reduces cannon reload speed", delegate { cannons.cooldownTime -= 1f; }, delegate () { cannons.cooldownTime += 1f; });
+        BuffController.registerBuff("Exponential Stupidity", "Locks your max hp at 1, Gain 1.5x more cannons per area", delegate { health.currentHealth = 1; health.maxHealth = 1; cannons.cannonsPerSide = Mathf.CeilToInt(cannons.cannonsPerSide * 1.5f); cannons.InitializeCannons(); }, delegate () { });
 
 
 
