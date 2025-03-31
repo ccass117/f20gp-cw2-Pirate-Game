@@ -26,19 +26,26 @@ public class BuffController : MonoBehaviour
 
     public static void registerBuff(string name, string description, Action activateCallback, Action deactivateCallback)
     {
-        Debug.Log("added");
+        // update the store with the current handlers
         buffStore.Add(name, new Buff(name, description, activateCallback, deactivateCallback));
-        activeBuff.Add(name, false);
 
-        foreach (var kvp in buffStore)
+        if (activeBuff.ContainsKey(name))
         {
-            Debug.Log($"{kvp.Key}: {kvp.Value}");
+            // activate buff straight away, this will be on load
+            if (activeBuff[name])
+            {
+                activateBuff(name);
+            }
+        }
+        else
+        {
+            activeBuff.Add(name, false);
         }
     }
 
     static public void activateBuff(string name)
     {
-        Debug.Log($"activated, {name}");
+        //Debug.Log($"activated, {name}");
         Buff buff = buffStore[name];
         buff.activateCallback();
         activeBuff[name] = true;
@@ -46,7 +53,7 @@ public class BuffController : MonoBehaviour
 
     static public void deactivateBuff(string name)
     {
-        Debug.Log($"deactivated, {name}");
+        //Debug.Log($"deactivated, {name}");
         Buff buff = buffStore[name];
         buff.deactivateCallback();
         activeBuff[name] = false;
