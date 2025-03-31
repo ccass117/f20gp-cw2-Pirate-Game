@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-class Buff
+public class Buff
 {
     public string name;
     public string description;
@@ -64,4 +64,34 @@ public class BuffController : MonoBehaviour
         return activeBuff[name];
     }
 
+    static public List<Buff> getBuffsForShop(int amt)
+    {
+        List<string> keys = new List<string>(buffStore.Keys);
+        List<string> activeBuffs = new List<string>();
+        for (int i = 0; i > keys.Count; i++)
+        {
+            if (!isActive(keys[i]))
+            {
+                activeBuffs.Add(keys[i]);
+            }
+        }
+
+        if (activeBuffs.Count < amt)
+        {
+            throw new Exception("not enough buffs");
+        }
+
+        List<Buff> chosenBuffs = new List<Buff>();
+        HashSet<int> selectedIndices = new HashSet<int>();
+
+        while (chosenBuffs.Count < amt)
+        {
+            int index = UnityEngine.Random.Range(0, activeBuffs.Count);
+            if (selectedIndices.Add(index))
+            {
+                chosenBuffs.Add(buffStore[activeBuffs[index]]);
+            }
+        }
+        return chosenBuffs;
+    }
 }
