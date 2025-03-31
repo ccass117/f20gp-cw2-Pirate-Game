@@ -12,28 +12,42 @@ public class MoveShip : MonoBehaviour
 
     // stores the points already visited / marked to be restored on each load
     private static Dictionary<int, bool> markedPoints = new Dictionary<int, bool>();
-    private static int lvls = 0;
+    private static int lvls = -1;
 
     private void Start()
     {
         Debug.Log($"lvls at start: {lvls}");
 
-        // get properties of the current recorded map point (level just completed)
-        // move ship to start at last map position 
-        Transform currentPoint = mapPoints.GetPoint(lvls);
-        transform.position = currentPoint.position;
-        Debug.Log($"ship positioned at: {transform.position}");
-
-        PreviouslyMarked();
-
-        // small delay makes the transition feel better
-        StartCoroutine(SmallDelay());
-        IEnumerator SmallDelay()
+        if (lvls < 0)
         {
-            yield return new WaitForSeconds(1f);
-            MarkMap(currentPoint);
+            lvls = 0;
+            StartCoroutine(DelayLoad());
+            IEnumerator DelayLoad()
+            {
+                yield return new WaitForSeconds(3f);
+                levelLoader.LoadLevel("level_1");
+            }
+        }
+        else
+        {
+            // get properties of the current recorded map point (level just completed)
+            // move ship to start at last map position 
+            Transform currentPoint = mapPoints.GetPoint(lvls);
+            transform.position = currentPoint.position;
+            Debug.Log($"ship positioned at: {transform.position}");
+
+            PreviouslyMarked();
+
+            // small delay makes the transition feel better
+            StartCoroutine(SmallDelay());
+            IEnumerator SmallDelay()
+            {
+                yield return new WaitForSeconds(1f);
+                MarkMap(currentPoint);
+            }
         }
     }
+
     // checks for previously marked levels against the dictionary
     // adds a 'X' back to the points that previously had one
     void PreviouslyMarked()
