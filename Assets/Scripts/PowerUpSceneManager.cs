@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using JetBrains.Annotations;
 
 public class PowerUpSceneManager : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class PowerUpSceneManager : MonoBehaviour
     public Toggle[] buffToggles;
     [Tooltip("Accept button to confirm the selection.")]
     public Button acceptButton;
+
+    private GameObject levelloader;
 
     private List<BuffData> availableBuffs = new List<BuffData>();
 
@@ -30,6 +33,8 @@ public class PowerUpSceneManager : MonoBehaviour
 
     void Start()
     {
+        levelloader = GameObject.Find("LevelLoader");
+
         Type buffControllerType = typeof(BuffController);
         FieldInfo buffStoreField = buffControllerType.GetField("buffStore", BindingFlags.NonPublic | BindingFlags.Static);
         if (buffStoreField == null)
@@ -97,6 +102,11 @@ public class PowerUpSceneManager : MonoBehaviour
 
     void OnAccept(List<BuffData> selectedBuffs)
     {
+
+        LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
+        loaderScript.LoadLevel("LevelChange");
+
+
         Toggle selectedToggle = null;
         foreach (Toggle toggle in buffToggleGroup.GetComponentsInChildren<Toggle>())
         {
@@ -115,18 +125,10 @@ public class PowerUpSceneManager : MonoBehaviour
                 string buffName = selectedBuffs[index].name;
                 Debug.Log("PowerUpSceneManager: Selected Buff - " + buffName);
                 BuffController.activateBuff(buffName);
-                
-                int nextLevel = PlayerPrefs.GetInt("NextLevel", 1);
-                if (nextLevel > 0 && nextLevel <= 12)
-                {
-                    string nextSceneName = "level_" + nextLevel;
-                    Debug.Log("Loading next level: " + nextSceneName);
-                    SceneManager.LoadScene(nextSceneName);
-                }
-                else
-                {
-                    Debug.LogWarning("Next level number is invalid.");
-                }
+
+                //LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
+                loaderScript.LoadLevel("LevelChange");
+
             }
             else
             {
