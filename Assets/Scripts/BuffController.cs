@@ -80,6 +80,15 @@ public class BuffController : MonoBehaviour
     {
         return activeBuff.ContainsKey(name) && activeBuff[name];
     }
+    
+    public static IEnumerable<string> GetActiveBuffNames()
+    {
+        foreach (var kvp in activeBuff)
+        {
+            if (kvp.Value)
+                yield return kvp.Key;
+        }
+    }
 
     public static List<Buff> getBuffsForShop(int amt)
     {

@@ -38,7 +38,23 @@ public class Health : MonoBehaviour
 
     void Awake()
     {
-        currentHealth = maxHealth;
+        // If this Health script is attached to the player, use PlayerData to set currentHealth.
+        if (gameObject.CompareTag("Player"))
+        {
+            if (PlayerData.currentHealth >= 0)
+            {
+                currentHealth = PlayerData.currentHealth;
+            }
+            else
+            {
+                currentHealth = maxHealth;
+                PlayerData.currentHealth = maxHealth;
+            }
+        }
+        else
+        {
+            currentHealth = maxHealth;
+        }
     }
     
     public void TakeDamage(float amount, GameObject damageSource = null)
@@ -52,7 +68,11 @@ public class Health : MonoBehaviour
         currentHealth -= finalDamage;
         lastDamageTime = Time.time;
         
-        string sourceName = damageSource != null ? damageSource.name : "unknown source";
+        // If this is the player, update PlayerData.
+        if (gameObject.CompareTag("Player"))
+        {
+            PlayerData.currentHealth = currentHealth;
+        }
         
         if (currentHealth <= 0)
         {
@@ -63,6 +83,12 @@ public class Health : MonoBehaviour
     public void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        
+        // If this is the player, update PlayerData.
+        if (gameObject.CompareTag("Player"))
+        {
+            PlayerData.currentHealth = currentHealth;
+        }
     }
 
     private void Die()
@@ -113,7 +139,50 @@ public class Health : MonoBehaviour
                 return;
             }
         }
+        else
+        {
+            if (otherHealth != null)
+            {
+                DamageHandshake(otherHealth, mySpeed, otherSpeed);
+            }
+            else
+            {
+                float damage = (mySpeed + otherSpeed) * 1f;
+                TakeDamage(damage, collision.gameObject);
+            }
+        }
+    }
 
+    public void OnTriggerEnter(Collider collision)
+    {
+        Rigidbody rbSelf = GetComponent<Rigidbody>();
+        float mySpeed = (rbSelf != null) ? rbSelf.linearVelocity.magnitude : 0f;
+        float otherSpeed = (collision.GetComponent<Rigidbody>() != null) ? collision.GetComponent<Rigidbody>().linearVelocity.magnitude : 0f;
+        Health otherHealth = collision.gameObject.GetComponent<Health>();
+
+        bool attackerValid = mySpeed >= attackerSpeedThreshold;
+        bool defenderValid = otherSpeed >= defenderSpeedThreshold;
+        
+        if (!attackerValid && !defenderValid) return;
+
+        if (isProjectile || (otherHealth != null && otherHealth.isProjectile))
+        {
+            if (isProjectile && (otherHealth == null || !otherHealth.isProjectile))
+            {
+                return;
+            }
+            if (!isProjectile && otherHealth != null && otherHealth.isProjectile)
+            {
+                float projectileDamage = otherHealth.damageMultiplier;
+                TakeDamage(projectileDamage, otherHealth.gameObject);
+                return;
+            }
+            if (isProjectile && otherHealth != null && otherHealth.isProjectile)
+            {
+                TakeDamage(damageMultiplier, otherHealth.gameObject);
+                return;
+            }
+        }
         else
         {
             if (otherHealth != null)

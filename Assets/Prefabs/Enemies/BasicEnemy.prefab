@@ -101,10 +101,10 @@ NavMeshAgent:
   m_GameObject: {fileID: 9021748170562436102}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 10
   m_Speed: 2
   m_Acceleration: 8
-  avoidancePriority: 50
+  avoidancePriority: 99
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
@@ -112,7 +112,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 1
   m_BaseOffset: 0.5
-  m_WalkableMask: 4294967295
+  m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
 --- !u!114 &3464620669303781926
 MonoBehaviour:
@@ -128,16 +128,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerShip: {fileID: 0}
   targetDistance: 10
-  avoidanceRadius: 10
+  avoidanceRadius: 5
   positionTolerance: 1.5
   updateTimer: 1
   useNavMesh: 1
   speed: 2
   maxSpeed: 6
   riggingSpeed: 5
-  maxTurnRate: 50
+  maxTurnRate: 30
   maxRudderAngle: 90
-  rudderSpeed: 30
+  rudderSpeed: 20
   maxTurnBoost: 30
   aggroRange: 40
   lineOfSightMask:
@@ -165,13 +165,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6665cc027cb6f5a4fa730a3903dc6f5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 15
   currentHealth: 0
   damageResistance: 1
   damageMultiplier: 1
   isProjectile: 0
   damageCooldown: 0.5
-  goldAmount: 0
+  goldAmount: 25
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
 --- !u!114 &335897065274413280

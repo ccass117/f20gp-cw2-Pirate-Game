@@ -64,8 +64,9 @@ public class EnemyShipAI : MonoBehaviour
         if (navAgent != null)
         {
             navAgent.speed = maxSpeed;
-            navAgent.updatePosition = false;
-            navAgent.updateRotation = false;
+            // Enable automatic updates so the agent drives movement and rotation
+            navAgent.updatePosition = true;
+            navAgent.updateRotation = true;
         }
 
         idleCenterPosition = transform.position;
@@ -88,6 +89,7 @@ public class EnemyShipAI : MonoBehaviour
         if (playerShip == null)
             return;
 
+        // Apply wind force calculation for use in non-navmesh movement
         wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength;
 
         Vector3 toPlayer = playerShip.position - transform.position;
@@ -113,14 +115,18 @@ public class EnemyShipAI : MonoBehaviour
         else
             Idle();
 
-        if (useNavMesh && navAgent != null && isAggroed)
-            Navigate();
-        else
+        // If using NavMeshAgent and aggroed, let the agent handle movement.
+        // Otherwise, use custom rudder steering.
+        if (!(useNavMesh && navAgent != null && isAggroed))
             Rudder();
 
         adjustSails();
 
         currentRudderAngle = Mathf.MoveTowards(currentRudderAngle, targetRudderAngle, rudderSpeed * Time.deltaTime);
+
+        // If using navmesh and aggroed, update destination periodically.
+        if (useNavMesh && navAgent != null && isAggroed)
+            Navigate();
     }
 
     void FixedUpdate()
@@ -128,11 +134,13 @@ public class EnemyShipAI : MonoBehaviour
         if (anchored)
             return;
 
-        Move();
-        Steer();
-
-        if (useNavMesh && navAgent != null && isAggroed)
-            navAgent.nextPosition = rb.position;
+        // If using NavMeshAgent and aggroed, let it drive the movement automatically.
+        // Otherwise, use our custom Move() and Steer() routines.
+        if (!(useNavMesh && navAgent != null && isAggroed))
+        {
+            Move();
+            Steer();
+        }
     }
 
     void acquireTarget()
@@ -144,7 +152,7 @@ public class EnemyShipAI : MonoBehaviour
         {
             predictedPlayerPos += playerRb.linearVelocity * predictionTime;
         }
-        
+
         Vector3 directionFromPlayer = transform.position - predictedPlayerPos;
         if (directionFromPlayer == Vector3.zero)
         {
@@ -153,7 +161,6 @@ public class EnemyShipAI : MonoBehaviour
         directionFromPlayer.Normalize();
 
         float desiredDistance = isRammingShip ? targetDistance : Mathf.Max(targetDistance, avoidanceRadius);
-
         targetPosition = predictedPlayerPos + directionFromPlayer * desiredDistance;
     }
 
@@ -164,6 +171,7 @@ public class EnemyShipAI : MonoBehaviour
         targetPosition = idleCenterPosition + offset;
     }
 
+    // Custom movement when not using NavMeshAgent for aggroed behavior.
     void Move()
     {
         float windEffect = Vector3.Dot(transform.forward, wind);
@@ -173,6 +181,7 @@ public class EnemyShipAI : MonoBehaviour
         rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
     }
 
+    // Custom steering when not using NavMeshAgent.
     void Steer()
     {
         Vector3 toTarget = targetPosition - transform.position;
@@ -194,6 +203,7 @@ public class EnemyShipAI : MonoBehaviour
         transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation, effectiveTurnRate * Time.fixedDeltaTime);
     }
 
+    // Use NavMeshAgent to navigate toward the target position.
     void Navigate()
     {
         if (Time.time - timer > updateTimer)
@@ -201,15 +211,6 @@ public class EnemyShipAI : MonoBehaviour
             navAgent.SetDestination(targetPosition);
             timer = Time.time;
         }
-
-        if (navAgent.pathPending || !navAgent.hasPath)
-            return;
-
-        Vector3 nextCorner = navAgent.path.corners.Length > 1 ? navAgent.path.corners[1] : targetPosition;
-        Vector3 targetDir = (nextCorner - transform.position).normalized;
-        Vector3 correctedDir = courseCorrect(targetDir);
-        float angleToTarget = Vector3.SignedAngle(transform.forward, correctedDir, Vector3.up);
-        targetRudderAngle = Mathf.Clamp(angleToTarget, -maxRudderAngle, maxRudderAngle);
     }
 
     Vector3 courseCorrect(Vector3 targetDir)

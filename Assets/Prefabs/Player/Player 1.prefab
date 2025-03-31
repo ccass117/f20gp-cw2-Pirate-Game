@@ -500,6 +500,7 @@ GameObject:
   - component: {fileID: 5804434220599336474}
   - component: {fileID: 810277927123364101}
   - component: {fileID: -1057681644101350878}
+  - component: {fileID: -4383180508728465170}
   m_Layer: 6
   m_Name: Player 1
   m_TagString: Player
@@ -836,7 +837,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6665cc027cb6f5a4fa730a3903dc6f5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 50
   currentHealth: 0
   damageResistance: 1
   damageMultiplier: 1
@@ -887,6 +888,18 @@ MonoBehaviour:
   windResistanceDecreasePerTier: 0.1
   minWindResistance: 0.2
   turnSpeedIncreasePerTier: 1
+--- !u!114 &-4383180508728465170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5576887064709836160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bcd0ac0467f67c48b6c99bf0374f2a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3324889247543741654
 PrefabInstance:
   m_ObjectHideFlags: 0

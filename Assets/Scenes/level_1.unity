@@ -1118,7 +1118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5804434220599336474, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: damageResistance
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6252308522572844391, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: m_Mesh
@@ -1130,7 +1130,7 @@ PrefabInstance:
       objectReference: {fileID: 283950651}
     - target: {fileID: 8227602360300738300, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: m_VersionIndex
-      value: 1242
+      value: 1245
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1227,6 +1227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkInterval: 1
+  levelCompleted: 0
 --- !u!1001 &1571070315
 PrefabInstance:
   m_ObjectHideFlags: 0
