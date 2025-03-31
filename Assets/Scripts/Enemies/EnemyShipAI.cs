@@ -17,7 +17,7 @@ public class EnemyShipAI : MonoBehaviour
     public bool useNavMesh = true;
 
     [Header("Movement")]
-    public float speed = 2f;
+    public float speed = 2f;          // Minimum forward speed
     public float maxSpeed = 5f;
     public float riggingSpeed = 2f;
     public float maxTurnRate = 60f;
@@ -64,8 +64,9 @@ public class EnemyShipAI : MonoBehaviour
         if (navAgent != null)
         {
             navAgent.speed = maxSpeed;
-            // Enable automatic updates so the agent drives movement and rotation
-            navAgent.updatePosition = true;
+            // Disable automatic position updates so we can force forward-only movement.
+            navAgent.updatePosition = false;
+            // Let the agent update rotation to help with path calculation.
             navAgent.updateRotation = true;
         }
 
@@ -89,9 +90,10 @@ public class EnemyShipAI : MonoBehaviour
         if (playerShip == null)
             return;
 
-        // Apply wind force calculation for use in non-navmesh movement
+        // Calculate wind force for movement.
         wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength;
 
+        // Determine aggro status based on range and line of sight.
         Vector3 toPlayer = playerShip.position - transform.position;
         if (toPlayer.magnitude <= aggroRange)
         {
@@ -110,21 +112,20 @@ public class EnemyShipAI : MonoBehaviour
             isAggroed = false;
         }
 
+        // Compute the target position.
         if (isAggroed)
             acquireTarget();
         else
             Idle();
 
-        // If using NavMeshAgent and aggroed, let the agent handle movement.
-        // Otherwise, use custom rudder steering.
+        // When not using navmesh for aggroed movement, use our custom rudder steering.
         if (!(useNavMesh && navAgent != null && isAggroed))
             Rudder();
 
         adjustSails();
-
         currentRudderAngle = Mathf.MoveTowards(currentRudderAngle, targetRudderAngle, rudderSpeed * Time.deltaTime);
 
-        // If using navmesh and aggroed, update destination periodically.
+        // If using NavMeshAgent, update its destination and extract the next corner for steering.
         if (useNavMesh && navAgent != null && isAggroed)
             Navigate();
     }
@@ -134,9 +135,15 @@ public class EnemyShipAI : MonoBehaviour
         if (anchored)
             return;
 
-        // If using NavMeshAgent and aggroed, let it drive the movement automatically.
-        // Otherwise, use our custom Move() and Steer() routines.
-        if (!(useNavMesh && navAgent != null && isAggroed))
+        // For navmesh-driven behavior, always move along transform.forward.
+        if (useNavMesh && navAgent != null && isAggroed)
+        {
+            float windEffect = Vector3.Dot(transform.forward, wind);
+            float effectiveSpeed = currentRiggingSpeed + windEffect;
+            effectiveSpeed = Mathf.Max(effectiveSpeed, speed);
+            rb.MovePosition(rb.position + transform.forward * effectiveSpeed * Time.fixedDeltaTime);
+        }
+        else
         {
             Move();
             Steer();
@@ -153,15 +160,24 @@ public class EnemyShipAI : MonoBehaviour
             predictedPlayerPos += playerRb.linearVelocity * predictionTime;
         }
 
-        Vector3 directionFromPlayer = transform.position - predictedPlayerPos;
-        if (directionFromPlayer == Vector3.zero)
+        Vector3 fromPlayerToEnemy = transform.position - predictedPlayerPos;
+        if (fromPlayerToEnemy == Vector3.zero)
         {
-            directionFromPlayer = transform.forward;
+            fromPlayerToEnemy = transform.forward;
         }
-        directionFromPlayer.Normalize();
+        fromPlayerToEnemy.Normalize();
 
-        float desiredDistance = isRammingShip ? targetDistance : Mathf.Max(targetDistance, avoidanceRadius);
-        targetPosition = predictedPlayerPos + directionFromPlayer * desiredDistance;
+
+        float orbitAngle = 30f * Mathf.Sin(Time.time); 
+        Vector3 orbitDirection = Quaternion.Euler(0, orbitAngle, 0) * fromPlayerToEnemy;
+        
+        targetPosition = predictedPlayerPos + orbitDirection * targetDistance;
+        
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(targetPosition, out hit, 5f, NavMesh.AllAreas))
+        {
+            targetPosition = hit.position;
+        }
     }
 
     void Idle()
@@ -171,17 +187,16 @@ public class EnemyShipAI : MonoBehaviour
         targetPosition = idleCenterPosition + offset;
     }
 
-    // Custom movement when not using NavMeshAgent for aggroed behavior.
+    // Custom movement for non-navmesh cases.
     void Move()
     {
         float windEffect = Vector3.Dot(transform.forward, wind);
         float effectiveSpeed = currentRiggingSpeed + windEffect;
-        effectiveSpeed = Mathf.Max(0, effectiveSpeed);
-        Vector3 velocity = transform.forward * effectiveSpeed;
-        rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+        effectiveSpeed = Mathf.Max(effectiveSpeed, speed);
+        rb.MovePosition(rb.position + transform.forward * effectiveSpeed * Time.fixedDeltaTime);
     }
 
-    // Custom steering when not using NavMeshAgent.
+    // Custom steering for non-navmesh cases.
     void Steer()
     {
         Vector3 toTarget = targetPosition - transform.position;
@@ -191,19 +206,17 @@ public class EnemyShipAI : MonoBehaviour
             targetRudderAngle = 0;
             return;
         }
-
         Vector3 targetDir = toTarget.normalized;
         float angleDiff = Mathf.Abs(Vector3.SignedAngle(transform.forward, targetDir, Vector3.up));
         float aggressiveMultiplier = 3f;
         float effectiveTurnRate = maxTurnRate * aggressiveMultiplier;
         if (angleDiff > 20f)
             effectiveTurnRate += maxTurnBoost * (angleDiff / 90f);
-
         Quaternion desiredRotation = Quaternion.LookRotation(targetDir);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation, effectiveTurnRate * Time.fixedDeltaTime);
     }
 
-    // Use NavMeshAgent to navigate toward the target position.
+    // Use the NavMeshAgent to update destination and extract the next corner for steering.
     void Navigate()
     {
         if (Time.time - timer > updateTimer)
@@ -211,15 +224,14 @@ public class EnemyShipAI : MonoBehaviour
             navAgent.SetDestination(targetPosition);
             timer = Time.time;
         }
-    }
-
-    Vector3 courseCorrect(Vector3 targetDir)
-    {
-        Vector3 windDir = wind.normalized;
-        float windStrength = wind.magnitude;
-        Vector3 projectedWind = Vector3.ProjectOnPlane(windDir, Vector3.up);
-        float windEffect = Mathf.Clamp01(windStrength / currentRiggingSpeed);
-        return Vector3.Lerp(targetDir, targetDir - projectedWind * windEffect, 0.5f).normalized;
+        // If the agent has a path with corners, use the next corner to guide rotation.
+        if (navAgent.path != null && navAgent.path.corners.Length > 1)
+        {
+            Vector3 nextCorner = navAgent.path.corners[1];
+            Vector3 toCorner = nextCorner - transform.position;
+            float angleToCorner = Vector3.SignedAngle(transform.forward, toCorner, Vector3.up);
+            targetRudderAngle = Mathf.Clamp(angleToCorner, -maxRudderAngle, maxRudderAngle);
+        }
     }
 
     void Rudder()
