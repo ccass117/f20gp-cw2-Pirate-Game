@@ -33,7 +33,10 @@ public class Islands
             for (int x = 0; x < tileInts[0].Count; x++)
             {
                 // find the current tile in the tile map and take its base tile + transform
-                baseTiles[y].Add(tileMapping[tileInts[y][x]]);
+                if (tileMapping.ContainsKey(tileInts[y][x]))
+                {
+                    baseTiles[y].Add(tileMapping[tileInts[y][x]]);
+                }
             }
         }
         return baseTiles;

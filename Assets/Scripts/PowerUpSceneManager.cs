@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using TMPro;
 
 public class PowerUpSceneManager : MonoBehaviour
 {
@@ -14,6 +14,8 @@ public class PowerUpSceneManager : MonoBehaviour
     public Toggle[] buffToggles;
     [Tooltip("Accept button to confirm the selection.")]
     public Button acceptButton;
+
+    private GameObject levelloader;
 
     private List<BuffData> availableBuffs = new List<BuffData>();
 
@@ -30,31 +32,29 @@ public class PowerUpSceneManager : MonoBehaviour
 
     void Start()
     {
-        Type buffControllerType = typeof(BuffController);
-        FieldInfo buffStoreField = buffControllerType.GetField("buffStore", BindingFlags.NonPublic | BindingFlags.Static);
-        if (buffStoreField == null)
+        levelloader = GameObject.Find("LevelLoader");
+
+        // Use the public API to get all available buffs.
+        var buffStore = BuffController.AvailableBuffs;
+        if (buffStore == null || buffStore.Count == 0)
         {
-            Debug.LogError("Could not find buffStore field in BuffController.");
-            return;
-        }
-        var buffStore = buffStoreField.GetValue(null) as Dictionary<string, Buff>;
-        if (buffStore == null)
-        {
-            Debug.LogError("buffStore is null.");
+            Debug.LogError("No buffs available in BuffController.");
             return;
         }
 
+        // Only add buffs that are not currently active.
         foreach (var kvp in buffStore)
         {
             string buffName = kvp.Key;
             if (!BuffController.isActive(buffName))
             {
-                FieldInfo descriptionField = kvp.Value.GetType().GetField("description", BindingFlags.Public | BindingFlags.Instance);
-                string description = descriptionField != null ? descriptionField.GetValue(kvp.Value) as string : "";
+                // Directly use the public field since description is public.
+                string description = kvp.Value.description;
                 availableBuffs.Add(new BuffData(buffName, description));
             }
         }
         
+        // Randomly select up to 3 buffs.
         List<BuffData> selectedBuffs = new List<BuffData>();
         int countToSelect = Mathf.Min(3, availableBuffs.Count);
         System.Random rnd = new System.Random();
@@ -72,17 +72,38 @@ public class PowerUpSceneManager : MonoBehaviour
             return;
         }
         
+        // Update the toggle UI.
+        // Assuming each toggle prefab has two child TMP_Text components:
+        // texts[0] for the buff name and texts[1] for the buff description.
         for (int i = 0; i < 3; i++)
         {
-            string displayText = "";
             if (i < selectedBuffs.Count)
-                displayText = selectedBuffs[i].name + "\n" + selectedBuffs[i].description;
+            {
+                TMP_Text[] texts = buffToggles[i].GetComponentsInChildren<TMP_Text>();
+                if (texts.Length >= 2)
+                {
+                    texts[0].text = selectedBuffs[i].name;
+                    texts[1].text = selectedBuffs[i].description;
+                }
+                else if (texts.Length == 1)
+                {
+                    // Fallback: combine name and description if only one text component is found.
+                    texts[0].text = selectedBuffs[i].name + "\n" + selectedBuffs[i].description;
+                }
+            }
             else
-                displayText = "None";
-            
-            Text toggleLabel = buffToggles[i].GetComponentInChildren<Text>();
-            if (toggleLabel != null)
-                toggleLabel.text = displayText;
+            {
+                TMP_Text[] texts = buffToggles[i].GetComponentsInChildren<TMP_Text>();
+                if (texts.Length >= 2)
+                {
+                    texts[0].text = "None";
+                    texts[1].text = "";
+                }
+                else if (texts.Length == 1)
+                {
+                    texts[0].text = "None";
+                }
+            }
         }
         
         if (acceptButton != null)
@@ -97,6 +118,9 @@ public class PowerUpSceneManager : MonoBehaviour
 
     void OnAccept(List<BuffData> selectedBuffs)
     {
+        LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
+        loaderScript.LoadLevel("LevelChange");
+
         Toggle selectedToggle = null;
         foreach (Toggle toggle in buffToggleGroup.GetComponentsInChildren<Toggle>())
         {
@@ -115,18 +139,7 @@ public class PowerUpSceneManager : MonoBehaviour
                 string buffName = selectedBuffs[index].name;
                 Debug.Log("PowerUpSceneManager: Selected Buff - " + buffName);
                 BuffController.activateBuff(buffName);
-                
-                int nextLevel = PlayerPrefs.GetInt("NextLevel", 1);
-                if (nextLevel > 0 && nextLevel <= 12)
-                {
-                    string nextSceneName = "level_" + nextLevel;
-                    Debug.Log("Loading next level: " + nextSceneName);
-                    SceneManager.LoadScene(nextSceneName);
-                }
-                else
-                {
-                    Debug.LogWarning("Next level number is invalid.");
-                }
+                loaderScript.LoadLevel("LevelChange");
             }
             else
             {

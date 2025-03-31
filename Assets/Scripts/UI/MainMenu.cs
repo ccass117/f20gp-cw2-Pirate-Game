@@ -48,7 +48,7 @@ public class MainMenu : MonoBehaviour
         DOVirtual.DelayedCall(moveTime + 0.5f, () =>
         {
             DOTween.KillAll();
-            levelLoader.LoadLevel("LevelChange");
+            levelLoader.LoadLevel("GoldShop");
         });
     }
 

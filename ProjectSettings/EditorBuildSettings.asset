@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 3255780d83acb2c468f784be2f853fab
+  - enabled: 1
     path: Assets/Scenes/level_1.unity
     guid: b8e2b2da2e033cf4d8aee62d59a3d625
   - enabled: 1
@@ -19,13 +22,13 @@ EditorBuildSettings:
     guid: 13769e0974da75a47aae37a64b236e7a
   - enabled: 1
     path: Assets/Scenes/level_5.unity
-    guid: 06d8f92848afa81479187db68dca4ea5
+    guid: 16f01140a8df2f1419328dbd73dfbab6
   - enabled: 1
     path: Assets/Scenes/level_6.unity
-    guid: ce0707ef2fe2dc7418314125340619e7
+    guid: 240f1da68749880459f2faf197f13614
   - enabled: 1
     path: Assets/Scenes/level_7.unity
-    guid: 1dd033ff4688b8448b6bfba7debec6d6
+    guid: 3853eaf2c5bedc74bb0e5bccb40b39fe
   - enabled: 1
     path: Assets/Scenes/level_8.unity
     guid: c8e57f4d49bc3904987c1790fcc72397
@@ -47,6 +50,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GoldShop.unity
     guid: b7fcb90f9fe0277488b05567fac77eed
+  - enabled: 1
+    path: Assets/Scenes/Lose.unity
+    guid: 639f4d5fb788c7540a9fbf7a48b40d78
+  - enabled: 1
+    path: Assets/Scenes/LevelChange.unity
+    guid: 6bf033deba81c8e40803e3ced7132bec
+  - enabled: 1
+    path: Assets/Scenes/Win.unity
+    guid: c2a1c532b73374b409389b2f0cecf734
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

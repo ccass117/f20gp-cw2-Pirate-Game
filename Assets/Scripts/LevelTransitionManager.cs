@@ -1,17 +1,44 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class LevelTransitionManager : MonoBehaviour
 {
     [Tooltip("Time (in seconds) between enemy checks.")]
     public float checkInterval = 1f;
-    
-    private bool levelCompleted = false;
+
+    public bool levelCompleted = false;
+
+    private GameObject levelloader;
+    private string sceneName;
 
     void Start()
     {
+        levelloader = GameObject.Find("LevelLoader");
+
+        // Subscribe to scene loaded event
+        SceneManager.sceneLoaded += OnSceneLoaded;
         StartCoroutine(CheckEnemies());
+    }
+
+    void OnDestroy()
+    {
+        // Unsubscribe to avoid memory leaks
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        //only work on level_1 to level_12
+        if (Regex.IsMatch(scene.name, @"^level_(1[0-2]|[1-9])$"))
+        {
+            sceneName = scene.name;
+            levelloader = GameObject.Find("LevelLoader");
+            levelCompleted = false;  // Reset level completion when a new scene loads
+            StartCoroutine(CheckEnemies());
+        }
     }
 
     IEnumerator CheckEnemies()
@@ -19,8 +46,14 @@ public class LevelTransitionManager : MonoBehaviour
         while (!levelCompleted)
         {
             yield return new WaitForSeconds(checkInterval);
-            
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+            GameObject[] enemyShips = GameObject.FindGameObjectsWithTag("Enemy");
+            GameObject[] bosses = GameObject.FindGameObjectsWithTag("Boss");
+
+            List<GameObject> allEnemies = new List<GameObject>(enemyShips);
+            allEnemies.AddRange(bosses);
+            GameObject[] enemies = allEnemies.ToArray();
+
             bool allInactive = true;
             foreach (GameObject enemy in enemies)
             {
@@ -30,8 +63,8 @@ public class LevelTransitionManager : MonoBehaviour
                     break;
                 }
             }
-            
-            if (allInactive)
+
+            if (allInactive || Input.GetKeyDown(KeyCode.Delete))
             {
                 levelCompleted = true;
                 TransitionToPowerUpScene();
@@ -41,27 +74,17 @@ public class LevelTransitionManager : MonoBehaviour
 
     void TransitionToPowerUpScene()
     {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        int currentLevel = 0;
-        if (int.TryParse(currentSceneName.Replace("level_", ""), out currentLevel))
+        Debug.Log("All enemies defeated! Transitioning to PowerUpScene for next level");
+        LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
+
+
+        if (sceneName == "level_12")
         {
-            int nextLevel = currentLevel + 1;
-            if (nextLevel <= 12)
-            {
-                // Store next level number for the power-up scene.
-                PlayerPrefs.SetInt("NextLevel", nextLevel);
-                PlayerPrefs.Save();
-                Debug.Log("All enemies defeated! Transitioning to PowerUpScene for next level: " + nextLevel);
-                SceneManager.LoadScene("powerup");
-            }
-            else
-            {
-                Debug.Log("Last level reached! No further levels to load.");
-            }
-        }
-        else
+            loaderScript.LoadLevel("LevelChange");
+        } else
         {
-            Debug.LogError("Unable to parse current level from scene name: " + currentSceneName);
+            loaderScript.LoadLevel("powerup");
         }
+        
     }
 }
