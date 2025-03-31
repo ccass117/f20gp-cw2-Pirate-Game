@@ -23,6 +23,7 @@ public class WindMgr : MonoBehaviour
     void Awake() //I changed this to awake from start, so it starts on scene start not script instance run
     {
 
+
         SceneManager.sceneLoaded += OnSceneLoaded;
 
         player = GameObject.FindWithTag("Player");
