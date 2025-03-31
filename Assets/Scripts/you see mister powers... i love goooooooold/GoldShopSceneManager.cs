@@ -126,7 +126,7 @@ public class GoldShopSceneManager : MonoBehaviour
 
     void UpdateUI()
     {
-        int currentGold = GoldManager.Instance != null ? GoldManager.Instance.Gold : 0;
+        int currentGold = GoldManager.Gold;
         currentGoldText.text = currentGold.ToString();
 
         healthTierText.text = currentHealthTiers + " + " + additionalHealthTiers;
@@ -174,32 +174,26 @@ public class GoldShopSceneManager : MonoBehaviour
                                   (additionalTurnSpeedTiers * costPerTurnSpeedTier) +
                                   (additionalCannon * extraCannonCost);
 
-        if (GoldManager.Instance == null)
-        {
-            Debug.LogWarning("GoldManager instance not found.");
-            return;
-        }
-        
-        if (GoldManager.Instance.Gold < totalAdditionalCost)
+        if (GoldManager.Gold < totalAdditionalCost)
         {
             Debug.Log("Not enough gold for purchase.");
             return;
         }
-        
-        bool spent = GoldManager.Instance.SpendGold(totalAdditionalCost);
+
+        bool spent = GoldManager.SpendGold(totalAdditionalCost);
         if (!spent)
         {
             Debug.Log("Gold deduction failed.");
             return;
         }
-        
+
         currentHealthTiers += additionalHealthTiers;
         currentSpeedTiers += additionalSpeedTiers;
         currentReloadTiers += additionalReloadTiers;
         currentWindTiers += additionalWindTiers;
         currentTurnSpeedTiers += additionalTurnSpeedTiers;
         currentExtraCannons += additionalCannon;
-        
+
         PlayerPrefs.SetInt("HealthUpgradeTiers", currentHealthTiers);
         PlayerPrefs.SetInt("SpeedUpgradeTiers", currentSpeedTiers);
         PlayerPrefs.SetInt("ReloadUpgradeTiers", currentReloadTiers);
@@ -207,7 +201,7 @@ public class GoldShopSceneManager : MonoBehaviour
         PlayerPrefs.SetInt("TurnSpeedUpgradeTiers", currentTurnSpeedTiers);
         PlayerPrefs.SetInt("ExtraCannonPurchased", currentExtraCannons);
         PlayerPrefs.Save();
-        
+
         Debug.Log("Purchased upgrades: Health: " + additionalHealthTiers +
                   ", Speed: " + additionalSpeedTiers +
                   ", Reload: " + additionalReloadTiers +
@@ -215,7 +209,7 @@ public class GoldShopSceneManager : MonoBehaviour
                   ", Turn Speed: " + additionalTurnSpeedTiers +
                   ", Extra Cannon: " + additionalCannon +
                   ". Total cost: " + totalAdditionalCost);
-        
+
         additionalHealthTiers = 0;
         additionalSpeedTiers = 0;
         additionalReloadTiers = 0;
@@ -223,10 +217,10 @@ public class GoldShopSceneManager : MonoBehaviour
         additionalTurnSpeedTiers = 0;
         additionalCannon = 0;
         UpdateUI();
-        
+
         SceneManager.LoadScene("level_1");
     }
-    
+
     void ResetUpgrades()
     {
         currentHealthTiers = 0;

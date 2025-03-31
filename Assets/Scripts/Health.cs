@@ -67,10 +67,7 @@ public class Health : MonoBehaviour
 
     private void Die()
     {
-        if (GoldManager.Instance != null)
-        {
-            GoldManager.Instance.AddGold(goldAmount);
-        }
+        GoldManager.AddGold(goldAmount);
         Debug.Log($"{gameObject.name} has died.");
         gameObject.SetActive(false);
     }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LevelTransitionManager : MonoBehaviour
 {
@@ -9,8 +10,11 @@ public class LevelTransitionManager : MonoBehaviour
     
     private bool levelCompleted = false;
 
+    private GameObject levelloader;
+
     void Start()
     {
+        levelloader = GameObject.Find("LevelLoader");
         StartCoroutine(CheckEnemies());
     }
 
@@ -19,8 +23,15 @@ public class LevelTransitionManager : MonoBehaviour
         while (!levelCompleted)
         {
             yield return new WaitForSeconds(checkInterval);
-            
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+            GameObject[] enemyShips = GameObject.FindGameObjectsWithTag("Enemy");
+            GameObject[] bosses = GameObject.FindGameObjectsWithTag("Boss");
+            // Combine both arrays into one list
+            List<GameObject> allEnemies = new List<GameObject>(enemyShips);
+            allEnemies.AddRange(bosses);
+            GameObject[] enemies = allEnemies.ToArray();
+
+
             bool allInactive = true;
             foreach (GameObject enemy in enemies)
             {
@@ -52,7 +63,9 @@ public class LevelTransitionManager : MonoBehaviour
                 PlayerPrefs.SetInt("NextLevel", nextLevel);
                 PlayerPrefs.Save();
                 Debug.Log("All enemies defeated! Transitioning to PowerUpScene for next level: " + nextLevel);
-                SceneManager.LoadScene("powerup");
+                LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
+                loaderScript.LoadLevel("powerup");
+                levelCompleted = !levelCompleted;
             }
             else
             {
