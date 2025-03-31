@@ -75,15 +75,23 @@ public class MoveShip : MonoBehaviour
             if (!markedPoints.ContainsKey(lvls))
                 markedPoints[lvls] = true;
 
-            MoveToNext();
+            // load win screen if the level just beaten is level_12 (final)
+            if (lvls == 11)
+            {
+                levelLoader.LoadLevel("Win");
+            }
+            else
+            {
+                MoveToNext();
+            }
         }
     }
 
     // helper to find sprites
     private (SpriteRenderer x1, SpriteRenderer x2) FindSprite(Transform thisPoint)
     {
-        SpriteRenderer x1 = thisPoint.Find("x_1")?.GetComponent<SpriteRenderer>();
-        SpriteRenderer x2 = thisPoint.Find("x_2")?.GetComponent<SpriteRenderer>();
+        SpriteRenderer x1 = thisPoint.Find("x_1").GetComponent<SpriteRenderer>();
+        SpriteRenderer x2 = thisPoint.Find("x_2").GetComponent<SpriteRenderer>();
 
         return (x1, x2);
     }
