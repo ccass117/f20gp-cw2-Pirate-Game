@@ -1,19 +1,32 @@
 using UnityEngine;
 
-public class shipWobble : MonoBehaviour
+public class ShipWobble : MonoBehaviour
 {
-
     private Transform selfT;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private WindMgr windMgr;
+
     void Start()
     {
         selfT = GetComponent<Transform>();
-
+        GameObject windObject = GameObject.Find("Wind"); // Find the wind GameObject
+        if (windObject != null)
+        {
+            windMgr = windObject.GetComponent<WindMgr>();
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        selfT.localRotation = Quaternion.Euler(Mathf.Sin(Time.time) * 3, Mathf.Sin(Time.time * 0.379f) * 2, Mathf.Sin(Time.time * 0.654f));
+        float windStrength = (windMgr != null) ? windMgr.windStrength : 1f; // Default to 1 if windMgr is null
+        if (windStrength == 4)
+        {
+            windStrength = 3f;
+        }
+
+        selfT.localRotation = Quaternion.Euler(
+            Mathf.Sin(Time.time) * 3 * windStrength,
+            Mathf.Sin(Time.time * 0.379f) * 2 * windStrength,
+            Mathf.Sin(Time.time * 0.654f) * windStrength
+        );
     }
 }

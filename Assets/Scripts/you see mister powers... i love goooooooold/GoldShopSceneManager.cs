@@ -8,6 +8,7 @@ public class GoldShopSceneManager : MonoBehaviour
     [Header("UI References")]
     [Tooltip("Text displaying the player's current gold.")]
     public TextMeshProUGUI currentGoldText;
+    public TextMeshProUGUI totalCost;
     
     [Header("Health Upgrade UI")]
     public TextMeshProUGUI healthTierText;
@@ -42,8 +43,10 @@ public class GoldShopSceneManager : MonoBehaviour
     [Header("Extra Cannon Upgrade UI")]
     [Tooltip("Displays extra cannon info (e.g. cost or 'Purchased').")]
     public TextMeshProUGUI extraCannonText;
-    public Button extraCannonButton;
-    
+    public TextMeshProUGUI extraCannonCostText;
+    public Button extraCannonPlusButton;
+    public Button extraCannonMinusButton;
+
     [Header("Purchase & Dev")]
     public Button purchaseButton;
     [Tooltip("Developer button to reset all upgrades to zero.")]
@@ -69,7 +72,8 @@ public class GoldShopSceneManager : MonoBehaviour
     public int maxTurnSpeedTiers = 10;
     public int costPerTurnSpeedTier = 150;
     public float turnSpeedIncreasePerTier = 1f;
-    
+
+    public int maxExtraCannons = 1;
     public int extraCannonCost = 5000;
     
     private int additionalHealthTiers = 0;
@@ -77,14 +81,14 @@ public class GoldShopSceneManager : MonoBehaviour
     private int additionalReloadTiers = 0;
     private int additionalWindTiers = 0;
     private int additionalTurnSpeedTiers = 0;
-    private bool wantsExtraCannon = false; 
+    private int additionalCannon = 0; 
     
     private int currentHealthTiers = 0;
     private int currentSpeedTiers = 0;
     private int currentReloadTiers = 0;
     private int currentWindTiers = 0;
     private int currentTurnSpeedTiers = 0;
-    private bool extraCannonPurchased = false;
+    private int currentExtraCannons = 0;
     
     void Start()
     {
@@ -93,7 +97,7 @@ public class GoldShopSceneManager : MonoBehaviour
         currentReloadTiers = PlayerPrefs.GetInt("ReloadUpgradeTiers", 0);
         currentWindTiers = PlayerPrefs.GetInt("WindUpgradeTiers", 0);
         currentTurnSpeedTiers = PlayerPrefs.GetInt("TurnSpeedUpgradeTiers", 0);
-        extraCannonPurchased = PlayerPrefs.GetInt("ExtraCannonPurchased", 0) == 1;
+        currentExtraCannons = PlayerPrefs.GetInt("ExtraCannonPurchased", 0);
         
         healthPlusButton.onClick.AddListener(() => { if(additionalHealthTiers + currentHealthTiers < maxHealthTiers) { additionalHealthTiers++; UpdateUI(); } });
         healthMinusButton.onClick.AddListener(() => { if(additionalHealthTiers > 0) { additionalHealthTiers--; UpdateUI(); } });
@@ -110,60 +114,66 @@ public class GoldShopSceneManager : MonoBehaviour
         turnSpeedPlusButton.onClick.AddListener(() => { if(additionalTurnSpeedTiers + currentTurnSpeedTiers < maxTurnSpeedTiers) { additionalTurnSpeedTiers++; UpdateUI(); } });
         turnSpeedMinusButton.onClick.AddListener(() => { if(additionalTurnSpeedTiers > 0) { additionalTurnSpeedTiers--; UpdateUI(); } });
         
-        extraCannonButton.onClick.AddListener(() => {
-            if (!extraCannonPurchased)
-            {
-                wantsExtraCannon = !wantsExtraCannon;
-                UpdateUI();
-            }
-        });
-        
+        extraCannonPlusButton.onClick.AddListener(() => { if (additionalCannon + currentExtraCannons < maxExtraCannons) { additionalCannon++; UpdateUI(); } });
+        extraCannonMinusButton.onClick.AddListener(() => { if (additionalCannon > 0) { additionalCannon--; UpdateUI(); } });
+
+
         purchaseButton.onClick.AddListener(OnPurchase);
         resetButton.onClick.AddListener(ResetUpgrades);
         
         UpdateUI();
     }
-    
+
     void UpdateUI()
     {
         int currentGold = GoldManager.Instance != null ? GoldManager.Instance.Gold : 0;
-        currentGoldText.text = "Gold: " + currentGold;
-        
-        healthTierText.text = "Health: " + currentHealthTiers + " + " + additionalHealthTiers;
-        healthCostText.text = "Cost: " + (additionalHealthTiers * costPerHealthTier);
-        
-        speedTierText.text = "Speed: " + currentSpeedTiers + " + " + additionalSpeedTiers;
-        speedCostText.text = "Cost: " + (additionalSpeedTiers * costPerSpeedTier);
-        
-        reloadTierText.text = "Reload: " + currentReloadTiers + " + " + additionalReloadTiers;
-        reloadCostText.text = "Cost: " + (additionalReloadTiers * costPerReloadTier);
-        
-        windTierText.text = "Wind Resist: " + currentWindTiers + " + " + additionalWindTiers;
-        windCostText.text = "Cost: " + (additionalWindTiers * costPerWindTier);
-        
-        turnSpeedTierText.text = "Turn Speed: " + currentTurnSpeedTiers + " + " + additionalTurnSpeedTiers;
-        turnSpeedCostText.text = "Cost: " + (additionalTurnSpeedTiers * costPerTurnSpeedTier);
-        
-        if (extraCannonPurchased)
-        {
-            extraCannonText.text = "Extra Cannon: Purchased";
-            extraCannonButton.interactable = false;
-        }
-        else
-        {
-            extraCannonText.text = "Extra Cannon: " + (wantsExtraCannon ? "Selected (" + extraCannonCost + " gold)" : "Not Selected (" + extraCannonCost + " gold)");
-            extraCannonButton.interactable = true;
-        }
+        currentGoldText.text = currentGold.ToString();
+
+        healthTierText.text = currentHealthTiers + " + " + additionalHealthTiers;
+        if (currentHealthTiers == maxHealthTiers) healthTierText.text = "Max Level";
+        int healthCost = CalculateUpgradeCost(currentHealthTiers, additionalHealthTiers, costPerHealthTier);
+        healthCostText.text = healthCost.ToString();
+
+        speedTierText.text = currentSpeedTiers + " + " + additionalSpeedTiers;
+        if (currentSpeedTiers == maxSpeedTiers) speedTierText.text = "Max Level";
+        int speedCost = CalculateUpgradeCost(currentSpeedTiers, additionalSpeedTiers, costPerSpeedTier);
+        speedCostText.text = speedCost.ToString();
+
+        reloadTierText.text = currentReloadTiers + " + " + additionalReloadTiers;
+        if (currentReloadTiers == maxReloadTiers) reloadTierText.text = "Max Level";
+        int reloadCost = CalculateUpgradeCost(currentReloadTiers, additionalReloadTiers, costPerReloadTier);
+        reloadCostText.text = reloadCost.ToString();
+
+        windTierText.text = currentWindTiers + " + " + additionalWindTiers;
+        if (currentWindTiers == maxWindTiers) windTierText.text = "Max Level";
+        int windCost = CalculateUpgradeCost(currentWindTiers, additionalWindTiers, costPerWindTier);
+        windCostText.text = windCost.ToString();
+
+        turnSpeedTierText.text = currentTurnSpeedTiers + " + " + additionalTurnSpeedTiers;
+        if (currentTurnSpeedTiers == maxTurnSpeedTiers) turnSpeedTierText.text = "Max Level";
+        int turnSpeedCost = CalculateUpgradeCost(currentTurnSpeedTiers, additionalTurnSpeedTiers, costPerTurnSpeedTier);
+        turnSpeedCostText.text = turnSpeedCost.ToString();
+
+        extraCannonText.text = currentExtraCannons + " + " + additionalCannon;
+        if (currentExtraCannons == maxExtraCannons) extraCannonText.text = "Max Level";
+        int extraCannonCostTotal = CalculateUpgradeCost(currentExtraCannons, additionalCannon, extraCannonCost);
+        extraCannonCostText.text = extraCannonCostTotal.ToString();
+
+        int totalAdditionalCost = healthCost + speedCost + reloadCost + windCost + turnSpeedCost + extraCannonCostTotal;
+        totalCost.text = ("Total:" + totalAdditionalCost);
+
+        totalCost.color = totalAdditionalCost > currentGold ? Color.red : Color.white;
     }
-    
+
     void OnPurchase()
     {
         int totalAdditionalCost = (additionalHealthTiers * costPerHealthTier) +
                                   (additionalSpeedTiers * costPerSpeedTier) +
                                   (additionalReloadTiers * costPerReloadTier) +
                                   (additionalWindTiers * costPerWindTier) +
-                                  ( (!extraCannonPurchased && wantsExtraCannon) ? extraCannonCost : 0 );
-        
+                                  (additionalTurnSpeedTiers * costPerTurnSpeedTier) +
+                                  (additionalCannon * extraCannonCost);
+
         if (GoldManager.Instance == null)
         {
             Debug.LogWarning("GoldManager instance not found.");
@@ -188,16 +198,14 @@ public class GoldShopSceneManager : MonoBehaviour
         currentReloadTiers += additionalReloadTiers;
         currentWindTiers += additionalWindTiers;
         currentTurnSpeedTiers += additionalTurnSpeedTiers;
-        
-        if (!extraCannonPurchased && wantsExtraCannon)
-            extraCannonPurchased = true;
+        currentExtraCannons += additionalCannon;
         
         PlayerPrefs.SetInt("HealthUpgradeTiers", currentHealthTiers);
         PlayerPrefs.SetInt("SpeedUpgradeTiers", currentSpeedTiers);
         PlayerPrefs.SetInt("ReloadUpgradeTiers", currentReloadTiers);
         PlayerPrefs.SetInt("WindUpgradeTiers", currentWindTiers);
         PlayerPrefs.SetInt("TurnSpeedUpgradeTiers", currentTurnSpeedTiers);
-        PlayerPrefs.SetInt("ExtraCannonPurchased", extraCannonPurchased ? 1 : 0);
+        PlayerPrefs.SetInt("ExtraCannonPurchased", currentExtraCannons);
         PlayerPrefs.Save();
         
         Debug.Log("Purchased upgrades: Health: " + additionalHealthTiers +
@@ -205,7 +213,7 @@ public class GoldShopSceneManager : MonoBehaviour
                   ", Reload: " + additionalReloadTiers +
                   ", Wind Resist: " + additionalWindTiers +
                   ", Turn Speed: " + additionalTurnSpeedTiers +
-                  (wantsExtraCannon ? ", Extra Cannon purchased" : "") +
+                  ", Extra Cannon: " + additionalCannon +
                   ". Total cost: " + totalAdditionalCost);
         
         additionalHealthTiers = 0;
@@ -213,7 +221,7 @@ public class GoldShopSceneManager : MonoBehaviour
         additionalReloadTiers = 0;
         additionalWindTiers = 0;
         additionalTurnSpeedTiers = 0;
-        wantsExtraCannon = false;
+        additionalCannon = 0;
         UpdateUI();
         
         SceneManager.LoadScene("level_1");
@@ -226,13 +234,13 @@ public class GoldShopSceneManager : MonoBehaviour
         currentReloadTiers = 0;
         currentWindTiers = 0;
         currentTurnSpeedTiers = 0;
+        currentExtraCannons = 0;
         additionalHealthTiers = 0;
         additionalSpeedTiers = 0;
         additionalReloadTiers = 0;
         additionalWindTiers = 0;
         additionalTurnSpeedTiers = 0;
-        extraCannonPurchased = false;
-        wantsExtraCannon = false;
+        additionalCannon = 0;
         
         PlayerPrefs.SetInt("HealthUpgradeTiers", 0);
         PlayerPrefs.SetInt("SpeedUpgradeTiers", 0);
@@ -244,4 +252,15 @@ public class GoldShopSceneManager : MonoBehaviour
         UpdateUI();
         Debug.Log("All upgrades reset to default.");
     }
+
+    int CalculateUpgradeCost(int currentTier, int additionalTiers, int baseCost)
+    {
+        int totalCost = 0;
+        for (int i = 0; i < additionalTiers; i++)
+        {
+            totalCost += baseCost + (currentTier + i) * (int)(0.1f * baseCost);
+        }
+        return totalCost;
+    }
+
 }
