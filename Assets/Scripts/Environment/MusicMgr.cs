@@ -62,10 +62,12 @@ public class MusicMgr : MonoBehaviour
         if (scene.name == "powerup")
         {
             StartCoroutine(FadeAudioPitch(0.5f, 0.5f)); // Lower pitch over 0.5 sec
+            StartCoroutine(FadeAudioVolume(0.5f, 0.5f));
         }
         else if (scene.name == "LevelChange")
         {
             StartCoroutine(FadeAudioPitch(1.0f, 0.5f)); // Restore pitch over 0.5 sec
+            StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
         }
         else
         {
