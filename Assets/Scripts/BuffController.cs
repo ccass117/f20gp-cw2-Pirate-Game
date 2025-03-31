@@ -34,7 +34,7 @@ public class BuffController : MonoBehaviour
             // activate buff straight away, this will be on load
             if (activeBuff[name])
             {
-                activateBuff(name)
+                activateBuff(name);
             }
         }
         else
