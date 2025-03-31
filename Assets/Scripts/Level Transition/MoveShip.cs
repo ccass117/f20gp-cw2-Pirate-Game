@@ -98,10 +98,29 @@ public class MoveShip : MonoBehaviour
 
             Transform nextPoint = mapPoints.GetPoint(lvls + 1);
             Vector3 nextPointPos = nextPoint.position;
+            Vector3 direction = nextPointPos - transform.position;
 
-            transform.DOMove(nextPointPos, 3)
-                .SetEase(Ease.InOutSine)
-                .OnComplete(OnPoint);
+            // maths derived / adapted from: https://www.reddit.com/r/Unity2D/comments/xz5u0m/smoothly_rotating_a_object_towards_a_vector/?rdt=51309
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+            Sequence mapPathMove = DOTween.Sequence();
+            // angle sprite towards next point on map and move it there
+            mapPathMove.Append(transform.DORotate(new Vector3(0, 0, angle), 1.5f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine));
+            mapPathMove.Join(transform.DOMove(nextPointPos, 4f).SetEase(Ease.InOutSine));
+
+            if (direction.x < 0) // backwards
+            {
+                Sequence flipSprite = DOTween.Sequence();
+                flipSprite.Append(sprite.transform.DOScaleY(-10, 0.5f).SetEase(Ease.InOutSine)); // flip on Y to correct sprite
+
+                mapPathMove.Join(transform.DORotate(new Vector3(0, 0, 180), 1.5f).SetEase(Ease.InOutSine).SetDelay(2.5f)); // turn sprite around
+            }
+            else
+            {
+                mapPathMove.Join(transform.DORotate(Vector3.zero, 1.5f).SetEase(Ease.InOutSine).SetDelay(2.5f)); // default rotation
+            }
+            mapPathMove.OnComplete(OnPoint);
         }
     }
 
@@ -114,6 +133,7 @@ public class MoveShip : MonoBehaviour
         StartCoroutine(ShipDelayOut());
         IEnumerator ShipDelayOut()
         {
+
             // short delay before loading because it feels nicer to have it
             yield return new WaitForSeconds(1.5f);
             LoadNext();
@@ -127,7 +147,7 @@ public class MoveShip : MonoBehaviour
         // if lvls = 2 -> "level_" + (2 + 1) = "level_3" etc.
         string next = "level_" + (lvls + 1);
         Debug.Log($"loading: {next}");
-        levelLoader.LoadLevel(next);
+        levelLoader.LoadLevel(next); // change to ("LevelChange") to test map movement
     }
 }
 
