@@ -12,6 +12,7 @@ public class LevelTransitionManager : MonoBehaviour
     public bool levelCompleted = false;
 
     private GameObject levelloader;
+    private string sceneName;
 
     void Start()
     {
@@ -33,6 +34,7 @@ public class LevelTransitionManager : MonoBehaviour
         //only work on level_1 to level_12
         if (Regex.IsMatch(scene.name, @"^level_(1[0-2]|[1-9])$"))
         {
+            sceneName = scene.name;
             levelloader = GameObject.Find("LevelLoader");
             levelCompleted = false;  // Reset level completion when a new scene loads
             StartCoroutine(CheckEnemies());
@@ -62,7 +64,7 @@ public class LevelTransitionManager : MonoBehaviour
                 }
             }
 
-            if (allInactive)
+            if (allInactive || Input.GetKeyDown(KeyCode.Delete))
             {
                 levelCompleted = true;
                 TransitionToPowerUpScene();
@@ -74,6 +76,15 @@ public class LevelTransitionManager : MonoBehaviour
     {
         Debug.Log("All enemies defeated! Transitioning to PowerUpScene for next level");
         LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
-        loaderScript.LoadLevel("powerup");
+
+
+        if (sceneName == "level_12")
+        {
+            loaderScript.LoadLevel("LevelChange");
+        } else
+        {
+            loaderScript.LoadLevel("powerup");
+        }
+        
     }
 }

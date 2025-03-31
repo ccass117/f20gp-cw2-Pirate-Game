@@ -573,15 +573,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2424172798536746553, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.b
-      value: 0.20754719
+      value: 0.49803922
       objectReference: {fileID: 0}
     - target: {fileID: 2424172798536746553, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 0.49803922
       objectReference: {fileID: 0}
     - target: {fileID: 2424172798536746553, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.r
-      value: 0.019135118
+      value: 0.5568628
       objectReference: {fileID: 0}
     - target: {fileID: 2853058218819548271, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_LocalPosition.x
@@ -629,27 +629,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7640030124664402801, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.b
-      value: 0.20754719
+      value: 0.49803922
       objectReference: {fileID: 0}
     - target: {fileID: 7640030124664402801, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 0.49803922
       objectReference: {fileID: 0}
     - target: {fileID: 7640030124664402801, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.r
-      value: 0.019135118
+      value: 0.5568628
       objectReference: {fileID: 0}
     - target: {fileID: 7779654556883578869, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.b
-      value: 0.20754719
+      value: 0.49803922
       objectReference: {fileID: 0}
     - target: {fileID: 7779654556883578869, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 0.49803922
       objectReference: {fileID: 0}
     - target: {fileID: 7779654556883578869, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: m_Color.r
-      value: 0.019135118
+      value: 0.5568628
       objectReference: {fileID: 0}
     - target: {fileID: 7782726795310095263, guid: a7eb9d4b31bcc694b8a6f2e499e58410, type: 3}
       propertyPath: lightningMax
