@@ -43,6 +43,10 @@ public class HydraHeadController : MonoBehaviour
     [Tooltip("Time in seconds used for predicting the player's position.")]
     public float predictionTime = 1f;
 
+    [Header("Tracking Settings")]
+    [Tooltip("Speed (in degrees per second) at which the hydra head rotates to track the player.")]
+    public float trackingSpeed = 90f;
+
     private Animator anim;
     private Transform player;
 
@@ -65,6 +69,17 @@ public class HydraHeadController : MonoBehaviour
         {
             Attack();
             ResetAttackTimer();
+        }
+
+        if (player != null)
+        {
+            Vector3 directionToPlayer = player.position - transform.position;
+            directionToPlayer.y = 0f;
+            if (directionToPlayer != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, trackingSpeed * Time.deltaTime);
+            }
         }
     }
 
@@ -119,11 +134,23 @@ public class HydraHeadController : MonoBehaviour
             {
                 Vector3 predictedPosition = player.position;
                 Rigidbody playerRb = player.GetComponent<Rigidbody>();
+                Vector3 predictedVelocity = Vector3.zero;
                 if (playerRb != null)
-                    predictedPosition += playerRb.linearVelocity * predictionTime;
+                {
+                    predictedVelocity = Vector3.Project(playerRb.linearVelocity, player.forward);
+                }
                 else
-                    predictedPosition += player.forward * (predictionTime * 3f);
-                Quaternion spawnRot = Quaternion.LookRotation(player.forward);
+                {
+                    predictedVelocity = player.forward * 1.5f;
+                }
+                predictedPosition += predictedVelocity * predictionTime;
+
+                Quaternion spawnRot;
+                if (predictedVelocity != Vector3.zero)
+                    spawnRot = Quaternion.LookRotation(predictedVelocity);
+                else
+                    spawnRot = Quaternion.LookRotation(player.forward);
+
                 Instantiate(attack2Prefab, predictedPosition, spawnRot);
                 Debug.Log(gameObject.name + ": Attack 2 triggered. Spawned prefab at predicted position " + predictedPosition);
             }
@@ -150,10 +177,8 @@ public class HydraHeadController : MonoBehaviour
         }
         
         Quaternion baseRot = mouthTransform.rotation;
-        
         Quaternion horizontalOffset = Quaternion.Euler(0, fireDirectionOffset, 0);
         Quaternion verticalOffset = Quaternion.Euler(fireVerticalAngle, 0, 0);
-        
         Quaternion finalRot = verticalOffset * horizontalOffset * baseRot;
         
         GameObject instance = Instantiate(attack1Prefab, mouthTransform.position, finalRot, mouthTransform);
