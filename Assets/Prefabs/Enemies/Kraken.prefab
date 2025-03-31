@@ -69,11 +69,6 @@ MonoBehaviour:
   damageMultiplier: 1
   isProjectile: 0
   damageCooldown: 0.5
+  goldAmount: 200
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
-  headThreshold: 0.7
-  useHeadHitDetection: 0
-  collisionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  isSolidObstacle: 1
