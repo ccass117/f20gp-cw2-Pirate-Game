@@ -4,41 +4,42 @@ public class meteorRock : MonoBehaviour
 {
     bool splashed = false;
     public GameObject splashPrefab;
-    // Update is called once per frame
 
-    private void Start()
-    {
-    }
     private void Update()
     {
         if (transform.position.y <= 0 && !splashed)
         {
             Instantiate(splashPrefab, new Vector3(transform.position.x, 0.5f, transform.position.z), Quaternion.identity);
-            splashed = !splashed;
+            splashed = true;
         }
-        
+
         if (transform.position.y <= -50)
         {
-
             Destroy(transform.parent.gameObject);
         }
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the other object has the "fireball shadow" tag
         if (other.CompareTag("fireball shadow"))
         {
-            // Destroy the object with the "fireball shadow" tag
             Destroy(other.gameObject);
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
-        // Check if the other object is tagged as "player"
         if (collision.gameObject.CompareTag("Player"))
         {
+            // Try to get the Health script on the player
+            Health playerHealth = collision.gameObject.GetComponent<Health>();
 
-            // Example action: Destroy the object
+            if (playerHealth != null)
+            {
+                playerHealth.currentHealth -= 10;
+            }
+
+            // Destroy the meteor
             Destroy(transform.parent.gameObject);
         }
     }

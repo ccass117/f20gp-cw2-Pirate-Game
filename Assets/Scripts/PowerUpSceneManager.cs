@@ -30,8 +30,6 @@ public class PowerUpSceneManager : MonoBehaviour
 
     void Start()
     {
-        RegisterDummyBuffs();
-
         Type buffControllerType = typeof(BuffController);
         FieldInfo buffStoreField = buffControllerType.GetField("buffStore", BindingFlags.NonPublic | BindingFlags.Static);
         if (buffStoreField == null)
@@ -95,30 +93,6 @@ public class PowerUpSceneManager : MonoBehaviour
         {
             Debug.LogWarning("Accept button not assigned.");
         }
-    }
-
-    void RegisterDummyBuffs()
-    {
-        BuffController.registerBuff(
-            "Buff A", 
-            "Increases damage by 20% for 30 seconds.",
-            () => { Debug.Log("Buff A activated."); },
-            () => { Debug.Log("Buff A deactivated."); }
-        );
-
-        BuffController.registerBuff(
-            "Buff B", 
-            "Grants 50 shield points for 30 seconds.",
-            () => { Debug.Log("Buff B activated."); },
-            () => { Debug.Log("Buff B deactivated."); }
-        );
-
-        BuffController.registerBuff(
-            "Buff C", 
-            "Boosts speed by 50% for 15 seconds.",
-            () => { Debug.Log("Buff C activated."); },
-            () => { Debug.Log("Buff C deactivated."); }
-        );
     }
 
     void OnAccept(List<BuffData> selectedBuffs)

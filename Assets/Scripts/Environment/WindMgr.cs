@@ -12,6 +12,7 @@ public class WindMgr : MonoBehaviour
     private float transitionTime;
     private float targetWindDir;
     public float targetWindAngle;
+    private GameObject player;
 
     public Vector3 windDir = Vector3.forward;
     public float windStrength = 1f; //Added wind strength!
@@ -24,7 +25,26 @@ public class WindMgr : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        BuffController.registerBuff("Calm Winds", "Make winds affect the player less", delegate () { windStrength = 0.5f; }, delegate () { windStrength = 1f; });
+        player = GameObject.FindWithTag("Player");
+        ShipController shipController = player.GetComponent<ShipController>();
+        Cannons cannons = player.GetComponent<Cannons>();
+        Health health = player.GetComponent<Health>();
+
+        BuffController.registerBuff("Calm Winds", "Make winds affect the player less", delegate () { shipController.windResistance -= 0.5f; }, delegate () { shipController.windResistance += 0.5f; });
+        BuffController.registerBuff("Rocket Boost", "Allows you to rocket forward every 15 seconds, giving a burst of speed", delegate () { RocketBoost.ActivateRocketBoost(); }, delegate () { RocketBoost.DeactivateRocketBoost(); });
+        BuffController.registerBuff("Gaon Cannon", "Fires a high damage laser from the front of your ship every 20 seconds", delegate { GaonCannon.ActivateLaserBuff(); }, delegate { GaonCannon.DeactivateLaserBuff(); });
+        BuffController.registerBuff("PEDs", "Reduces time taken to raise the anchor", delegate { shipController.anchorRaiseTime -= 0.75f; }, delegate () { shipController.anchorRaiseTime += 0.75f; });
+        BuffController.registerBuff("Suspicious Needle", "Greatly reduces time taken to raise the anchor", delegate { shipController.anchorRaiseTime -= 1.25f; }, delegate () { shipController.anchorRaiseTime += 1.25f; });
+        BuffController.registerBuff("Noise Cancelling Earbuds", "Reduces the effect of Sirens' pull", delegate { shipController.sirenTurnStrength -= 0.4f; }, delegate () { shipController.sirenTurnStrength += 0.4f; });
+        BuffController.registerBuff("Sobered up", "Negate the effect of Sirens' pull", delegate { shipController.sirenTurnStrength = 0; }, delegate () { shipController.sirenTurnStrength += 1.2f; });
+        BuffController.registerBuff("Tube of Superglue", "You can't just glue on another cannon and expect it to work", delegate { cannons.cannonsPerSide += 1; cannons.InitializeCannons(); }, delegate () { cannons.cannonsPerSide -= 1; cannons.InitializeCannons(); });
+        BuffController.registerBuff("TF2 Engineer", "Add an additional cannon", delegate { cannons.cannonsPerSide += 1; cannons.InitializeCannons(); }, delegate () { cannons.cannonsPerSide -= 1; cannons.InitializeCannons(); });
+        BuffController.registerBuff("Reinforced Hull", "Increases maximum HP by 10", delegate { health.maxHealth += 10f; health.currentHealth += 10f; BuffController.deactivateBuff("Reinforced Hull"); }, delegate () {  });
+        BuffController.registerBuff("Quick Repair", "Heal 10HP", delegate { health.currentHealth += 10f; if (health.currentHealth > health.maxHealth) { health.currentHealth = health.maxHealth; } BuffController.deactivateBuff("Quick Repair"); }, delegate () {  });
+        BuffController.registerBuff("Theseus's Prodigy", "Fully repair your ship... is it even the same one anymore?", delegate { health.currentHealth = health.maxHealth; BuffController.deactivateBuff("Theseus's Prodigy"); }, delegate () {  });
+        BuffController.registerBuff("Kilogram of feathers", "Reduces cannon reload speed", delegate { cannons.cooldownTime -= 1f; }, delegate () { cannons.cooldownTime += 1f; });
+
+
 
         //makes sure that there is only gonna be one instance of wind for when we start changing scenes later
         if (Instance == null)
