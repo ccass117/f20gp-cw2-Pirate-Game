@@ -20,18 +20,23 @@ public class Buff
 
 public class BuffController : MonoBehaviour
 {
-
     private static Dictionary<string, Buff> buffStore = new Dictionary<string, Buff>();
     private static Dictionary<string, bool> activeBuff = new Dictionary<string, bool>();
 
+    // Public API to access the currently registered buffs
+    public static Dictionary<string, Buff> AvailableBuffs
+    {
+        get { return buffStore; }
+    }
+
     public static void registerBuff(string name, string description, Action activateCallback, Action deactivateCallback)
     {
-        // update the store with the current handlers
+        // Add the buff to the store
         buffStore.Add(name, new Buff(name, description, activateCallback, deactivateCallback));
 
         if (activeBuff.ContainsKey(name))
         {
-            // activate buff straight away, this will be on load
+            // Activate buff immediately if it was already set active
             if (activeBuff[name])
             {
                 activateBuff(name);
@@ -43,53 +48,64 @@ public class BuffController : MonoBehaviour
         }
     }
 
-    static public void activateBuff(string name)
+    public static void activateBuff(string name)
     {
-        //Debug.Log($"activated, {name}");
-        Buff buff = buffStore[name];
-        buff.activateCallback();
-        activeBuff[name] = true;
+        if (buffStore.ContainsKey(name))
+        {
+            Buff buff = buffStore[name];
+            buff.activateCallback();
+            activeBuff[name] = true;
+        }
+        else
+        {
+            Debug.LogWarning("Buff '" + name + "' not found in buffStore.");
+        }
     }
 
-    static public void deactivateBuff(string name)
+    public static void deactivateBuff(string name)
     {
-        //Debug.Log($"deactivated, {name}");
-        Buff buff = buffStore[name];
-        buff.deactivateCallback();
-        activeBuff[name] = false;
+        if (buffStore.ContainsKey(name))
+        {
+            Buff buff = buffStore[name];
+            buff.deactivateCallback();
+            activeBuff[name] = false;
+        }
+        else
+        {
+            Debug.LogWarning("Buff '" + name + "' not found in buffStore.");
+        }
     }
 
-    static public bool isActive(string name)
+    public static bool isActive(string name)
     {
-        return activeBuff[name];
+        return activeBuff.ContainsKey(name) && activeBuff[name];
     }
 
-    static public List<Buff> getBuffsForShop(int amt)
+    public static List<Buff> getBuffsForShop(int amt)
     {
         List<string> keys = new List<string>(buffStore.Keys);
-        List<string> activeBuffs = new List<string>();
-        for (int i = 0; i > keys.Count; i++)
+        List<string> inactiveBuffs = new List<string>();
+        for (int i = 0; i < keys.Count; i++)
         {
             if (!isActive(keys[i]))
             {
-                activeBuffs.Add(keys[i]);
+                inactiveBuffs.Add(keys[i]);
             }
         }
 
-        if (activeBuffs.Count < amt)
+        if (inactiveBuffs.Count < amt)
         {
-            throw new Exception("not enough buffs");
+            throw new Exception("Not enough buffs available");
         }
 
         List<Buff> chosenBuffs = new List<Buff>();
         HashSet<int> selectedIndices = new HashSet<int>();
-
         while (chosenBuffs.Count < amt)
         {
-            int index = UnityEngine.Random.Range(0, activeBuffs.Count);
+            int index = UnityEngine.Random.Range(0, inactiveBuffs.Count);
             if (selectedIndices.Add(index))
             {
-                chosenBuffs.Add(buffStore[activeBuffs[index]]);
+                chosenBuffs.Add(buffStore[inactiveBuffs[index]]);
             }
         }
         return chosenBuffs;

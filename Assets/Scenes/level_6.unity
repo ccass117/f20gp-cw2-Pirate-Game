@@ -1438,10 +1438,22 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.33333334
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: aca8e8862de64db41b0d25394075077e, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 74bf1bfb62e79234f8a2dd1e6c9fc361, type: 2}
   m_BuildHeightMesh: 0
+--- !u!114 &731418546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731418542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b6e17ab0b8554439239c992c81b09e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &752545912
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3128,7 +3140,7 @@ PrefabInstance:
     - target: {fileID: 2276141517750743387, guid: 26a8116f55f6658479c0bac2edcfccde, type: 3}
       propertyPath: m_NavMeshData
       value: 
-      objectReference: {fileID: 23800000, guid: 1d439831ac5a3d546a5801e41837a6ab, type: 2}
+      objectReference: {fileID: 23800000, guid: 9a8b08b1325da274aa42d9a634e1013b, type: 2}
     - target: {fileID: 5771023853547093089, guid: 26a8116f55f6658479c0bac2edcfccde, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3776,6 +3788,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3512576589181445363, guid: 26a8116f55f6658479c0bac2edcfccde, type: 3}
       insertIndex: -1
       addedObject: {fileID: 731418545}
+    - targetCorrespondingSourceObject: {fileID: 3512576589181445363, guid: 26a8116f55f6658479c0bac2edcfccde, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 731418546}
   m_SourcePrefab: {fileID: 100100000, guid: 26a8116f55f6658479c0bac2edcfccde, type: 3}
 --- !u!1001 &1625528575
 PrefabInstance:
