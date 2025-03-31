@@ -123,13 +123,16 @@ public class WindMgr : MonoBehaviour
     {
         //default strenght levels
         HashSet<string> windLevel1 = new() { "level_1", "level_2", "level_3", "level_4", "level_9", "level_10", "level_11", "level_12" };
-        //first 2 stormy levels and boss
-        HashSet<string> windLevel2 = new() { "level_5", "level_6", "level_8" };
+        //first 2 stormy levels
+        HashSet<string> windLevel2 = new() { "level_5", "level_6", };
         //level 7 (fnuuy strong wind go brrrrrrrrrrrrrr)
         HashSet<string> windLevel3 = new() { "level_7" };
+        //level 8 boss
+        HashSet<string> windLevel4 = new() { "level_8" };
 
         if (windLevel1.Contains(scene.name)) { windStrength = 1f; }        
         else if (windLevel2.Contains(scene.name)) { windStrength = 2f; }
         else if (windLevel3.Contains(scene.name)) { windStrength = 2.75f; }
+        else if (windLevel4.Contains(scene.name)) { windStrength = 4f; }
     }
 }
