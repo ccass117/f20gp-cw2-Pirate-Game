@@ -56,4 +56,16 @@ public class GoldManager : MonoBehaviour
         Gold = PlayerPrefs.GetInt(GoldKey, 0);
         Debug.Log("Gold loaded: " + Gold);
     }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Equals))
+        {
+            AddGold(100);
+        }
+        if (Input.GetKeyDown(KeyCode.Minus))
+        {
+            AddGold(-Gold);
+        }
+    }
 }

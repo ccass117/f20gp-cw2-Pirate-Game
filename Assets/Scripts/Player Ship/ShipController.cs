@@ -15,14 +15,14 @@ public class ShipController : MonoBehaviour
     public float turnDamping = 0.9f;
     public float anchorRaiseTime = 3f;
     public float maxTurnBoost = 2f;
-    public float sirenTurnStrength = 0.75f;
+    public float sirenTurnStrength = 1.2f;
 
     [Header("Read Only")]
     [SerializeField] public float targetRudderAngle;
     [SerializeField] public float currentRiggingSpeed;
     [SerializeField] private float currentRudderAngle = 0f;
-    [SerializeField] private bool anchored = false;
-    [SerializeField] private bool isRaisingAnchor = false;
+    public bool anchored = false;
+    public bool isRaisingAnchor = false;
     [SerializeField] private Vector3 wind = Vector3.zero;
     [SerializeField] private float anchorTurnMomentum = 0f;
 

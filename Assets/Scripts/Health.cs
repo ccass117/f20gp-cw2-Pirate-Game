@@ -7,7 +7,7 @@ public class Health : MonoBehaviour
     public float maxHealth = 20f;
     
     [SerializeField, Tooltip("Current health of the object")]
-    private float currentHealth;
+    public float currentHealth;
 
     [Header("Damage Multipliers")]
     [Tooltip("Damage resistance multiplier e.g. 1 = full damage taken, 0.5 = 50%, 0 = doesn't take damage")]
