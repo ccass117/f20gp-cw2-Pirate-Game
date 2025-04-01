@@ -1295,6 +1295,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: innerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: outerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'innerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5457a337992dd40cbab4cf1fcd48b70a, type: 2}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'outerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 46cbe64244343453b821bd6038d5d247, type: 2}
     - target: {fileID: 3634181591688249460, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
       propertyPath: m_Name
       value: islandInstantiator (2)
@@ -1454,6 +1470,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: innerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: outerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'innerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5457a337992dd40cbab4cf1fcd48b70a, type: 2}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'outerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 46cbe64244343453b821bd6038d5d247, type: 2}
     - target: {fileID: 3634181591688249460, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
       propertyPath: m_Name
       value: islandInstantiator (3)
@@ -1511,6 +1543,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: innerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: outerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'innerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5457a337992dd40cbab4cf1fcd48b70a, type: 2}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'outerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 46cbe64244343453b821bd6038d5d247, type: 2}
     - target: {fileID: 3634181591688249460, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
       propertyPath: m_Name
       value: islandInstantiator (1)
@@ -2267,6 +2315,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: innerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: outerMat.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'innerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5457a337992dd40cbab4cf1fcd48b70a, type: 2}
+    - target: {fileID: 1663668291154702281, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
+      propertyPath: 'outerMat.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 46cbe64244343453b821bd6038d5d247, type: 2}
     - target: {fileID: 3634181591688249460, guid: 438f65632af7949dfbf6379d81598b8e, type: 3}
       propertyPath: m_Name
       value: islandInstantiator
