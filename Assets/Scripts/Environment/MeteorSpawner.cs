@@ -14,6 +14,14 @@ public class MeteorSpawner : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player");
 
+        BuffController.registerBuff(
+            "Big Umbrella",
+            "Lower the chance for a meteor to spawn",
+            delegate () { minSpawnDelay = 4f; },
+            delegate () { maxSpawnDelay = 10f; }
+        );
+
+
         if (player == null)
         {
             Debug.LogError("Player not found! Make sure the player object has the 'Player' tag.");
