@@ -5,7 +5,7 @@ public class Health : MonoBehaviour
     [Header("Health Settings")]
     [Tooltip("Maximum health of the object")]
     public float maxHealth = 20f;
-    
+
     [SerializeField, Tooltip("Current health of the object")]
     public float currentHealth;
 
@@ -13,7 +13,7 @@ public class Health : MonoBehaviour
     [Tooltip("Damage resistance multiplier e.g. 1 = full damage taken, 0.5 = 50%, 0 = doesn't take damage")]
     [Range(0f, 1f)]
     public float damageResistance = 1f;
-    
+
     [Tooltip("Generic multiplier applied to damage when colliding with anything. Usage is to make an object do more damage, increase this value")]
     public float damageMultiplier = 1f;
 
@@ -50,13 +50,17 @@ public class Health : MonoBehaviour
                 currentHealth = maxHealth;
                 PlayerData.currentHealth = maxHealth;
             }
+
+            if (BuffController.registerBuff("Strong Hull", "Increase the resistance to damage")) { damageResistance = 0.5f; }
+
+            if (BuffController.registerBuff("Cast Iron Figurehead", "Increase ramming dammage")) { damageMultiplier = 2f; }
         }
         else
         {
             currentHealth = maxHealth;
         }
     }
-    
+
     public void TakeDamage(float amount, GameObject damageSource = null)
     {
         if (damageCooldown > 0 && Time.time < lastDamageTime + damageCooldown)
@@ -67,13 +71,13 @@ public class Health : MonoBehaviour
         float finalDamage = amount * damageResistance;
         currentHealth -= finalDamage;
         lastDamageTime = Time.time;
-        
+
         // If this is the player, update PlayerData.
         if (gameObject.CompareTag("Player"))
         {
             PlayerData.currentHealth = currentHealth;
         }
-        
+
         if (currentHealth <= 0)
         {
             Die();
@@ -83,7 +87,7 @@ public class Health : MonoBehaviour
     public void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        
+
         // If this is the player, update PlayerData.
         if (gameObject.CompareTag("Player"))
         {
@@ -118,7 +122,7 @@ public class Health : MonoBehaviour
 
         bool attackerValid = mySpeed >= attackerSpeedThreshold;
         bool defenderValid = otherSpeed >= defenderSpeedThreshold;
-        
+
         if (!attackerValid && !defenderValid) return;
 
         if (isProjectile || (otherHealth != null && otherHealth.isProjectile))
@@ -162,7 +166,7 @@ public class Health : MonoBehaviour
 
         bool attackerValid = mySpeed >= attackerSpeedThreshold;
         bool defenderValid = otherSpeed >= defenderSpeedThreshold;
-        
+
         if (!attackerValid && !defenderValid) return;
 
         if (isProjectile || (otherHealth != null && otherHealth.isProjectile))

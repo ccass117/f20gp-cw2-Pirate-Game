@@ -6,15 +6,11 @@ public class Buff
 {
     public string name;
     public string description;
-    public Action activateCallback;
-    public Action deactivateCallback;
 
-    public Buff(string name, string description, Action activateCallback, Action deactivateCallback)
+    public Buff(string name, string description)
     {
         this.name = name;
         this.description = description;
-        this.activateCallback = activateCallback;
-        this.deactivateCallback = deactivateCallback;
     }
 }
 
@@ -29,31 +25,42 @@ public class BuffController : MonoBehaviour
         get { return buffStore; }
     }
 
-    public static void registerBuff(string name, string description, Action activateCallback, Action deactivateCallback)
+    public static List<(Buff, bool)> getBuffs()
+    {
+        List<(Buff, bool)> ret = new List<(Buff, bool)>();
+
+        var keys = new List<string>(buffStore.Keys);
+        for (int i = 0; i < keys.Count; i++)
+        {
+            string cur = keys[i];
+            bool active = isActive(cur);
+            ret.Add((buffStore[cur], active));
+        }
+
+        return ret;
+    }
+
+    public static bool registerBuff(string name, string description)
     {
         // Add the buff to the store
-        buffStore.Add(name, new Buff(name, description, activateCallback, deactivateCallback));
 
-        if (activeBuff.ContainsKey(name))
+        if (buffStore.ContainsKey(name))
         {
             // Activate buff immediately if it was already set active
-            if (activeBuff[name])
-            {
-                activateBuff(name);
-            }
+            return activeBuff[name];
         }
         else
         {
+            buffStore.Add(name, new Buff(name, description));
             activeBuff.Add(name, false);
+            return false;
         }
     }
 
-    public static void activateBuff(string name)
+    public static void setActive(string name)
     {
         if (buffStore.ContainsKey(name))
         {
-            Buff buff = buffStore[name];
-            buff.activateCallback();
             activeBuff[name] = true;
         }
         else
@@ -62,12 +69,10 @@ public class BuffController : MonoBehaviour
         }
     }
 
-    public static void deactivateBuff(string name)
+    public static void setInactive(string name)
     {
         if (buffStore.ContainsKey(name))
         {
-            Buff buff = buffStore[name];
-            buff.deactivateCallback();
             activeBuff[name] = false;
         }
         else
@@ -80,7 +85,7 @@ public class BuffController : MonoBehaviour
     {
         return activeBuff.ContainsKey(name) && activeBuff[name];
     }
-    
+
     public static IEnumerable<string> GetActiveBuffNames()
     {
         foreach (var kvp in activeBuff)

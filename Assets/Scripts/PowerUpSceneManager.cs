@@ -95,7 +95,7 @@ public class PowerUpSceneManager : MonoBehaviour
             {
                 string buffName = selectedBuffs[index].name;
                 Debug.Log("PowerUpSceneManager: Selected Buff - " + buffName);
-                BuffController.activateBuff(buffName);
+                BuffController.setActive(buffName);
                 loaderScript.LoadLevel("LevelChange");
             }
             else
