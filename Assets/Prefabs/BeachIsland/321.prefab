@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6391762264700618901}
   - component: {fileID: 7321794240744860818}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: 321
-  m_TagString: Untagged
+  m_TagString: Island
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 3844062797564849556}
   - component: {fileID: 226862992751253357}
   - component: {fileID: 7809359417281032726}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PolyShape
   m_TagString: outerMat
   m_Icon: {fileID: 0}

@@ -101,7 +101,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 9021748170562436102}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 5
+  m_Radius: 12
   m_Speed: 6
   m_Acceleration: 8
   avoidancePriority: 75
@@ -130,35 +130,56 @@ MonoBehaviour:
   targetDistance: 5
   avoidanceRadius: 5
   positionTolerance: 1
-  updateTimer: 1
+  updateTimer: 5
   useNavMesh: 1
   speed: 2
   maxSpeed: 6
   riggingSpeed: 5
-  maxTurnRate: 30
-  maxRudderAngle: 90
-  rudderSpeed: 20
+  maxTurnRate: 60
+  maxRudderAngle: 110
+  rudderSpeed: 100
   maxTurnBoost: 30
-  aggroRange: 40
+  farSpeedMultiplier: 0.1
+  farDistanceThreshold: 20
+  aggroRange: 30
   lineOfSightMask:
     serializedVersion: 2
     m_Bits: 64
   patrolRadius: 10
   idleAngularSpeed: 3
+  minObstacleDistance: 15
+  patrolPointVariance: 25
   holdCourseThreshold: 1
   isRammingShip: 0
-  obstacleDetectionDistance: 10
-  obstacleAvoidanceRadius: 5
-  obstacleAvoidanceStrength: 5
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 2112
   targetRudderAngle: 0
   currentRiggingSpeed: 0
   currentRudderAngle: 0
   anchored: 0
   wind: {x: 0, y: 0, z: 0}
-  isAggroed: 0
+  avoidanceForce: 20
+  lookAheadDistance: 50
+  sideCastAngle: 60
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  emergencyBrakeDistance: 40
+  emergencySpeedMultiplier: 0.2
+  directionalAvoidWeight: 7
+  islandAvoidanceRadius: 50
+  pursuitAggression: 0.7
+  minPathUpdateDistance: 15
+  smoothedTargetPosition: {x: 0, y: 0, z: 0}
+  emergencyTurnBoost: 2.5
+  recoveryPathRadius: 40
+  obstacleRecheckInterval: 0.5
+  recoveryAggression: 2.2
+  recoverySpeedMultiplier: 0.6
+  derailmentThreshold: 10
+  lastValidPosition: {x: 0, y: 0, z: 0}
+  derailmentTimer: 0
+  stuckCheckInterval: 1
+  stuckThreshold: 0.5
+  escapeForceMultiplier: 5
 --- !u!114 &5072822801750741256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,7 +245,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9021748170562436102}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 75
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
