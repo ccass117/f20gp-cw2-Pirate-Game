@@ -127,8 +127,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83e3e7123689f6a4cb06baa8aa3fe839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  needle: {fileID: 0}
-  idleSpinSpeed: 30
+  spinSpeed: -60
+  flutterSpeed: 2
+  flutterAmplitude: 5
+  rotationDuration: 3
 --- !u!1 &2913513829543919304
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,7 +687,7 @@ GameObject:
   - component: {fileID: 2325452513564686458}
   - component: {fileID: 6649796455776326249}
   m_Layer: 5
-  m_Name: Compasss
+  m_Name: Compass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
