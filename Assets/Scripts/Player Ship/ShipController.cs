@@ -35,7 +35,9 @@ public class ShipController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 currentVelocity;
     private Cannons cannons;
-    
+
+    private Health health;
+
     [Header("Wind Resistance")]
     public float windResistance = 1f;
 
@@ -45,6 +47,212 @@ public class ShipController : MonoBehaviour
         cannons = GetComponent<Cannons>();
         currentRiggingSpeed = speed;
         currentVelocity = Vector3.zero;
+        health = GetComponent<Health>();
+
+        // ################################################################################
+        // #                                                                              #
+        // #                                     Buffs                                    #
+        // #                                                                              #
+        // ################################################################################
+
+        // #########################################
+        // #            HP Related Buffs           #
+        // #########################################
+
+        BuffController.registerBuff(
+            "Reinforced Hull",
+            "Increases maximum HP by 10",
+            delegate ()
+            {
+                health.maxHealth += 10f;
+                health.currentHealth += 10f;
+                BuffController.deactivateBuff("Reinforced Hull");
+            },
+            delegate () { }
+        );
+
+        BuffController.registerBuff(
+            "Quick Repair",
+            "Heal 10HP",
+            delegate ()
+            {
+                health.currentHealth += 10f;
+                if (health.currentHealth > health.maxHealth)
+                {
+                    health.currentHealth = health.maxHealth;
+                }
+                Debug.Log("Quick Repair activated: currentHealth now " + health.currentHealth);
+                BuffController.deactivateBuff("Quick Repair");
+            },
+            delegate () { }
+        );
+
+        BuffController.registerBuff(
+            "Theseus's Prodigy",
+            "Fully repair your ship... is it even the same one anymore?",
+            delegate ()
+            {
+                health.currentHealth = health.maxHealth;
+                Debug.Log("Theseus's Prodigy activated: currentHealth set to maxHealth " + health.maxHealth);
+                BuffController.deactivateBuff("Theseus's Prodigy");
+            },
+            delegate () { }
+        );
+
+        // #########################################
+        // #                Movement               #
+        // #########################################
+
+        BuffController.registerBuff(
+            "Calm Winds",
+            "Make winds affect the player less",
+            delegate () { windResistance -= 0.5f; },
+            delegate () { windResistance += 0.5f; }
+        );
+
+
+        BuffController.registerBuff(
+            "Sobered up",
+            "Negate the effect of Sirens' pull",
+            delegate () { sirenTurnStrength = 0; },
+            delegate () { sirenTurnStrength += 1.2f; }
+        );
+
+        BuffController.registerBuff(
+            "Noise Cancelling Earbuds",
+            "Reduces the effect of Sirens' pull",
+            delegate () { sirenTurnStrength -= 0.4f; },
+            delegate () { sirenTurnStrength += 0.4f; }
+        );
+
+        BuffController.registerBuff(
+            "Rocket Boost",
+            "Allows you to rocket forward every 15 seconds, giving a burst of speed",
+            delegate ()
+            {
+                RocketBoost.ActivateRocketBoost();
+                Debug.Log("Rocket Boost activated");
+            },
+            delegate ()
+            {
+                RocketBoost.DeactivateRocketBoost();
+                Debug.Log("Rocket Boost deactivated");
+            }
+        );
+
+        BuffController.registerBuff(
+            "Suspicious Needle",
+            "Greatly reduces time taken to raise the anchor",
+            delegate () { anchorRaiseTime -= 1.25f; },
+            delegate () { anchorRaiseTime += 1.25f; }
+        );
+
+        BuffController.registerBuff(
+            "PEDs",
+            "Reduces time taken to raise the anchor",
+            delegate () { anchorRaiseTime -= 0.75f; },
+            delegate () { anchorRaiseTime += 0.75f; }
+        );
+
+        // #########################################
+        // #               Offensive               #
+        // #########################################
+
+        BuffController.registerBuff(
+            "Gaon Cannon",
+            "Fires a high damage laser from the front of your ship every 20 seconds",
+            delegate ()
+            {
+                GaonCannon.ActivateLaserBuff();
+                Debug.Log("Gaon Cannon activated");
+            },
+            delegate ()
+            {
+                GaonCannon.DeactivateLaserBuff();
+                Debug.Log("Gaon Cannon deactivated");
+            }
+        );
+
+        BuffController.registerBuff(
+            "Tube of Superglue",
+            "You can't just glue on another cannon and expect it to work",
+            delegate ()
+            {
+                cannons.cannonsPerSide += 1;
+                cannons.InitializeCannons();
+            },
+            delegate ()
+            {
+                cannons.cannonsPerSide -= 1;
+                cannons.InitializeCannons();
+            }
+        );
+
+        BuffController.registerBuff(
+            "TF2 Engineer",
+            "Add an additional cannon",
+            delegate ()
+            {
+                cannons.cannonsPerSide += 1;
+                cannons.InitializeCannons();
+            },
+            delegate ()
+            {
+                cannons.cannonsPerSide -= 1;
+                cannons.InitializeCannons();
+            }
+        );
+
+        BuffController.registerBuff(
+            "Double Decker Cannons",
+            "Double the amount of cannons",
+            delegate ()
+            {
+                cannons.cannonsPerSide *= 2;
+                cannons.InitializeCannons();
+            },
+            delegate ()
+            {
+                cannons.cannonsPerSide /= 2;
+                cannons.InitializeCannons();
+            }
+        );
+
+        BuffController.registerBuff(
+            "Black Powder",
+            "Increase the power of the cannons",
+            delegate ()
+            {
+                cannons.shotSpeed = 20f;
+                cannons.InitializeCannons();
+            },
+            delegate ()
+            {
+                cannons.shotSpeed = 10f;
+                cannons.InitializeCannons();
+            }
+        );
+
+        BuffController.registerBuff(
+            "Kilogram of feathers",
+            "Reduces cannon reload speed",
+            delegate () { cannons.cooldownTime -= 1f; },
+            delegate () { cannons.cooldownTime += 1f; }
+        );
+
+        BuffController.registerBuff(
+            "Exponential Stupidity",
+            "Locks your max hp at 1, Gain 1.5x more cannons per area",
+            delegate ()
+            {
+                health.currentHealth = 1;
+                health.maxHealth = 1;
+                cannons.cannonsPerSide = Mathf.CeilToInt(cannons.cannonsPerSide * 1.5f); //TODO fix
+                cannons.InitializeCannons();
+            },
+            delegate () { }
+        );
+
     }
 
     void Update()

@@ -29,12 +29,26 @@ public class BuffController : MonoBehaviour
         get { return buffStore; }
     }
 
+    public static List<(Buff, bool)> getBuffs()
+    {
+        List<(Buff, bool)> ret = new List<(Buff, bool)>();
+
+        var keys = new List<string>(buffStore.Keys);
+        for (int i = 0; i < keys.Count; i++)
+        {
+            string cur = keys[i];
+            bool active = isActive(cur);
+            ret.Add((buffStore[cur], active));
+        }
+
+        return ret;
+    }
+
     public static void registerBuff(string name, string description, Action activateCallback, Action deactivateCallback)
     {
         // Add the buff to the store
-        buffStore.Add(name, new Buff(name, description, activateCallback, deactivateCallback));
 
-        if (activeBuff.ContainsKey(name))
+        if (buffStore.ContainsKey(name))
         {
             // Activate buff immediately if it was already set active
             if (activeBuff[name])
@@ -44,6 +58,7 @@ public class BuffController : MonoBehaviour
         }
         else
         {
+            buffStore.Add(name, new Buff(name, description, activateCallback, deactivateCallback));
             activeBuff.Add(name, false);
         }
     }
@@ -54,6 +69,18 @@ public class BuffController : MonoBehaviour
         {
             Buff buff = buffStore[name];
             buff.activateCallback();
+            activeBuff[name] = true;
+        }
+        else
+        {
+            Debug.LogWarning("Buff '" + name + "' not found in buffStore.");
+        }
+    }
+
+    public static void setActive(string name)
+    {
+        if (buffStore.ContainsKey(name))
+        {
             activeBuff[name] = true;
         }
         else
@@ -80,7 +107,7 @@ public class BuffController : MonoBehaviour
     {
         return activeBuff.ContainsKey(name) && activeBuff[name];
     }
-    
+
     public static IEnumerable<string> GetActiveBuffNames()
     {
         foreach (var kvp in activeBuff)
