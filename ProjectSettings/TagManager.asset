@@ -11,6 +11,8 @@ TagManager:
   - fireball shadow
   - innerMat
   - outerMat
+  - Island
+  - Anchor Flail
   layers:
   - Default
   - TransparentFX
@@ -23,9 +25,9 @@ TagManager:
   - MegalodonHead
   - MegalodonBody
   - Meteor
-  - 
-  - 
-  - 
+  - Island
+  - Anchor Flail
+  - Cannonball
   - 
   - 
   - 

@@ -1769,7 +1769,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5804434220599336474, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: damageResistance
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6252308522572844391, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: m_Mesh
@@ -2809,6 +2809,14 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 764873480}
+    - target: {fileID: 5609522442095031526, guid: b8b13151492034109b4fa344d7797368, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5609522442095031526, guid: b8b13151492034109b4fa344d7797368, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5609522442095031526, guid: b8b13151492034109b4fa344d7797368, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

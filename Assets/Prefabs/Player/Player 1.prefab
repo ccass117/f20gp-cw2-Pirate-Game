@@ -591,6 +591,7 @@ MonoBehaviour:
   anchorTurnMomentum: 0
   anchorRaiseSFX: {fileID: 4402156337256153514}
   anchorDropSFX: {fileID: 2924119063556261526}
+  anchorFlail: {fileID: 3044397488763925703, guid: 870d747e8136c614bbcc34307465ebb6, type: 3}
   sirenInfluenceActive: 0
   sirenTarget: {fileID: 0}
   windResistance: 1
