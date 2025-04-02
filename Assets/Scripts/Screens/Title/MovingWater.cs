@@ -12,14 +12,17 @@ public class ScreenWaterMovement : MonoBehaviour
 
     private void Start()
     {
+        // right > left
         screenWater0.transform.DOMoveX(screenWater0.transform.position.x + moveDistance, moveTime)
             .SetEase(Ease.InOutSine)
             .SetLoops(-1, LoopType.Yoyo);
 
+        // left > right
         screenWater1.transform.DOMoveX(screenWater1.transform.position.x - moveDistance, moveTime)
             .SetEase(Ease.InOutSine)
             .SetLoops(-1, LoopType.Yoyo);
 
+        // right > left
         screenWater2.transform.DOMoveX(screenWater2.transform.position.x + moveDistance, moveTime)
             .SetEase(Ease.InOutSine)
             .SetLoops(-1, LoopType.Yoyo);

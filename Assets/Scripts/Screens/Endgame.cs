@@ -23,6 +23,11 @@ public class EndScreen : MonoBehaviour
 
     void AnimUIIn()
     {
-        UIAnimator.AnimateUI(titleText, new RectTransform[] { quitBtn }, canvasWidth);
+        UIAnimator.AnimateUIIn(titleText, new RectTransform[] { quitBtn }, canvasWidth);
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
     }
 }

@@ -330,7 +330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7722856902940333016, guid: 43ad9f5c8c2c65445883db96c2e94cef, type: 3}
       propertyPath: m_Name
-      value: Enemy
+      value: enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -557,7 +557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3624288323041115553, guid: 7c619a3358c621d4a8e9c9b64c417ace, type: 3}
       propertyPath: m_Name
-      value: Ship
+      value: ship
       objectReference: {fileID: 0}
     - target: {fileID: 6486110104499899188, guid: 7c619a3358c621d4a8e9c9b64c417ace, type: 3}
       propertyPath: m_Pivot.x
@@ -865,8 +865,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+      - m_Target: {fileID: 899667693}
+        m_TargetAssemblyTypeName: EndScreen, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
@@ -1248,7 +1248,7 @@ GameObject:
   - component: {fileID: 1102971078}
   - component: {fileID: 1102971079}
   m_Layer: 0
-  m_Name: Sky
+  m_Name: sky
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,11 +1,12 @@
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using UnityEditorInternal;
 
 public class UIAnimator : MonoBehaviour
 {
     // brings UI elements into view
-    public static void AnimateUI(RectTransform titleText, RectTransform[] buttons, float width)
+    public static void AnimateUIIn(RectTransform titleText, RectTransform[] buttons, float width)
     {
         titleText.anchoredPosition = new Vector2(-width, titleText.anchoredPosition.y);
         titleText.DOAnchorPosX(0, 2.2f)
@@ -19,6 +20,7 @@ public class UIAnimator : MonoBehaviour
                 .SetEase(Ease.OutBack)
                 .OnComplete(() =>
                 {
+                    // type RectTransform can't be used with '.interactable'
                     Button btn = button.GetComponent<Button>();
                     btn.interactable = true;
                 });

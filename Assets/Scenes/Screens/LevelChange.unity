@@ -3347,7 +3347,7 @@ PrefabInstance:
       objectReference: {fileID: 1853688960}
     - target: {fileID: 5146297667273020622, guid: 55fbb35929eeebb4bb21b815ca6b6978, type: 3}
       propertyPath: m_Name
-      value: Ship
+      value: ship
       objectReference: {fileID: 0}
     - target: {fileID: 6081603699979700339, guid: 55fbb35929eeebb4bb21b815ca6b6978, type: 3}
       propertyPath: m_LocalScale.y
