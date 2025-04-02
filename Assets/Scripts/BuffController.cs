@@ -6,15 +6,11 @@ public class Buff
 {
     public string name;
     public string description;
-    public Action activateCallback;
-    public Action deactivateCallback;
 
-    public Buff(string name, string description, Action activateCallback, Action deactivateCallback)
+    public Buff(string name, string description)
     {
         this.name = name;
         this.description = description;
-        this.activateCallback = activateCallback;
-        this.deactivateCallback = deactivateCallback;
     }
 }
 
@@ -44,36 +40,20 @@ public class BuffController : MonoBehaviour
         return ret;
     }
 
-    public static void registerBuff(string name, string description, Action activateCallback, Action deactivateCallback)
+    public static bool registerBuff(string name, string description)
     {
         // Add the buff to the store
 
         if (buffStore.ContainsKey(name))
         {
             // Activate buff immediately if it was already set active
-            if (activeBuff[name])
-            {
-                activateBuff(name);
-            }
+            return activeBuff[name];
         }
         else
         {
-            buffStore.Add(name, new Buff(name, description, activateCallback, deactivateCallback));
+            buffStore.Add(name, new Buff(name, description));
             activeBuff.Add(name, false);
-        }
-    }
-
-    public static void activateBuff(string name)
-    {
-        if (buffStore.ContainsKey(name))
-        {
-            Buff buff = buffStore[name];
-            buff.activateCallback();
-            activeBuff[name] = true;
-        }
-        else
-        {
-            Debug.LogWarning("Buff '" + name + "' not found in buffStore.");
+            return false;
         }
     }
 
@@ -89,12 +69,10 @@ public class BuffController : MonoBehaviour
         }
     }
 
-    public static void deactivateBuff(string name)
+    public static void setInactive(string name)
     {
         if (buffStore.ContainsKey(name))
         {
-            Buff buff = buffStore[name];
-            buff.deactivateCallback();
             activeBuff[name] = false;
         }
         else

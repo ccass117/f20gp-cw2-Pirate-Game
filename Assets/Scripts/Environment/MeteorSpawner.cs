@@ -14,13 +14,7 @@ public class MeteorSpawner : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player");
 
-        BuffController.registerBuff(
-            "Big Umbrella",
-            "Lower the chance for a meteor to spawn",
-            delegate () { minSpawnDelay = 4f; },
-            delegate () { maxSpawnDelay = 10f; }
-        );
-
+        if (BuffController.registerBuff("Big Umbrella", "Lower the chance for a meteor to spawn")) { minSpawnDelay = 4f; }
 
         if (player == null)
         {
