@@ -24,7 +24,7 @@ public class GaonCannon : MonoBehaviour
     IEnumerator ShootLaser()
     {
         canShoot = false;
-        
+
         if (laserPrefab != null)
         {
             GameObject laserInstance = Instantiate(laserPrefab, transform);
@@ -36,7 +36,7 @@ public class GaonCannon : MonoBehaviour
         {
             Debug.LogWarning("GaonCannon: No laserPrefab assigned.");
         }
-        
+
         yield return new WaitForSeconds(cooldown);
         canShoot = true;
     }
@@ -92,7 +92,6 @@ public class GaonCannon : MonoBehaviour
             gc = player.AddComponent<GaonCannon>();
             gc.Initialize();
         }
-        DontDestroyOnLoad(player);
         Debug.Log("Laser Buff activated on " + player.name);
     }
 }

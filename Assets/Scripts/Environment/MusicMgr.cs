@@ -36,6 +36,7 @@ public class MusicMgr : MonoBehaviour
 
         sceneMusicMap["MainMenu"] = menuMusic;
         sceneMusicMap["GoldShop"] = menuMusic;
+        sceneMusicMap["Win"] = world_2_boss;
         sceneMusicMap["level_1"] = world_1_theme;
         sceneMusicMap["level_2"] = world_1_theme;
         sceneMusicMap["level_3"] = world_1_theme;
@@ -67,15 +68,24 @@ public class MusicMgr : MonoBehaviour
         else if (scene.name == "LevelChange")
         {
             StartCoroutine(FadeAudioPitch(1.0f, 0.5f)); // Restore pitch over 0.5 sec
-            StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
+
+            // Check if MoveShip.lvls is 1,2,5,6,9, or 10
+            if (MoveShip.lvls == 0 || MoveShip.lvls == 1 || MoveShip.lvls == 4 ||
+                MoveShip.lvls == 5 || MoveShip.lvls == 8 || MoveShip.lvls == 9)
+            {
+                StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
+            } else if (MoveShip.lvls ==-1)
+            {
+                StartCoroutine(FadeAudioVolume(0.0f, 3.0f));
+            } else {
+                StartCoroutine(FadeAudioVolume(0.0f, 7.5f));
+            }
         }
         else
         {
             ChangeMusic(scene.name);
             FindPlayer();
         }
-
-        
     }
 
     private void ChangeMusic(string sceneName)

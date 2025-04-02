@@ -11,6 +11,7 @@ TagManager:
   - fireball shadow
   - innerMat
   - outerMat
+  - Island
   layers:
   - Default
   - TransparentFX
@@ -23,7 +24,7 @@ TagManager:
   - MegalodonHead
   - MegalodonBody
   - Meteor
-  - 
+  - Island
   - 
   - 
   - 
