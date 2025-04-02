@@ -219,14 +219,14 @@ MonoBehaviour:
   yOffset: 0.5
   xOffset: 0.5
   zOffset: 0
-  cannonScale: 1
+  cannonScale: 2.25
   cannonsPerSide: 1
   cooldownTime: 3
   timeBetweenShots: 0.1
-  shotSpeed: 10
-  shotGravityMult: 0.2
-  shotSizeMult: 1
-  maxAngleDifference: 45
+  shotSpeed: 15
+  shotGravityMult: 0.05
+  shotSizeMult: 2.25
+  maxAngleDifference: 10
   ballsFiredPerCannon: 1
   autoAimFOV: 0
   autoAimRange: 5

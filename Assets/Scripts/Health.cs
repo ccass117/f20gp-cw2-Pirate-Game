@@ -177,7 +177,7 @@ public class Health : MonoBehaviour
             }
             else
             {
-                float damage = (mySpeed + otherSpeed) * 1f;
+                float damage = (mySpeed + otherSpeed) * 1.5f;
                 TakeDamage(damage, collision.gameObject);
             }
         }
