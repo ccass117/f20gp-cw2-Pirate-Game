@@ -36,6 +36,9 @@ public class Health : MonoBehaviour
     [Tooltip("Minimum speed attackers need to be moving to damage this object")]
     public float defenderSpeedThreshold = 0f;
 
+    [Header("for player and enemy")]
+    public AudioSource hitSfx;
+
     void Awake()
     {
         // If this Health script is attached to the player, use PlayerData to set currentHealth.
@@ -76,6 +79,29 @@ public class Health : MonoBehaviour
         if (gameObject.CompareTag("Player"))
         {
             PlayerData.currentHealth = currentHealth;
+            if (hitSfx != null)
+            {
+                hitSfx.pitch = Random.Range(0.5f, 1.0f);
+                hitSfx.Play();
+            }
+        }
+
+
+        if (gameObject.CompareTag("Enemy"))
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+                if (distanceToPlayer <= 15f)
+                {
+                    if (hitSfx != null)
+                    {
+                        hitSfx.pitch = Random.Range(0.5f, 1.0f);
+                        hitSfx.Play();
+                    }
+                }
+            }
         }
 
         if (currentHealth <= 0)
