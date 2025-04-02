@@ -220,7 +220,7 @@ MonoBehaviour:
   xOffset: 0.5
   zOffset: 0
   cannonScale: 1
-  cannonsPerSide: 1
+  cannonsPerSide: 2
   cooldownTime: 3
   timeBetweenShots: 0.1
   shotSpeed: 20
@@ -285,10 +285,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 7
-  m_Height: 40.18539
+  m_Radius: 9
+  m_Height: 50
   m_Direction: 2
-  m_Center: {x: 0, y: 3, z: -6}
+  m_Center: {x: 0, y: 5, z: -10}
 --- !u!82 &2336066815633125418
 AudioSource:
   m_ObjectHideFlags: 0
