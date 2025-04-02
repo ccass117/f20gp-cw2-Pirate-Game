@@ -2,7 +2,6 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 
 public class MoveShip : MonoBehaviour
 {
@@ -12,12 +11,10 @@ public class MoveShip : MonoBehaviour
 
     // stores the points already visited / marked to be restored on each load
     private static Dictionary<int, bool> markedPoints = new Dictionary<int, bool>();
-    public static int lvls = -1;
+    private static int lvls = -1; // to show map without doing anything before level_1
 
     private void Start()
     {
-        Debug.Log($"lvls at start: {lvls}");
-
         if (lvls < 0)
         {
             lvls = 0;
@@ -125,7 +122,6 @@ public class MoveShip : MonoBehaviour
             // maths derived / adapted from: https://www.reddit.com/r/Unity2D/comments/xz5u0m/smoothly_rotating_a_object_towards_a_vector/?rdt=51309
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-            SpriteRenderer sprite = GetComponent<SpriteRenderer>();
             Sequence mapPathMove = DOTween.Sequence();
             // angle sprite towards next point on map and move it there
             mapPathMove.Append(transform.DORotate(new Vector3(0, 0, angle), 1.5f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine));
@@ -134,7 +130,7 @@ public class MoveShip : MonoBehaviour
             if (direction.x < 0) // backwards
             {
                 Sequence flipSprite = DOTween.Sequence();
-                flipSprite.Append(sprite.transform.DOScaleY(-10, 0.5f).SetEase(Ease.InOutSine)); // flip on Y to correct sprite
+                flipSprite.Append(transform.DOScaleY(-10, 0.5f).SetEase(Ease.InOutSine)); // flip on Y to correct sprite
 
                 mapPathMove.Join(transform.DORotate(new Vector3(0, 0, 180), 1.5f).SetEase(Ease.InOutSine).SetDelay(2.5f)); // turn sprite around
             }
@@ -162,7 +158,6 @@ public class MoveShip : MonoBehaviour
         }
     }
 
-    // load next level with the naming convention "level_x" using own level loader
     void LoadNext()
     {
         // if lvls = 1 -> "level_" + (1 + 1) = "level_2"
@@ -172,4 +167,3 @@ public class MoveShip : MonoBehaviour
         levelLoader.LoadLevel(next); // change to ("LevelChange") to test map movement
     }
 }
-

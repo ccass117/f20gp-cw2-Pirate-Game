@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using JetBrains.Annotations;
 
 public class ShipController : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class ShipController : MonoBehaviour
 
     [SerializeField] private AudioSource anchorRaiseSFX;
     [SerializeField] private AudioSource anchorDropSFX;
+    public GameObject anchorFlail;
 
     public bool sirenInfluenceActive = false;
     public Transform sirenTarget = null;
@@ -109,6 +111,14 @@ public class ShipController : MonoBehaviour
         // #               Offensive               #
         // #########################################
 
+
+
+        if (BuffController.registerBuff("Anchor Flail", "What if we just used the anchor as a mace instead?"))
+        {
+            Debug.Log("Spawning Anchor Flail");
+            Instantiate(anchorFlail, new Vector3(0, 0, 0), Quaternion.identity);  
+        }
+        
         if (BuffController.registerBuff("Gaon Cannon", "Fires a high damage laser from the front of your ship every 20 seconds"))
         {
             GaonCannon.ActivateLaserBuff();

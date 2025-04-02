@@ -3732,7 +3732,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5804434220599336474, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: damageResistance
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6252308522572844391, guid: e80619c49d78d4282ab54ffe1ac63070, type: 3}
       propertyPath: m_Mesh

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3472526569715324412}
   - component: {fileID: -4771927391302344162}
   - component: {fileID: 3982158916119590957}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cannonball
   m_TagString: Cannonball
   m_Icon: {fileID: 0}
@@ -176,6 +176,7 @@ MonoBehaviour:
   goldAmount: 0
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
+  hitSfx: {fileID: 0}
 --- !u!82 &3982158916119590957
 AudioSource:
   m_ObjectHideFlags: 0
