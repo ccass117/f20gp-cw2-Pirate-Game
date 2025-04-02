@@ -11,6 +11,7 @@ TagManager:
   - fireball shadow
   - innerMat
   - outerMat
+  - Island
   layers:
   - Default
   - TransparentFX

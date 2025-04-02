@@ -576,7 +576,7 @@ MonoBehaviour:
   maxSpeed: 5
   riggingSpeed: 2
   anchorForce: 3
-  maxRudderAngle: 90
+  maxRudderAngle: 120
   rudderSpeed: 100
   maxTurnRate: 50
   turnDamping: 0.9
