@@ -17,18 +17,61 @@ public class PowerUpSceneManager : MonoBehaviour
 
     private GameObject levelloader;
 
+    private List<BuffData> availableBuffs = new List<BuffData>();
+
+    private class BuffData
+    {
+        public string name;
+        public string description;
+        public BuffData(string name, string description)
+        {
+            this.name = name;
+            this.description = description;
+        }
+    }
+
     void Start()
     {
         levelloader = GameObject.Find("LevelLoader");
 
-        List<Buff> selectedBuffs = BuffController.getBuffsForShop(3);
+        // Use the public API to get all available buffs.
+        var buffStore = BuffController.AvailableBuffs;
+        if (buffStore == null || buffStore.Count == 0)
+        {
+            Debug.LogError("No buffs available in BuffController.");
+            return;
+        }
 
+        // Only add buffs that are not currently active.
+        foreach (var kvp in buffStore)
+        {
+            string buffName = kvp.Key;
+            if (!BuffController.isActive(buffName))
+            {
+                // Directly use the public field since description is public.
+                string description = kvp.Value.description;
+                availableBuffs.Add(new BuffData(buffName, description));
+            }
+        }
+        
+        // Randomly select up to 3 buffs.
+        List<BuffData> selectedBuffs = new List<BuffData>();
+        int countToSelect = Mathf.Min(3, availableBuffs.Count);
+        System.Random rnd = new System.Random();
+        while (selectedBuffs.Count < countToSelect)
+        {
+            int index = rnd.Next(availableBuffs.Count);
+            BuffData candidate = availableBuffs[index];
+            if (!selectedBuffs.Contains(candidate))
+                selectedBuffs.Add(candidate);
+        }
+        
         if (buffToggles == null || buffToggles.Length < 3)
         {
             Debug.LogError("Please assign exactly 3 toggles in the Inspector.");
             return;
         }
-
+        
         // Update the toggle UI.
         // Assuming each toggle prefab has two child TMP_Text components:
         // texts[0] for the buff name and texts[1] for the buff description.
@@ -62,7 +105,7 @@ public class PowerUpSceneManager : MonoBehaviour
                 }
             }
         }
-
+        
         if (acceptButton != null)
         {
             acceptButton.onClick.AddListener(() => OnAccept(selectedBuffs));
@@ -73,7 +116,7 @@ public class PowerUpSceneManager : MonoBehaviour
         }
     }
 
-    void OnAccept(List<Buff> selectedBuffs)
+    void OnAccept(List<BuffData> selectedBuffs)
     {
         LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
         loaderScript.LoadLevel("LevelChange");
@@ -87,7 +130,7 @@ public class PowerUpSceneManager : MonoBehaviour
                 break;
             }
         }
-
+        
         if (selectedToggle != null)
         {
             int index = Array.IndexOf(buffToggles, selectedToggle);
@@ -95,7 +138,7 @@ public class PowerUpSceneManager : MonoBehaviour
             {
                 string buffName = selectedBuffs[index].name;
                 Debug.Log("PowerUpSceneManager: Selected Buff - " + buffName);
-                BuffController.setActive(buffName);
+                BuffController.activateBuff(buffName);
                 loaderScript.LoadLevel("LevelChange");
             }
             else

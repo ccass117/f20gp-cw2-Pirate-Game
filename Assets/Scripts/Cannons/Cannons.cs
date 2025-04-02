@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Cannons : MonoBehaviour
 {
     [Header("Cannon Positioning (Relative to Ship)")]
-    public float shipLength = 2f;
+    public float shipLength = 1f;
     public float yOffset = 0f;
     public float xOffset = 0f;
     public float zOffset = 0f;
@@ -234,27 +234,23 @@ public class Cannons : MonoBehaviour
         if (cannonsPerSide < 1)
             return;
 
-        float effectiveLength = shipLength * 0.5f;
-        float cannonSpacing = cannonsPerSide > 1 ? effectiveLength / (cannonsPerSide - 1) : 0;
-        float startZ = -effectiveLength * 0.5f;
+        float cannonSpacing = cannonsPerSide > 1 ? shipLength / (cannonsPerSide - 1) : 0;
+        float angleDeviation = cannonsPerSide > 1 ? 2 * maxAngleDifference / (cannonsPerSide - 1) : 0;
 
-        // No angle deviation is used now since cannons face directly along the ship's z axis.
         for (int i = cannonsPerSide - 1; i >= 0; i--)
         {
-            // Position cannons between -shipLength/2+margin and shipLength/2-margin.
-            float zPosition = startZ + i * cannonSpacing;
-            
-            // Instantiate right cannon with fixed rotation (facing right)
+            float zPosition = cannonsPerSide > 1 ? -shipLength / 2 + i * cannonSpacing : 0;
+            float angle = cannonsPerSide > 1 ? -maxAngleDifference + i * angleDeviation : 0;
+
             Vector3 rightLocalPosition = new Vector3(xOffset, yOffset, zPosition);
             Vector3 rightWorldPosition = transform.TransformPoint(rightLocalPosition);
-            GameObject rightCannon = Instantiate(cannonPrefab, rightWorldPosition, transform.rotation * Quaternion.Euler(0, 90, 0), rightCannons.transform);
+            GameObject rightCannon = Instantiate(cannonPrefab, rightWorldPosition, transform.rotation * Quaternion.Euler(0, 90 - angle, 0), rightCannons.transform);
             rightCannon.transform.localScale *= cannonScale;
             defaultRotations[rightCannon.transform] = Quaternion.Inverse(transform.rotation) * rightCannon.transform.rotation;
 
-            // Instantiate left cannon with fixed rotation (facing left)
             Vector3 leftLocalPosition = new Vector3(-xOffset, yOffset, zPosition);
             Vector3 leftWorldPosition = transform.TransformPoint(leftLocalPosition);
-            GameObject leftCannon = Instantiate(cannonPrefab, leftWorldPosition, transform.rotation * Quaternion.Euler(0, -90, 0), leftCannons.transform);
+            GameObject leftCannon = Instantiate(cannonPrefab, leftWorldPosition, transform.rotation * Quaternion.Euler(0, -90 + angle, 0), leftCannons.transform);
             leftCannon.transform.localScale *= cannonScale;
             defaultRotations[leftCannon.transform] = Quaternion.Inverse(transform.rotation) * leftCannon.transform.rotation;
         }

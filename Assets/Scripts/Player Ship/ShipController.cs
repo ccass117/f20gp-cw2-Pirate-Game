@@ -35,9 +35,7 @@ public class ShipController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 currentVelocity;
     private Cannons cannons;
-
-    private Health health;
-
+    
     [Header("Wind Resistance")]
     public float windResistance = 1f;
 
@@ -47,119 +45,6 @@ public class ShipController : MonoBehaviour
         cannons = GetComponent<Cannons>();
         currentRiggingSpeed = speed;
         currentVelocity = Vector3.zero;
-        health = GetComponent<Health>();
-
-        // ################################################################################
-        // #                                                                              #
-        // #                                     Buffs                                    #
-        // #                                                                              #
-        // ################################################################################
-
-        // #########################################
-        // #            HP Related Buffs           #
-        // #########################################
-
-        if (BuffController.registerBuff("Reinforced Hull", "Increases maximum HP by 10"))
-        {
-            health.maxHealth += 10f;
-            health.currentHealth += 10f;
-            BuffController.setInactive("Reinforced Hull");
-        }
-
-        if (BuffController.registerBuff("Quick Repair", "Heal 10HP"))
-        {
-            health.currentHealth += 10f;
-            if (health.currentHealth > health.maxHealth)
-            {
-                health.currentHealth = health.maxHealth;
-            }
-            Debug.Log("Quick Repair activated: currentHealth now " + health.currentHealth);
-            BuffController.setInactive("Quick Repair");
-        }
-
-        if (BuffController.registerBuff("Theseus's Prodigy", "Fully repair your ship... is it even the same one anymore?"))
-        {
-            health.currentHealth = health.maxHealth;
-            Debug.Log("Theseus's Prodigy activated: currentHealth set to maxHealth " + health.maxHealth);
-            BuffController.setInactive("Theseus's Prodigy");
-        }
-
-        // #########################################
-        // #                Movement               #
-        // #########################################
-
-        if (BuffController.registerBuff("Calm Winds", "Make winds affect the player less")) { windResistance -= 0.5f; }
-
-
-        if (BuffController.registerBuff("Sobered up", "Negate the effect of Sirens' pull")) { sirenTurnStrength = 0; }
-
-        if (BuffController.registerBuff("Noise Cancelling Earbuds", "Reduces the effect of Sirens' pull")) { sirenTurnStrength -= 0.4f; }
-
-        if (BuffController.registerBuff("Rocket Boost", "Allows you to rocket forward every 15 seconds, giving a burst of speed"))
-        {
-            RocketBoost.ActivateRocketBoost();
-            Debug.Log("Rocket Boost activated");
-        }
-
-        if (BuffController.registerBuff("Suspicious Needle", "Greatly reduces time taken to raise the anchor")) { anchorRaiseTime -= 1.25f; }
-
-        if (BuffController.registerBuff("PEDs", "Reduces time taken to raise the anchor")) { anchorRaiseTime -= 0.75f; }
-
-        // #########################################
-        // #               Offensive               #
-        // #########################################
-
-        if (BuffController.registerBuff("Gaon Cannon", "Fires a high damage laser from the front of your ship every 20 seconds"))
-        {
-            GaonCannon.ActivateLaserBuff();
-            Debug.Log("Gaon Cannon activated");
-        }
-
-        if (BuffController.registerBuff("Tube of Superglue", "You can't just glue on another cannon and expect it to work"))
-        {
-            cannons = GetComponent<Cannons>();
-            cannons.cannonsPerSide += 1;
-            cannons.InitializeCannons();
-        }
-
-        if (BuffController.registerBuff("TF2 Engineer", "Add an additional cannon"))
-        {
-            Debug.Log("running");
-            cannons = GetComponent<Cannons>();
-            cannons.cannonsPerSide += 1;
-            cannons.InitializeCannons();
-        }
-
-        if (BuffController.registerBuff("Double Decker Cannons", "Double the amount of cannons"))
-        {
-            cannons = GetComponent<Cannons>();
-            cannons.cannonsPerSide *= 2;
-            cannons.InitializeCannons();
-        }
-
-        if (BuffController.registerBuff("Black Powder", "Increase the power of the cannons"))
-        {
-            cannons = GetComponent<Cannons>();
-            cannons.shotSpeed = 20f;
-            cannons.InitializeCannons();
-        }
-
-        if (BuffController.registerBuff("Kilogram of feathers", "Reduces cannon reload speed"))
-        {
-            cannons = GetComponent<Cannons>();
-            cannons.cooldownTime -= 1f;
-        }
-
-        if (BuffController.registerBuff("Exponential Stupidity", "Locks your max hp at 1, Gain 1.5x more cannons per area"))
-        {
-            health = GetComponent<Health>();
-            health.currentHealth = 1;
-            health.maxHealth = 1;
-            cannons = GetComponent<Cannons>();
-            cannons.cannonsPerSide = Mathf.CeilToInt(cannons.cannonsPerSide * 1.5f); //TODO fix
-            cannons.InitializeCannons();
-        }
-
     }
 
     void Update()

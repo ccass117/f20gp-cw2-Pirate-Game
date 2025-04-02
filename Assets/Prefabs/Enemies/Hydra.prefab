@@ -54,7 +54,7 @@ MonoBehaviour:
   damageMultiplier: 1
   isProjectile: 0
   damageCooldown: 0.5
-  goldAmount: 350
+  goldAmount: 0
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
 --- !u!114 &350340528860596805

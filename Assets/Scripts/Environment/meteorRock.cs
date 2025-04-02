@@ -29,8 +29,16 @@ public class meteorRock : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Player"))
         {
+            // Try to get the Health script on the player
+            Health playerHealth = collision.gameObject.GetComponent<Health>();
+
+            if (playerHealth != null)
+            {
+                playerHealth.currentHealth -= 10;
+            }
+
             // Destroy the meteor
             Destroy(transform.parent.gameObject);
         }

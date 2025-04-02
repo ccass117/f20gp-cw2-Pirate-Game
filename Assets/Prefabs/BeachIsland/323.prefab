@@ -14,8 +14,7 @@ GameObject:
   - component: {fileID: 441513176276866361}
   - component: {fileID: 2746910097096303700}
   - component: {fileID: 8500241810418247097}
-  - component: {fileID: 510512089448489541}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: PolyShape
   m_TagString: outerMat
   m_Icon: {fileID: 0}
@@ -692,33 +691,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!54 &510512089448489541
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 344683817285490428}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 2
 --- !u!1 &3004350279902825715
 GameObject:
   m_ObjectHideFlags: 0
@@ -733,8 +705,7 @@ GameObject:
   - component: {fileID: 5116172287569572794}
   - component: {fileID: 525542235005391746}
   - component: {fileID: 1328471805571734021}
-  - component: {fileID: 7585172829011158179}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: PolyShape (1)
   m_TagString: innerMat
   m_Icon: {fileID: 0}
@@ -1183,33 +1154,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!54 &7585172829011158179
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3004350279902825715}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 2
 --- !u!1 &8592221449363325170
 GameObject:
   m_ObjectHideFlags: 0
@@ -1219,10 +1163,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8674494959812924848}
-  - component: {fileID: 1168409097456261196}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: 323
-  m_TagString: Island
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1244,20 +1187,3 @@ Transform:
   - {fileID: 5676434790793740885}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1168409097456261196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8592221449363325170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_Size: {x: 4, y: 3, z: 4}
-  m_Center: {x: 0, y: 1, z: 0}
-  m_Area: 1
-  m_AffectedAgents: ffffffff

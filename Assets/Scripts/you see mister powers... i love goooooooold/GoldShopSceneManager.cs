@@ -89,13 +89,9 @@ public class GoldShopSceneManager : MonoBehaviour
     private int currentWindTiers = 0;
     private int currentTurnSpeedTiers = 0;
     private int currentExtraCannons = 0;
-
-    private GameObject levelloader;
-
+    
     void Start()
     {
-        levelloader = GameObject.Find("LevelLoader");
-
         currentHealthTiers = PlayerPrefs.GetInt("HealthUpgradeTiers", 0);
         currentSpeedTiers = PlayerPrefs.GetInt("SpeedUpgradeTiers", 0);
         currentReloadTiers = PlayerPrefs.GetInt("ReloadUpgradeTiers", 0);
@@ -222,8 +218,7 @@ public class GoldShopSceneManager : MonoBehaviour
         additionalCannon = 0;
         UpdateUI();
 
-        LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
-        loaderScript.LoadLevel("LevelChange");
+        SceneManager.LoadScene("level_1");
     }
 
     void ResetUpgrades()

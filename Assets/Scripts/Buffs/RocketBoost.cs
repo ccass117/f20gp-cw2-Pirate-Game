@@ -25,7 +25,7 @@ public class RocketBoost : MonoBehaviour
     IEnumerator PerformBoost()
     {
         canBoost = false;
-
+        
         if (boostEffectPrefab != null)
         {
             Transform boostOrigin = transform.Find("BoostOrigin");
@@ -33,10 +33,10 @@ public class RocketBoost : MonoBehaviour
             Quaternion effectRot = boostOrigin != null ? boostOrigin.rotation : transform.rotation;
             Instantiate(boostEffectPrefab, effectPos, effectRot, transform);
         }
-
+        
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + transform.forward * boostDistance;
-
+        
         float t = 0f;
         while (t < 1f)
         {
@@ -45,7 +45,7 @@ public class RocketBoost : MonoBehaviour
             transform.position = Vector3.Lerp(startPos, targetPos, easeT);
             yield return null;
         }
-
+        
         yield return new WaitForSeconds(cooldown);
         canBoost = true;
     }
@@ -101,6 +101,7 @@ public class RocketBoost : MonoBehaviour
             rb = player.AddComponent<RocketBoost>();
             rb.Initialize();
         }
+        DontDestroyOnLoad(player);
         Debug.Log("Rocket Boost activated on " + player.name);
     }
 }

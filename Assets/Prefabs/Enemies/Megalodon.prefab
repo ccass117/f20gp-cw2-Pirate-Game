@@ -102,9 +102,14 @@ MonoBehaviour:
   damageMultiplier: 1
   isProjectile: 1
   damageCooldown: 0.5
-  goldAmount: 0
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
+  headThreshold: 0.7
+  useHeadHitDetection: 0
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  isSolidObstacle: 1
 --- !u!1 &6012493345563255196
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,9 +238,6 @@ MonoBehaviour:
   player: {fileID: 0}
   circleRadius: 15
   circlingSpeed: 0
-  movementSmoothTime: 0.3
-  maxRotationSpeed: 270
-  minMovementForRotation: 0.1
   attackInterval: 10
   attackDuration: 3
   normalSpeed: 4
@@ -248,22 +250,9 @@ MonoBehaviour:
   phase2AttackChainCount: 2
   chainAttackDelay: 1
   phase2OvershootMultiplier: 1.5
-  radiusVariation: 3
-  radiusChangeInterval: 2
-  angleVariation: 30
-  patternChangeInterval: 4
-  lateralAmplitude: 2
-  lateralFrequency: 0.5
-  speedVariation: 2
-  minFollowDistance: 8
-  maxFollowDistance: 20
   bounceDistance: 20
-  recoveryDuration: 2
+  bounceRecoveryTime: 4
   rotationOffset: {x: 0, y: 90, z: 0}
-  bobbingAmplitude: 0.5
-  bobbingFrequency: 1
-  attackLift: 2
-  verticalSmoothSpeed: 5
   mainBodyCollider: {fileID: 3500800310631374004}
   attackHitbox: {fileID: 2725547533665312427}
   positionSyncThreshold: 0.1
@@ -393,6 +382,11 @@ MonoBehaviour:
   damageMultiplier: 1
   isProjectile: 0
   damageCooldown: 0.5
-  goldAmount: 100
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
+  headThreshold: 0.7
+  useHeadHitDetection: 0
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  isSolidObstacle: 1

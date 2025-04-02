@@ -28,7 +28,6 @@ public class UpgradeApplier : MonoBehaviour
         if (healthComp != null)
         {
             healthComp.maxHealth += healthTiers * healthIncreasePerTier;
-            healthComp.currentHealth = healthComp.maxHealth;
             Debug.Log("Applied health upgrade: " + healthTiers + " tiers, +" + (healthTiers * healthIncreasePerTier) + " max health.");
         }
         else
