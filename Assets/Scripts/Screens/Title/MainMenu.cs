@@ -1,7 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using UnityEngine.Audio;
 
 public class MainMenu : MonoBehaviour
 {

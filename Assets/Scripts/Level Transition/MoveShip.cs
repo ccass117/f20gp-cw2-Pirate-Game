@@ -2,17 +2,16 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 
 public class MoveShip : MonoBehaviour
 {
-    [SerializeField] MapPoints mapPoints; // points on map ship will move to
+    public MapPoints mapPoints; // points on map ship will move to
     [SerializeField] private LevelLoader levelLoader;
     [SerializeField] private AudioSource mapMarkerSound; // pencil stroke sound for map markers
 
     // stores the points already visited / marked to be restored on each load
     private static Dictionary<int, bool> markedPoints = new Dictionary<int, bool>();
-    private static int lvls = -1; // to show map without doing anything before level_1
+    public static int lvls = -1; // to show map without doing anything before level_1
 
     private void Start()
     {
