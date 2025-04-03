@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Cannons : MonoBehaviour
 {
+    // Variables van be addressed by buffs and powerups or defined on prefabs to make different types of ships.
     [Header("Cannon Positioning (Relative to Ship)")]
     public float shipLength = 2f;
     public float yOffset = 0f;
@@ -13,12 +14,12 @@ public class Cannons : MonoBehaviour
 
     [Header("Cannon Statistics")]
     public int cannonsPerSide = 1;
-    public float cooldownTime = 3f;
-    public float timeBetweenShots = 0.1f;
+    public float cooldownTime = 3f; // cooldown time before cannons can fire
+    public float timeBetweenShots = 0.1f; // time between shots fired in the same firing spurt
     public float shotSpeed = 10f;
     public float shotGravityMult = 1f;
     public float shotSizeMult = 1f;
-    public float maxAngleDifference = 0f;
+    public float maxAngleDifference = 0f; // difference in angle between frontmost cannon and backmost cannon - 90 is like inner eye in isaac terms
     public int ballsFiredPerCannon = 1;
 
     [Header("Auto-Aim Options")]
@@ -57,6 +58,7 @@ public class Cannons : MonoBehaviour
 
     void Start()
     {
+        // If the object is not the player and target is not assigned, then I'm probably an enemy - automatically target the player.
         if (!gameObject.CompareTag("Player") && target == null && isEnemy)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -72,11 +74,14 @@ public class Cannons : MonoBehaviour
 
     void Update()
     {
+        // Update cooldown timers
         if (leftCooldown > 0)
             leftCooldown -= Time.deltaTime;
         if (rightCooldown > 0)
             rightCooldown -= Time.deltaTime;
 
+
+        // if auto aim is enabled find target on each side and aim cannons
         if (autoAimFOV > 0 && autoAimRange > 0)
         {
             leftAimTarget = FindAutoAimTarget(-transform.right);
@@ -86,6 +91,7 @@ public class Cannons : MonoBehaviour
             AimCannons(rightCannons.transform, rightAimTarget);
         }
 
+        // Fire cannons if target is acquired on that side
         if (target != null)
         {
             foreach (Transform cannon in leftCannons.transform)
@@ -110,10 +116,10 @@ public class Cannons : MonoBehaviour
 
     Transform FindAutoAimTarget(Vector3 direction)
     {
+        // Find the nearest target within the auto-aim range and field of view
         Collider[] hits = Physics.OverlapSphere(transform.position, autoAimRange, detectionLayers);
         Transform nearestTarget = null;
         float nearestDistance = autoAimRange;
-
         foreach (Collider hit in hits)
         {
             Vector3 toTarget = hit.transform.position - transform.position;
@@ -134,7 +140,7 @@ public class Cannons : MonoBehaviour
     }
 
     void AimCannons(Transform cannons, Transform target)
-    // Aims cannons for a respective side (left or right) if a target exists for that side, else resets the cannons to the default angle stored in defaultRotations.
+    // Aims cannons for a respective side (left or right) if a target exists for that side, else resets the cannons to the default angle gradually
     {
         foreach (Transform cannon in cannons)
         {
@@ -155,6 +161,7 @@ public class Cannons : MonoBehaviour
 
     bool targetAcquired(Transform cannon)
     {
+        // Check if the target is acquired by the cannon
         RaycastHit hit;
         Debug.DrawRay(cannon.position, cannon.forward * cannonDetectionRange, Color.red, 0.5f);
         if (Physics.Raycast(cannon.position, cannon.forward, out hit, cannonDetectionRange, detectionLayers))
@@ -262,6 +269,7 @@ public class Cannons : MonoBehaviour
 
     public void FireLeft()
     {
+        // only fire if off cooldown
         if (leftCooldown <= 0)
         {
             StartCoroutine(Fire(leftCannons, ballsFiredPerCannon));
@@ -271,6 +279,7 @@ public class Cannons : MonoBehaviour
 
     public void FireRight()
     {
+        // only fire if off cooldown
         if (rightCooldown <= 0)
         {
             StartCoroutine(Fire(rightCannons, ballsFiredPerCannon));
@@ -280,10 +289,12 @@ public class Cannons : MonoBehaviour
 
     private IEnumerator Fire(GameObject cannons, int timesToFire)
     {
+        // fire multiple times if timesToFire > 1, under normal conditions this is 1
         for (int i = 0; i < timesToFire; i++)
         {
             foreach (Transform cannon in cannons.transform)
             {
+                // spawn a cannonball at the cannon's position and rotation and apply cannonball variables to its script and rb to fire
                 GameObject cannonball = Instantiate(cannonballPrefab, cannon.position, cannon.rotation);
 
                 Cannonball cannonballScript = cannonball.GetComponent<Cannonball>();
@@ -300,7 +311,7 @@ public class Cannons : MonoBehaviour
                 {
                     if (shipRb != null)
                     {
-                        rb.linearVelocity = shipRb.linearVelocity + (cannon.forward * shotSpeed);
+                        rb.linearVelocity = shipRb.linearVelocity + (cannon.forward * shotSpeed); // this doesn't appear to work, cannonballs lag behind for some reason? might just be wind
                     }
                     else
                     {
@@ -308,6 +319,7 @@ public class Cannons : MonoBehaviour
                     }
                 }
 
+                // ignore collisions between cannonball and firing ship
                 Collider cannonballCollider = cannonball.GetComponent<Collider>();
                 if (cannonballCollider != null)
                 {
@@ -323,3 +335,24 @@ public class Cannons : MonoBehaviour
         }
     }
 }
+
+/*
+ * 
+ * ...........
+ * ...................__
+ * 
+ * ............./´¯/'...'/´¯¯`·¸
+ * 
+ * ........../'/.../..../......./¨¯\
+ * 
+ * ........('(...´...´.... ¯~/'...')
+ * 
+ * .........\.................'...../
+ * 
+ * ..........''...\.......... _.·´
+ * 
+ * 
+ * ............\..............(
+ * 
+ * BROFIST ...........
+ */
