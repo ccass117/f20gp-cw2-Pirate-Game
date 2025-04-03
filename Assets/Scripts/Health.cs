@@ -76,7 +76,7 @@ public class Health : MonoBehaviour
         lastDamageTime = Time.time;
 
         // If this is the player, update PlayerData.
-        if (gameObject.CompareTag("Player"))
+        if (gameObject.CompareTag("Player") && Time.timeSinceLevelLoad >= 1)
         {
             PlayerData.currentHealth = currentHealth;
             if (hitSfx != null)
@@ -97,6 +97,10 @@ public class Health : MonoBehaviour
                 {
                     if (hitSfx != null)
                     {
+                        // Normalize volume between 0 and 1
+                        float volume = Mathf.Clamp01(1.0f - (distanceToPlayer / 15f));
+
+                        hitSfx.volume = volume; // Set the volume
                         hitSfx.pitch = Random.Range(0.5f, 1.0f);
                         hitSfx.Play();
                     }

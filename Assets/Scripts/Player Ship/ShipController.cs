@@ -179,7 +179,7 @@ public class ShipController : MonoBehaviour
                 cannons.cannonsPerSide += 1;
                 canIncreaseTf2 = false;
             }
-            if (BuffController.registerBuff("Tube of Superglue", "You can't just glue on another cannon and expect it to work"))
+            if (BuffController.registerBuff("Tube of Superglue", "You can't just glue on another cannon and expect it to work") && canIncreaseSuperglue)
             {
                 cannons.cannonsPerSide += 1;
                 canIncreaseSuperglue = false;

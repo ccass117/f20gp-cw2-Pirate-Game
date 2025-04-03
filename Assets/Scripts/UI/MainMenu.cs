@@ -43,7 +43,7 @@ public class MainMenu : MonoBehaviour
     // DOTween transition that brings in the title and buttons
     public void AnimUIMainIn()
     {
-     //   UIAnimator.AnimateUIIn(titleText, new RectTransform[] { startBtn, creditsBtn, quitBtn }, canvasWidth);
+        UIAnimator.AnimateUIIn(titleText, new RectTransform[] { startBtn, creditsBtn, quitBtn }, canvasWidth);
     }
 
     public void Play()
