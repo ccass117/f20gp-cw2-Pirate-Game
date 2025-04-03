@@ -1,4 +1,8 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
@@ -38,9 +42,10 @@ public class Health : MonoBehaviour
 
     [Header("for player and enemy")]
     public AudioSource hitSfx;
-
+    private GameObject levelLoader;
     void Awake()
     {
+        levelLoader = GameObject.Find("LevelLoader");
         // If this Health script is attached to the player, use PlayerData to set currentHealth.
         if (gameObject.CompareTag("Player"))
         {
@@ -129,8 +134,56 @@ public class Health : MonoBehaviour
     {
         GoldManager.AddGold(goldAmount);
         Debug.Log($"{gameObject.name} has died.");
-        gameObject.SetActive(false);
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            Collider[] colliders = GetComponents<Collider>();
+            foreach (Collider collider in colliders)
+            {
+                collider.enabled = false;
+            }
+            StartCoroutine(Fall(rb));
+        }
+        if (gameObject.CompareTag("Player"))
+        {
+            LevelLoader loaderScript = levelLoader.GetComponent<LevelLoader>();
+            PlayerData.currentHealth = 0;
+            loaderScript.LoadLevel("lose");
+        }
+        else
+        {
+            StartCoroutine(Disable(2f));
+        }
     }
+
+    private IEnumerator Fall(Rigidbody rb)
+    {
+        //Lock all axes except Y to make the object fall straight down
+        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        float fallTime = 3f;
+        float elapsedTime = 0f;
+        Vector3 startPosition = rb.transform.position;
+        Vector3 targetPosition = new Vector3(startPosition.x, startPosition.y - 8f, startPosition.z);
+
+        while (elapsedTime < fallTime)
+        {
+            rb.transform.position = Vector3.Lerp(startPosition, targetPosition, (elapsedTime / fallTime));
+            rb.transform.rotation = Quaternion.Slerp(rb.transform.rotation, Quaternion.Euler(-90, 0, 0), Time.deltaTime * 2f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private IEnumerator Disable(float delay)
+    {
+         yield return new WaitForSeconds(delay);
+         gameObject.SetActive(false);
+    }
+
 
     public float GetCurrentHealth()
     {
