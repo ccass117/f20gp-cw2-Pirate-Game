@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,12 @@ public class WindMgr : MonoBehaviour
 
     public Vector3 windDir = Vector3.forward;
     public float windStrength = 1f; //Added wind strength!
+
+    [Header("ExponentialStupidity")]
+    private Cannons cannons;
+    public int cannonCount;
+
+
 
     [Header("Debug")]
     [SerializeField] private Vector3 windEffect;
@@ -50,6 +57,7 @@ public class WindMgr : MonoBehaviour
         //Insert section to have wind-change time change depending on floor (stormy = frequent more eratic changes) - You can probably just do this in the updateDir() I added, if you have it just read the current scene name
 
     }
+
 
     void Update()
     {
@@ -114,5 +122,19 @@ public class WindMgr : MonoBehaviour
         else if (windLevel2.Contains(scene.name)) { windStrength = 2f; }
         else if (windLevel3.Contains(scene.name)) { windStrength = 2.75f; }
         else if (windLevel4.Contains(scene.name)) { windStrength = 4f; }
+
+        StartCoroutine(ReadCannonCount());
+
+
+    }
+    private IEnumerator ReadCannonCount()
+    {
+        yield return new WaitForSeconds(0.1f);
+        player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            cannons = player.GetComponent<Cannons>();
+            cannonCount = cannons.cannonsPerSide;
+        }
     }
 }
