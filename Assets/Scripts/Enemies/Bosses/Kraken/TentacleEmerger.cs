@@ -17,16 +17,14 @@ public class TentacleEmerger : MonoBehaviour
     [Header("Attack Settings")]
     public float attackRange = 8f;    
 
-    [Header("Tornado Attack Settings")]
+    [Header("Tornado Attack")]
     public GameObject tornadoPrefab;
     public float tornadoDelay = 1f;
-    [Tooltip("Distance in front of the tentacle from which the tornado is spawned.")]
     public float tornadoSpawnOffset = 1f;
-    [Tooltip("Chance (0 to 1) that an attack will spawn a tornado when health is low.")]
     public float tornadoChance = 0.15f;
 
     
-    [Header("Attack Timer Settings")]
+    [Header("Attack Timer")]
     public float minAttackInterval = 5f;
     public float maxAttackInterval = 10f;
 
@@ -55,19 +53,12 @@ public class TentacleEmerger : MonoBehaviour
         initialPosition = new Vector3(transform.position.x, 0f, transform.position.z);
 
         anim = GetComponent<Animator>();
-        if (anim == null)
-            Debug.LogWarning(gameObject.name + ": Animator component not found!");
 
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null)
-            {
-                player = p.transform;
-                Debug.Log(gameObject.name + ": Player found - " + player.name);
-            }
-            else
-                Debug.LogWarning(gameObject.name + ": Player not found!");
+            player = p.transform;
+            Debug.Log(gameObject.name + ": Player found - " + player.name);
         }
 
         ResetAttackTimer();
@@ -77,12 +68,12 @@ public class TentacleEmerger : MonoBehaviour
     {
         if (!hasRisen)
         {
-            Debug.Log(gameObject.name + ": Rise not complete yet; waiting.");
             return;
         }
 
         if (krakenZone != null)
         {
+            //check if the tentacle is outside the kraken zone as it moves, if so, retreat so tentacles keep spawning near the player
             Vector3 tentacleXZ = initialPosition;
             Vector3 zonePosXZ = new Vector3(krakenZone.position.x, 0f, krakenZone.position.z);
             float distanceFromZone = Vector3.Distance(tentacleXZ, zonePosXZ);
@@ -93,7 +84,6 @@ public class TentacleEmerger : MonoBehaviour
                 {
                     anim.SetTrigger("RetreatTrigger");
                     retreatTriggered = true;
-                    Debug.Log(gameObject.name + ": Left KrakenZone (distance " + distanceFromZone + "), triggering retreat.");
                 }
             }
         }
@@ -101,26 +91,25 @@ public class TentacleEmerger : MonoBehaviour
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
         bool inIdle = stateInfo.IsName("Idle");
 
+        //timer for how long the tentacle has been above water
         if (inIdle && !isAttacking && !retreatTriggered)
         {
             timeAboveWater += Time.deltaTime;
-            Debug.Log(gameObject.name + ": Time above water: " + timeAboveWater);
         }
 
+        //tentacle attack timer, just picks a random attack from the animator
         if (player != null && Vector3.Distance(transform.position, player.position) <= attackRange && !isAttacking && !retreatTriggered)
         {
             int attackIndex = Random.Range(0, 5);
             anim.SetInteger("AttackIndex", attackIndex);
             anim.SetTrigger("AttackTrigger");
             isAttacking = true;
-            Debug.Log(gameObject.name + ": Attack triggered with AttackIndex " + attackIndex);
         }
 
         if (timeAboveWater >= activeTime && !retreatTriggered && inIdle)
         {
             anim.SetTrigger("RetreatTrigger");
             retreatTriggered = true;
-            Debug.Log(gameObject.name + ": Retreat triggered after " + timeAboveWater + " seconds above water.");
         }
     }
 
@@ -130,12 +119,13 @@ public class TentacleEmerger : MonoBehaviour
         transform.position = new Vector3(initialPosition.x, currentPos.y, initialPosition.z);
     }
 
+    //called by animator event
     public void OnRiseComplete()
     {
         hasRisen = true;
     }
 
-
+    //animator event 2: electric boogaloo
     public void OnAttackComplete()
     {
         isAttacking = false;
@@ -146,7 +136,7 @@ public class TentacleEmerger : MonoBehaviour
             retreatTriggered = true;
         }
 
-        // --- NEW: Check for tornado attack ---
+        //if in phase 2, 50% chance to spawn a tornado
         Health parentHealth = transform.root.GetComponent<Health>();
         if (!isTornadoSpawnPending && 
             parentHealth != null && 
@@ -158,6 +148,7 @@ public class TentacleEmerger : MonoBehaviour
         }
     }
 
+    //animator event the third
     public void OnRetreatComplete()
     {
         Destroy(gameObject);
@@ -168,6 +159,7 @@ public class TentacleEmerger : MonoBehaviour
         attackTimer = Random.Range(minAttackInterval, maxAttackInterval);
     }
 
+    //tentacles take damage for this boss; parent has no colldier since its just a spawner, but Health.cs should still be attached to parent
     void OnCollisionEnter(Collision collision)
     {
         Health parentHealth = transform.root.GetComponent<Health>();
@@ -183,17 +175,18 @@ public class TentacleEmerger : MonoBehaviour
         ActiveTentacles.Remove(this);
     }
 
+    //phase 2 tornado spawn
     private IEnumerator SpawnTornado()
     {
-        isTornadoSpawnPending = true; // Lock spawning
+        //don't know why tbh, but multiple tornados can spawn at once if this isn't here
+        isTornadoSpawnPending = true; 
         
         yield return new WaitForSeconds(tornadoDelay);
         
-        // Calculate spawn position/rotation
         Vector3 spawnPos = transform.position + transform.forward * tornadoSpawnOffset;
         Quaternion spawnRot = transform.rotation;
         
-        // Spawn tornado
+        //make sure tornado is facing and moving the right direction
         GameObject tornadoInstance = Instantiate(tornadoPrefab, spawnPos, spawnRot);
         Tornado tornadoScript = tornadoInstance.GetComponent<Tornado>();
         if (tornadoScript != null)
@@ -202,8 +195,6 @@ public class TentacleEmerger : MonoBehaviour
         }
         Destroy(tornadoInstance, 5f);
 
-        isTornadoSpawnPending = false; // Release lock
+        isTornadoSpawnPending = false;
     }
-
-
 }

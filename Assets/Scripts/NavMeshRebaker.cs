@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using System.Collections;
 using Unity.AI.Navigation;
 
+//rebake the navmesh at runtime, so that procedurally generated islands are included in the navmesh and it is built around them for enemy navigation, called on every level load
 public class NavMeshRebaker : MonoBehaviour
 {
     private NavMeshSurface surface;
@@ -10,6 +11,7 @@ public class NavMeshRebaker : MonoBehaviour
     void Start()
     {
         surface = GetComponent<NavMeshSurface>();
+        //gives the islands a second to generate before rebaking the navmesh
         StartCoroutine(delay(1f));
     }
 
@@ -17,6 +19,5 @@ public class NavMeshRebaker : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         surface.BuildNavMesh();
-        Debug.Log("NavMesh rebuilt at runtime.");
     }
 }

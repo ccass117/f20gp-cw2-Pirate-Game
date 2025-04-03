@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "f20gp-cw2.sln"
+    "dotnet.defaultSolution": "F20GP-CW2.sln"
 }

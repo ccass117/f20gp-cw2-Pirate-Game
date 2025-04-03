@@ -1,7 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using UnityEditorInternal;
+//using UnityEditorInternal;
 
 public class UIAnimator : MonoBehaviour
 {

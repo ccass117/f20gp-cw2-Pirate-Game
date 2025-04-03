@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//uses playerprefs to save and load gold, so that it saves even if you close the game
 public class GoldManager : MonoBehaviour
 {
     public static int Gold { get; private set; } = 0;
@@ -10,19 +11,14 @@ public class GoldManager : MonoBehaviour
         LoadGold();
     }
 
-    /// <summary>
-    /// Adds gold and saves the new total.
-    /// </summary>
+    //gets used in Health.cs when something dies
     public static void AddGold(int amount)
     {
         Gold += amount;
-        Debug.Log("Gold added: " + amount + ". Total gold: " + Gold);
         SaveGold();
     }
 
-    /// <summary>
-    /// Attempts to spend gold. Returns true if successful.
-    /// </summary>
+    //used in the gold shop
     public static bool SpendGold(int amount)
     {
         if (Gold >= amount)
@@ -43,9 +39,9 @@ public class GoldManager : MonoBehaviour
     private static void LoadGold()
     {
         Gold = PlayerPrefs.GetInt(GoldKey, 0);
-        Debug.Log("Gold loaded: " + Gold);
     }
 
+    //dev cheats, shhhh don't tell anyone
     private void Update()
     {
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Equals))

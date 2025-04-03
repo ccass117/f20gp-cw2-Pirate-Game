@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+//permanent upgrade shop for the player
 public class GoldShopSceneManager : MonoBehaviour
 {
     [Header("UI References")]
@@ -10,6 +11,8 @@ public class GoldShopSceneManager : MonoBehaviour
     public TextMeshProUGUI currentGoldText;
     public TextMeshProUGUI totalCost;
     
+
+    //all of the UI references take the same arguments but for different upgrades
     [Header("Health Upgrade UI")]
     public TextMeshProUGUI healthTierText;
     public TextMeshProUGUI healthCostText;
@@ -47,9 +50,8 @@ public class GoldShopSceneManager : MonoBehaviour
     public Button extraCannonPlusButton;
     public Button extraCannonMinusButton;
 
-    [Header("Purchase & Dev")]
+    [Header("Purchase & Reset")]
     public Button purchaseButton;
-    [Tooltip("Developer button to reset all upgrades to zero.")]
     public Button resetButton;
     
     [Header("Upgrade Settings")]
@@ -57,6 +59,8 @@ public class GoldShopSceneManager : MonoBehaviour
     public int costPerHealthTier = 100;
     public int healthIncreasePerTier = 5;
     
+    //limiters for how many upgrades can be purchased
+    //and how much they cost
     public int maxSpeedTiers = 10;
     public int costPerSpeedTier = 100;
     public float speedIncreasePerTier = 0.5f;
@@ -102,7 +106,8 @@ public class GoldShopSceneManager : MonoBehaviour
         currentWindTiers = PlayerPrefs.GetInt("WindUpgradeTiers", 0);
         currentTurnSpeedTiers = PlayerPrefs.GetInt("TurnSpeedUpgradeTiers", 0);
         currentExtraCannons = PlayerPrefs.GetInt("ExtraCannonPurchased", 0);
-        
+        //again, this all works the same way for every upgrade; plus and minus buttons to increase or decrease the amount of upgrades purchased
+        //and a purchase button to confirm
         healthPlusButton.onClick.AddListener(() => { if(additionalHealthTiers + currentHealthTiers < maxHealthTiers) { additionalHealthTiers++; UpdateUI(); } });
         healthMinusButton.onClick.AddListener(() => { if(additionalHealthTiers > 0) { additionalHealthTiers--; UpdateUI(); } });
         
@@ -133,6 +138,8 @@ public class GoldShopSceneManager : MonoBehaviour
         int currentGold = GoldManager.Gold;
         currentGoldText.text = currentGold.ToString();
 
+        //in every instance, work out the cost of the upgrade based on the current tier and the additional tiers
+        //then display the cost and the current tier in the UI
         healthTierText.text = currentHealthTiers + " + " + additionalHealthTiers;
         if (currentHealthTiers == maxHealthTiers) healthTierText.text = "Max Level";
         int healthCost = CalculateUpgradeCost(currentHealthTiers, additionalHealthTiers, costPerHealthTier);
@@ -171,6 +178,7 @@ public class GoldShopSceneManager : MonoBehaviour
 
     void OnPurchase()
     {
+        //check if player has enough gold, text will be red if not
         int totalAdditionalCost = (additionalHealthTiers * costPerHealthTier) +
                                   (additionalSpeedTiers * costPerSpeedTier) +
                                   (additionalReloadTiers * costPerReloadTier) +
@@ -180,14 +188,12 @@ public class GoldShopSceneManager : MonoBehaviour
 
         if (GoldManager.Gold < totalAdditionalCost)
         {
-            Debug.Log("Not enough gold for purchase.");
             return;
         }
 
         bool spent = GoldManager.SpendGold(totalAdditionalCost);
         if (!spent)
         {
-            Debug.Log("Gold deduction failed.");
             return;
         }
 
@@ -198,6 +204,7 @@ public class GoldShopSceneManager : MonoBehaviour
         currentTurnSpeedTiers += additionalTurnSpeedTiers;
         currentExtraCannons += additionalCannon;
 
+        //permanently save upgrades so they'll still be there even if you close the game
         PlayerPrefs.SetInt("HealthUpgradeTiers", currentHealthTiers);
         PlayerPrefs.SetInt("SpeedUpgradeTiers", currentSpeedTiers);
         PlayerPrefs.SetInt("ReloadUpgradeTiers", currentReloadTiers);
@@ -206,14 +213,7 @@ public class GoldShopSceneManager : MonoBehaviour
         PlayerPrefs.SetInt("ExtraCannonPurchased", currentExtraCannons);
         PlayerPrefs.Save();
 
-        Debug.Log("Purchased upgrades: Health: " + additionalHealthTiers +
-                  ", Speed: " + additionalSpeedTiers +
-                  ", Reload: " + additionalReloadTiers +
-                  ", Wind Resist: " + additionalWindTiers +
-                  ", Turn Speed: " + additionalTurnSpeedTiers +
-                  ", Extra Cannon: " + additionalCannon +
-                  ". Total cost: " + totalAdditionalCost);
-
+        //reset the additional tiers to 0 after purchasing so you can buy more
         additionalHealthTiers = 0;
         additionalSpeedTiers = 0;
         additionalReloadTiers = 0;
@@ -226,6 +226,7 @@ public class GoldShopSceneManager : MonoBehaviour
         loaderScript.LoadLevel("LevelChange");
     }
 
+    //lets you reset all upgrades to default if you want to start again
     void ResetUpgrades()
     {
         currentHealthTiers = 0;
@@ -241,6 +242,7 @@ public class GoldShopSceneManager : MonoBehaviour
         additionalTurnSpeedTiers = 0;
         additionalCannon = 0;
         
+        //reset player prefs
         PlayerPrefs.SetInt("HealthUpgradeTiers", 0);
         PlayerPrefs.SetInt("SpeedUpgradeTiers", 0);
         PlayerPrefs.SetInt("ReloadUpgradeTiers", 0);
@@ -249,9 +251,9 @@ public class GoldShopSceneManager : MonoBehaviour
         PlayerPrefs.SetInt("ExtraCannonPurchased", 0);
         PlayerPrefs.Save();
         UpdateUI();
-        Debug.Log("All upgrades reset to default.");
     }
 
+    //increasing upgrade costs based on the current tier and the additional tiers
     int CalculateUpgradeCost(int currentTier, int additionalTiers, int baseCost)
     {
         int totalCost = 0;

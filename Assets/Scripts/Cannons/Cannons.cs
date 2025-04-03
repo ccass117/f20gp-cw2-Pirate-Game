@@ -53,10 +53,12 @@ public class Cannons : MonoBehaviour
 
     private Rigidbody shipRb;
 
+    //cannon local rot dictionary relative to ship for autoaim
     private Dictionary<Transform, Quaternion> defaultRotations = new Dictionary<Transform, Quaternion>();  // Stores the default rotation of each cannon to be returned to if there is no auto aim target.
 
     void Start()
     {
+        //different logic for player vs enemy ship, depending on what the cannon is instantiated on
         if (!gameObject.CompareTag("Player") && target == null && isEnemy)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -86,6 +88,7 @@ public class Cannons : MonoBehaviour
             AimCannons(rightCannons.transform, rightAimTarget);
         }
 
+        //only applies to enemies; fire as soon as valid target (player) enters LoS
         if (target != null)
         {
             foreach (Transform cannon in leftCannons.transform)
@@ -133,8 +136,8 @@ public class Cannons : MonoBehaviour
         return nearestTarget;
     }
 
+    //rotate each cannon on a side toward target for auto-aim
     void AimCannons(Transform cannons, Transform target)
-    // Aims cannons for a respective side (left or right) if a target exists for that side, else resets the cannons to the default angle stored in defaultRotations.
     {
         foreach (Transform cannon in cannons)
         {
@@ -152,7 +155,7 @@ public class Cannons : MonoBehaviour
         }
     }
 
-
+    //LoS definition
     bool targetAcquired(Transform cannon)
     {
         RaycastHit hit;
@@ -167,7 +170,7 @@ public class Cannons : MonoBehaviour
         return false;
     }
 
-    // SETTERS for dynamic cannon stat changes.
+    //SETTERS
     public void setShipLength(float newLength)
     {
         shipLength = newLength;
@@ -238,20 +241,17 @@ public class Cannons : MonoBehaviour
         float cannonSpacing = cannonsPerSide > 1 ? effectiveLength / (cannonsPerSide - 1) : 0;
         float startZ = -effectiveLength * 0.5f;
 
-        // No angle deviation is used now since cannons face directly along the ship's z axis.
+        //positions cannons horizontally along the ship, the effectiveLength above is basically just a "buffer" so that cannons don't spawn off the ship mesh, also more cannons = less space between cannons
         for (int i = cannonsPerSide - 1; i >= 0; i--)
         {
-            // Position cannons between -shipLength/2+margin and shipLength/2-margin.
             float zPosition = startZ + i * cannonSpacing;
             
-            // Instantiate right cannon with fixed rotation (facing right)
             Vector3 rightLocalPosition = new Vector3(xOffset, yOffset, zPosition);
             Vector3 rightWorldPosition = transform.TransformPoint(rightLocalPosition);
             GameObject rightCannon = Instantiate(cannonPrefab, rightWorldPosition, transform.rotation * Quaternion.Euler(0, 90, 0), rightCannons.transform);
             rightCannon.transform.localScale *= cannonScale;
             defaultRotations[rightCannon.transform] = Quaternion.Inverse(transform.rotation) * rightCannon.transform.rotation;
 
-            // Instantiate left cannon with fixed rotation (facing left)
             Vector3 leftLocalPosition = new Vector3(-xOffset, yOffset, zPosition);
             Vector3 leftWorldPosition = transform.TransformPoint(leftLocalPosition);
             GameObject leftCannon = Instantiate(cannonPrefab, leftWorldPosition, transform.rotation * Quaternion.Euler(0, -90, 0), leftCannons.transform);

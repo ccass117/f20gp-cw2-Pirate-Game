@@ -3,12 +3,13 @@ using System.Collections;
 
 public class Cannonball : MonoBehaviour
 {
+    //effective shooting range should be gravity mult * speed
     public float gravityMultiplier = 1f;
     public GameObject splashPrefab;
     public AudioClip hitSound;
     private Rigidbody rb;
     private AudioSource audioSource;
-    private Coroutine splashCoroutine;
+    private Coroutine splash;
     public GameObject firingShip;
 
     void Start()
@@ -19,9 +20,9 @@ public class Cannonball : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < 0f && splashCoroutine == null)
+        if (transform.position.y < 0f && splash == null)
         {
-            splashCoroutine = StartCoroutine(splashAndDestroy());
+            splash = StartCoroutine(splishsplash());
         }
     }
 
@@ -32,12 +33,11 @@ public class Cannonball : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        //Ignore collisions with the firing shi (and its children).
         if (firingShip != null && (collision.transform.IsChildOf(firingShip.transform) || collision.gameObject == firingShip))
         {
-            return; // Ignore the collision.
+            return;
         }
-
+        //so you can ignore collisisons below water, otherwise splash
         if (transform.position.y >= 0)
         {
           PlaySound(hitSound);
@@ -46,7 +46,7 @@ public class Cannonball : MonoBehaviour
         }
     }
 
-    private IEnumerator splashAndDestroy()
+    private IEnumerator splishsplash()
     {
         Instantiate(splashPrefab, new Vector3(transform.position.x, 0.5f, transform.position.z), Quaternion.identity);
         yield return new WaitForSeconds(1.5f);
