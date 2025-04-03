@@ -125,11 +125,13 @@ public class ShipController : MonoBehaviour
             Instantiate(anchorFlail, new Vector3(0, 0, 0), Quaternion.identity);  
         }
         
+        /*
         if (BuffController.registerBuff("Gaon Cannon", "Fires a high damage laser from the front of your ship every 20 seconds"))
         {
             GaonCannon.ActivateLaserBuff();
             Debug.Log("Gaon Cannon activated");
         }
+        */
 
         if (BuffController.registerBuff("Tube of Superglue", "You can't just glue on another cannon and expect it to work"))
         {

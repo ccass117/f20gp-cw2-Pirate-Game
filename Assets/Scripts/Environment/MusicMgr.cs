@@ -49,6 +49,7 @@ public class MusicMgr : MonoBehaviour
         sceneMusicMap["level_10"] = world_3_theme;
         sceneMusicMap["level_11"] = world_3_theme;
         sceneMusicMap["level_12"] = world_3_boss;
+        sceneMusicMap["Lose"] = menuMusic;
 
     }
 
@@ -60,7 +61,7 @@ public class MusicMgr : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "powerup")
+        if (scene.name == "powerup" || scene.name == "Lose")
         {
             StartCoroutine(FadeAudioPitch(0.5f, 0.5f)); // Lower pitch over 0.5 sec
             StartCoroutine(FadeAudioVolume(0.5f, 0.5f));
@@ -69,17 +70,17 @@ public class MusicMgr : MonoBehaviour
         {
             StartCoroutine(FadeAudioPitch(1.0f, 0.5f)); // Restore pitch over 0.5 sec
 
-            // Check if MoveShip.lvls is 1,2,5,6,9, or 10
-          //  if (MoveShip.lvls == 0 || MoveShip.lvls == 1 || MoveShip.lvls == 4 ||
-          //      MoveShip.lvls == 5 || MoveShip.lvls == 8 || MoveShip.lvls == 9)
-          //  {
-          //      StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
-          //  } else if (MoveShip.lvls ==-1)
-          //  {
-          //      StartCoroutine(FadeAudioVolume(0.0f, 3.0f));
-           // } else {
-           //     StartCoroutine(FadeAudioVolume(0.0f, 7.5f));
-          //  }
+          //   Check if MoveShip.lvls is 1,2,5,6,9, or 10
+            if (MoveShip.lvls == 0 || MoveShip.lvls == 1 || MoveShip.lvls == 4 ||
+                MoveShip.lvls == 5 || MoveShip.lvls == 8 || MoveShip.lvls == 9 || MoveShip.lvls == 11)
+            {
+                StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
+            } else if (MoveShip.lvls ==-1)
+            {
+                StartCoroutine(FadeAudioVolume(0.0f, 3.0f));
+            } else {
+               StartCoroutine(FadeAudioVolume(0.0f, 7.5f));
+            }
         }
         else
         {

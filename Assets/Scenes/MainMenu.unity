@@ -356,7 +356,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67140c7ec2fbf07489bfc5b3b14ed8d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 3.5
 --- !u!1 &51693903
 GameObject:
   m_ObjectHideFlags: 0
@@ -5037,7 +5036,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelLoader: {fileID: 1186352606}
-  credits: {fileID: 973547852}
   titleText: {fileID: 1952876290}
   startBtn: {fileID: 1764505112}
   startButton: {fileID: 1764505113}

@@ -6,7 +6,7 @@ public class MainMenu : MonoBehaviour
 {
     [Header("Scripts")]
     [SerializeField] private LevelLoader levelLoader;
-    //[SerializeField] private Credits credits;
+    [SerializeField] private Credits credits;
 
     [Header("Main")]
     [SerializeField] private RectTransform titleText;
@@ -66,7 +66,7 @@ public class MainMenu : MonoBehaviour
         DOVirtual.DelayedCall(1.5f, () =>
         {
             anim.SetTrigger("ToCredits");
-            //credits.RollCredits();
+            credits.RollCredits();
         });
     }
 
