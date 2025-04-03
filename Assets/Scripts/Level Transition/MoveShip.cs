@@ -11,7 +11,7 @@ public class MoveShip : MonoBehaviour
 
     // stores the points already visited / marked to be restored on each load
     private static Dictionary<int, bool> markedPoints = new Dictionary<int, bool>();
-    private static int lvls = -1; // to show map without doing anything before level_1
+    public static int lvls = -1; // to show map without doing anything before level_1
 
     private void Start()
     {

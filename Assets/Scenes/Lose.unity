@@ -865,8 +865,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+      - m_Target: {fileID: 899667693}
+        m_TargetAssemblyTypeName: EndScreen, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
