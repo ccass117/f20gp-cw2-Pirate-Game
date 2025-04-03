@@ -3,8 +3,7 @@ using System.Collections;
 
 public class Cannonball : MonoBehaviour
 {
-    //effective shooting range should be gravity mult * speed
-    public float gravityMultiplier = 1f;
+    public float gravityMultiplier = 1f; // gravityMultiplier is used to increase the gravity of the cannonball, usually set by the firing ship - artificial gravity is used rather than  game gravity
     public GameObject splashPrefab;
     public AudioClip hitSound;
     private Rigidbody rb;
@@ -20,7 +19,8 @@ public class Cannonball : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < 0f && splash == null)
+        // splash if the ball hits the water.
+        if (transform.position.y < 0f && splashCoroutine == null)
         {
             splash = StartCoroutine(splishsplash());
         }
@@ -28,11 +28,13 @@ public class Cannonball : MonoBehaviour
 
     void FixedUpdate()
     {
+        // add artificial gravity to the cannonball each frame
         rb.AddForce(Physics.gravity * (gravityMultiplier), ForceMode.Acceleration);
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        //Ignore collisions with the firing ship (and its children).
         if (firingShip != null && (collision.transform.IsChildOf(firingShip.transform) || collision.gameObject == firingShip))
         {
             return;
@@ -46,7 +48,8 @@ public class Cannonball : MonoBehaviour
         }
     }
 
-    private IEnumerator splishsplash()
+    // play splash sound effect and then delete the object (it will be hidden under the water so its fine to stay there for a bit)
+    private IEnumerator splashAndDestroy()
     {
         Instantiate(splashPrefab, new Vector3(transform.position.x, 0.5f, transform.position.z), Quaternion.identity);
         yield return new WaitForSeconds(1.5f);
@@ -61,3 +64,24 @@ public class Cannonball : MonoBehaviour
         }
     }
 }
+
+/*
+ * 
+ * ...........
+ * ...................__
+ * 
+ * ............./��/'...'/���`��
+ * 
+ * ........../'/.../..../......./��\
+ * 
+ * ........('(...�...�.... �~/'...')
+ * 
+ * .........\.................'...../
+ * 
+ * ..........''...\.......... _.��
+ * 
+ * 
+ * ............\..............(
+ * 
+ * BROFIST ...........
+ */
