@@ -28,7 +28,7 @@ public class StandardUI : MonoBehaviour
 
     void Update()
     {
-        healthText.text = (Mathf.Round(playerHealth.currentHealth) + "/" + playerHealth.maxHealth);
+        healthText.text = (Mathf.Ceil(playerHealth.currentHealth) + "/" + playerHealth.maxHealth);
         if (shipController.isRaisingAnchor && !movingUp)
         {
             movingUp = true;
