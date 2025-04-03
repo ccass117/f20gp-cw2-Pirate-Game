@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
 
 public class ShipController : MonoBehaviour
 {
@@ -37,6 +38,11 @@ public class ShipController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 currentVelocity;
     private Cannons cannons;
+
+
+    private static bool canDoubleCannons = true;
+    private static bool canIncreaseTf2 = true;
+    private static bool canIncreaseSuperglue = true;
 
     private Health health;
 
@@ -165,8 +171,25 @@ public class ShipController : MonoBehaviour
             health = GetComponent<Health>();
             health.currentHealth = 1;
             health.maxHealth = 1;
-            cannons = GetComponent<Cannons>();
-            cannons.cannonsPerSide = Mathf.CeilToInt(cannons.cannonsPerSide * 1.5f); //TODO fix
+            GameObject wind = GameObject.Find("Wind");
+            WindMgr windmgr = wind.GetComponent<WindMgr>();
+            cannons.cannonsPerSide = Mathf.CeilToInt(windmgr.cannonCount * 1.5f); //TODO fix..ed (doesnt work with double)?
+            if (BuffController.registerBuff("TF2 Engineer", "Add an additional cannon") && canIncreaseTf2)
+            {
+                cannons.cannonsPerSide += 1;
+                canIncreaseTf2 = false;
+            }
+            if (BuffController.registerBuff("Tube of Superglue", "You can't just glue on another cannon and expect it to work"))
+            {
+                cannons.cannonsPerSide += 1;
+                canIncreaseSuperglue = false;
+            }
+            if (BuffController.registerBuff("Double Decker Cannons", "Double the amount of cannons") && canDoubleCannons)
+            {
+                cannons.cannonsPerSide *= 2;
+                canDoubleCannons = false;
+            }
+
             cannons.InitializeCannons();
         }
 
