@@ -3,15 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class WindEventDisplay : MonoBehaviour
+//this is a joke event, basically when wind changes there is a 1 in 1000 change that wind strength is set to 10000 and a message pops up
+//we just thought this would be funny, actual random events are in windmgr.cs, this is just called there for the UI event
+public class CURSEOFPOSEIDON : MonoBehaviour
 {
-    public static WindEventDisplay Instance;
+    public static CURSEOFPOSEIDON Instance;
 
-    [Tooltip("UI Text element to display the wind event message")]
     public TextMeshProUGUI messageText;
-    [Tooltip("How long the message remains fully visible (in seconds)")]
     public float displayDuration = 3f;
-    [Tooltip("Duration of the fade in/out (in seconds)")]
     public float fadeDuration = 1f;
 
     void Awake()
@@ -33,6 +32,7 @@ public class WindEventDisplay : MonoBehaviour
         }
     }
 
+    //dispalys the message
     public void ShowMessage(string message)
     {
         if (messageText == null)

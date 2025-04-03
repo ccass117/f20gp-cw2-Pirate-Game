@@ -3,63 +3,57 @@ using System.Collections;
 
 public class GaonCannon : MonoBehaviour
 {
-    [Tooltip("Laser projectile prefab to spawn when firing.")]
-    public GameObject laserPrefab;
-    [Tooltip("Local offset from the player's position to spawn the laser (e.g., in front of the ship).")]
+    //expects a prefab reference in resources named exactly GaonCannon
+    public GameObject gaonCannon;
     public Vector3 spawnOffset = new Vector3(0, 0, 2f);
-    [Tooltip("Cooldown time between laser shots (in seconds).")]
     public float cooldown = 20f;
 
     private bool canShoot = true;
 
     void Update()
     {
-        // Listen for middle mouse button click.
         if (canShoot && Input.GetMouseButtonDown(2))
         {
-            StartCoroutine(ShootLaser());
+            StartCoroutine(Laser());
         }
     }
 
-    IEnumerator ShootLaser()
+
+    IEnumerator Laser()
     {
         canShoot = false;
 
-        if (laserPrefab != null)
+        if (gaonCannon != null)
         {
-            GameObject laserInstance = Instantiate(laserPrefab, transform);
+            GameObject laserInstance = Instantiate(gaonCannon, transform);
             laserInstance.transform.localPosition = spawnOffset;
             laserInstance.transform.localRotation = Quaternion.identity;
-            Debug.Log("Laser fired from local position " + spawnOffset);
-        }
-        else
-        {
-            Debug.LogWarning("GaonCannon: No laserPrefab assigned.");
         }
 
         yield return new WaitForSeconds(cooldown);
         canShoot = true;
     }
 
-    public void Initialize()
+    //loader for the prefab
+    public void Initialise()
     {
-        if (laserPrefab == null)
-            laserPrefab = Resources.Load<GameObject>("LaserPrefabName");
+        if (gaonCannon == null)
+            gaonCannon = Resources.Load<GameObject>("GaonCannon");
     }
 
-    public static void ActivateLaserBuff()
+    //use this one for registering the buff
+    public static void Fire()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogWarning("ActivateLaserBuff: No GameObject tagged 'Player' found. Delaying activation.");
-            CoroutineHelper.Instance.StartCoroutine(WaitForPlayerAndActivate());
+            CoroutineHelper.Instance.StartCoroutine(ChargeUp());
             return;
         }
-        AddLaserBuffComponent(player);
+        AddLaser(player);
     }
 
-    public static void DeactivateLaserBuff()
+    public static void Deactivate()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -68,30 +62,27 @@ public class GaonCannon : MonoBehaviour
             if (gc != null)
             {
                 Destroy(gc);
-                Debug.Log("Laser Buff deactivated on " + player.name);
             }
         }
     }
 
-    private static IEnumerator WaitForPlayerAndActivate()
+    private static IEnumerator ChargeUp()
     {
         GameObject player = null;
         while (player == null)
         {
-            player = GameObject.FindGameObjectWithTag("Player");
             yield return null;
         }
-        AddLaserBuffComponent(player);
+        AddLaser(player);
     }
 
-    private static void AddLaserBuffComponent(GameObject player)
+    private static void AddLaser(GameObject player)
     {
         GaonCannon gc = player.GetComponent<GaonCannon>();
         if (gc == null)
         {
             gc = player.AddComponent<GaonCannon>();
-            gc.Initialize();
+            gc.Initialise();
         }
-        Debug.Log("Laser Buff activated on " + player.name);
     }
 }

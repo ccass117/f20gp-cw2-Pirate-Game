@@ -8,7 +8,7 @@ public class Cannonball : MonoBehaviour
     public AudioClip hitSound;
     private Rigidbody rb;
     private AudioSource audioSource;
-    private Coroutine splashCoroutine;
+    private Coroutine splash;
     public GameObject firingShip;
 
     void Start()
@@ -22,7 +22,7 @@ public class Cannonball : MonoBehaviour
         // splash if the ball hits the water.
         if (transform.position.y < 0f && splashCoroutine == null)
         {
-            splashCoroutine = StartCoroutine(splashAndDestroy());
+            splash = StartCoroutine(splishsplash());
         }
     }
 
@@ -37,9 +37,9 @@ public class Cannonball : MonoBehaviour
         //Ignore collisions with the firing ship (and its children).
         if (firingShip != null && (collision.transform.IsChildOf(firingShip.transform) || collision.gameObject == firingShip))
         {
-            return; // Ignore the collision.
+            return;
         }
-
+        //so you can ignore collisisons below water, otherwise splash
         if (transform.position.y >= 0)
         {
           PlaySound(hitSound);
@@ -70,15 +70,15 @@ public class Cannonball : MonoBehaviour
  * ...........
  * ...................__
  * 
- * ............./´¯/'...'/´¯¯`·¸
+ * ............./ï¿½ï¿½/'...'/ï¿½ï¿½ï¿½`ï¿½ï¿½
  * 
- * ........../'/.../..../......./¨¯\
+ * ........../'/.../..../......./ï¿½ï¿½\
  * 
- * ........('(...´...´.... ¯~/'...')
+ * ........('(...ï¿½...ï¿½.... ï¿½~/'...')
  * 
  * .........\.................'...../
  * 
- * ..........''...\.......... _.·´
+ * ..........''...\.......... _.ï¿½ï¿½
  * 
  * 
  * ............\..............(

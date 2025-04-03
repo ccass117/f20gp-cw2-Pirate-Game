@@ -2,14 +2,12 @@ using UnityEngine;
 using UnityEngine.AI;
 using Unity.AI;
 
+//configurable agent, lets us easily create enemy variety!
 public class EnemyShipAI : MonoBehaviour
 {
     [Header("Targeting")]
-    [Tooltip("Target (player) that the enemy ship will pursue. If left unassigned, the first GameObject tagged 'Player' will be used.")]
     public Transform playerShip;
-    [Tooltip("Desired attack distance when ramming.")]
     public float targetDistance = 20f;
-    [Tooltip("When avoiding collision, maintain at least this distance from the player.")]
     public float avoidanceRadius = 25f;
     public float positionTolerance = 3f;
 
@@ -18,15 +16,15 @@ public class EnemyShipAI : MonoBehaviour
     public bool useNavMesh = true;
 
     [Header("Movement")]
-    public float speed = 2f;          // Minimum forward speed
+    public float speed = 2f;      
     public float maxSpeed = 5f;
     public float riggingSpeed = 2f;
     public float maxTurnRate = 60f;
     public float maxRudderAngle = 90f;
     public float rudderSpeed = 80f;
     public float maxTurnBoost = 30f;
-    public float farSpeedMultiplier = 0.1f; // Speed multiplier when far from player
-    public float farDistanceThreshold = 30f; // Distance to consider "far"
+    public float farSpeedMultiplier = 0.1f; 
+    public float farDistanceThreshold = 30f; 
 
     [Header("Aggro Settings")]
     private bool isAggroed;
@@ -36,15 +34,13 @@ public class EnemyShipAI : MonoBehaviour
     [Header("Idle Behavior Settings")]
     public float patrolRadius = 10f;
     public float idleAngularSpeed = 3f;
-    public float minObstacleDistance = 15f; // Minimum distance from obstacles when patrolling
-    public float patrolPointVariance = 25f; // Randomness in patrol points
+    public float minObstacleDistance = 15f; 
+    public float patrolPointVariance = 25f;
 
     [Header("Hold Course Settings")]
-    [Tooltip("When within this distance of the target position, hold course rather than turning aggressively.")]
     public float holdCourseThreshold = 5f;
 
     [Header("Collision Behavior")]
-    [Tooltip("If true, the enemy will attempt to ram (attack) the player. If false, it will avoid collisions by keeping at least 'avoidanceRadius' away.")]
     public bool isRammingShip = true;
 
     [Header("Read Only")]
@@ -66,9 +62,7 @@ public class EnemyShipAI : MonoBehaviour
     public float islandAvoidanceRadius = 15f;
 
     [Header("Advanced Navigation")]
-    [Tooltip("How aggressively to maintain pursuit while avoiding")]
     public float pursuitAggression = 0.7f;
-    [Tooltip("Minimum distance between path updates")]
     public float minPathUpdateDistance = 10f;
     [SerializeField] private Vector3 smoothedTargetPosition;
 
@@ -79,18 +73,15 @@ public class EnemyShipAI : MonoBehaviour
     private float lastObstacleRecheckTime;
 
     [Header("Collision Recovery")]
-    [Tooltip("When pushed off course, how aggressively to try to return")]
     public float recoveryAggression = 2f;
-    [Tooltip("Speed reduction during recovery maneuvers")]
     public float recoverySpeedMultiplier = 0.6f;
-    [Tooltip("How much offset from path before considering it a derailment")]
     public float derailmentThreshold = 8f;
     [SerializeField] private Vector3 lastValidPosition;
     [SerializeField] private float derailmentTimer;
 
     [Header("Stuck Detection")]
     public float stuckCheckInterval = 1f;
-    public float stuckThreshold = 0.5f; // Max speed to consider stuck
+    public float stuckThreshold = 0.5f;
     public float escapeForceMultiplier = 3f;
     private float lastStuckCheckTime;
     private Vector3 lastStuckPosition;
@@ -104,6 +95,7 @@ public class EnemyShipAI : MonoBehaviour
 
     void Awake()
     {
+        //grab components
         rb = GetComponent<Rigidbody>();
         navAgent = GetComponent<NavMeshAgent>();
         currentRiggingSpeed = speed;
@@ -119,16 +111,12 @@ public class EnemyShipAI : MonoBehaviour
             navAgent.updatePosition = false;
             navAgent.updateRotation = true;
         }
-        else
-        {
-            Debug.LogError("NavMeshAgent component missing!", this);
-        }
-
         idleCenterPosition = transform.position;
     }
 
     void Start()
     {
+        //target player ship
         if (playerShip == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -141,6 +129,7 @@ public class EnemyShipAI : MonoBehaviour
 
     void Update()
     {
+        //movement and steering
         if(navAgent != null && navAgent.enabled)
         {
             navAgent.Warp(transform.position);
@@ -149,41 +138,41 @@ public class EnemyShipAI : MonoBehaviour
 
         if(Time.time - lastStuckCheckTime > stuckCheckInterval)
         {
+            //ship gets stuck sometimes, because we procedurally generate islands
             CheckIfStuck();
         }
 
         if (playerShip == null)
             return;
 
-        // Calculate wind direction
+        //grab wind strength
         wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength;
 
-        // Restore aggro detection logic
         UpdateAggroStatus();
         
-        // Compute target position based on state
         if (isAggroed)
             acquireTarget();
         else
             Idle();
 
+        //smooth out target position
         smoothedTargetPosition = Vector3.Lerp(smoothedTargetPosition, targetPosition, 5f * Time.deltaTime);
         targetPosition = smoothedTargetPosition;
 
-        // Add collision avoidance
         CheckFrontalCollision();
 
-        // Restore navigation updates
         if (!(useNavMesh && navAgent != null && isAggroed))
             Rudder();
 
+        //we make the enemy ships move using the same rules as the player, they also have to adjust sails and turn with the rudder
         adjustSails();
         currentRudderAngle = Mathf.MoveTowards(currentRudderAngle, targetRudderAngle, rudderSpeed * Time.deltaTime);
 
-        // Update NavMesh navigation
+        //update navmesh
         if (useNavMesh && navAgent != null && isAggroed)
             Navigate();
 
+        //for if the agent gets knocked off course by collisions or wind or something
         CheckCourseDeviation();
         
         currentAvoidance = CalculateAvoidanceForce();
@@ -193,6 +182,7 @@ public class EnemyShipAI : MonoBehaviour
                                     Mathf.Clamp01(currentAvoidance.magnitude/avoidanceForce));
     }
 
+    //constant aggro, but it will move slower until in range
     void UpdateAggroStatus()
     {
         isAggroed = true;
@@ -202,13 +192,15 @@ public class EnemyShipAI : MonoBehaviour
     {
         lastStuckCheckTime = Time.time;
         
+        //checks if the ship is stuck by checking if it has moved in the last second
         if(rb.linearVelocity.magnitude < stuckThreshold && 
         Vector3.Distance(transform.position, lastStuckPosition) < 2f)
         {
             stuckCounter++;
+            //if the ship is stuck for 3 seconds, it will try to escape
             if(stuckCounter > 2)
             {
-                ExecuteEscapeManeuver();
+                Escape();
             }
         }
         else
@@ -219,9 +211,9 @@ public class EnemyShipAI : MonoBehaviour
         lastStuckPosition = transform.position;
     }
 
-    void ExecuteEscapeManeuver()
+    void Escape()
     {
-        // Find safest escape direction
+        //find easiest way out of the situation using navmesh sampling
         Vector3[] testDirs = {
             -transform.forward,
             transform.right,
@@ -230,8 +222,10 @@ public class EnemyShipAI : MonoBehaviour
             transform.forward - transform.right
         };
 
+        //loop through the test directions and find a valid escape route
         foreach(Vector3 dir in testDirs)
         {
+            //normalise the direction and check for obstacles when checking for escape routes
             Vector3 testPos = transform.position + dir * 25f;
             NavMeshHit hit;
             if(NavMesh.SamplePosition(testPos, out hit, 30f, NavMesh.AllAreas) &&
@@ -247,25 +241,27 @@ public class EnemyShipAI : MonoBehaviour
 
     Vector3 CalculateAvoidanceForce()
     {
+        //calculate avoidance forces for obstacles in front of the ship
+        //using sphere cast to check for obstacles in a cone in front of the ship
         Vector3 avoidance = Vector3.zero;
-        float[] scanAngles = { 0f, 30f, -30f, 60f, -60f }; // Wider angle coverage
+        float[] scanAngles = { 0f, 30f, -30f, 60f, -60f }; 
         float closestObstacleDistance = Mathf.Infinity;
         Vector3 primaryAvoidance = Vector3.zero;
 
-        // Primary obstacle detection
         foreach(float angle in scanAngles)
         {
+            //calculate the direction of the sphere cast based on the angle
             Vector3 dir = Quaternion.Euler(0, angle, 0) * transform.forward;
             if(Physics.SphereCast(transform.position, 15f, dir, out RaycastHit hit, lookAheadDistance, obstacleMask))
             {
                 float weight = 1 - Mathf.Clamp01(hit.distance / lookAheadDistance);
                 Vector3 avoidDir = (-dir + hit.normal).normalized;
                 
-                // Prioritize frontal obstacles
                 if(angle == 0f)
                 {
+                    //primary avoidance direction is the one directly in front of the ship
                     closestObstacleDistance = hit.distance;
-                    primaryAvoidance = avoidDir * weight * avoidanceForce * 3f; // Stronger frontal response
+                    primaryAvoidance = avoidDir * weight * avoidanceForce * 3f; 
                 }
                 else
                 {
@@ -274,7 +270,7 @@ public class EnemyShipAI : MonoBehaviour
             }
         }
 
-        // Apply emergency avoidance
+        //add primary avoidance direction to the total avoidance force
         if(closestObstacleDistance < emergencyBrakeDistance)
         {
             float emergencyWeight = 1 - (closestObstacleDistance / emergencyBrakeDistance);
@@ -282,10 +278,10 @@ public class EnemyShipAI : MonoBehaviour
             avoidance += -transform.forward * avoidanceForce * emergencyWeight;
         }
 
-        // Add periodic obstacle recheck
         if(Time.time - lastObstacleRecheckTime > obstacleRecheckInterval)
         {
             lastObstacleRecheckTime = Time.time;
+            //revalidate the calculated path to ensure it's still valid after all the avoidance calculations
             RevalidateCurrentPath();
         }
 
@@ -294,6 +290,7 @@ public class EnemyShipAI : MonoBehaviour
 
     void RevalidateCurrentPath()
     {
+        //check if the path is still valid by checking if there are any obstacles in the way
         if(navAgent != null && navAgent.hasPath)
         {
             foreach(Vector3 corner in navAgent.path.corners)
@@ -308,22 +305,9 @@ public class EnemyShipAI : MonoBehaviour
         }
     }
 
-    float GetPathSafety(Vector3 direction)
-    {
-        float score = 0f;
-        for(int i = 0; i < 5; i++)
-        {
-            Vector3 testDir = Quaternion.Euler(0, Random.Range(-30f, 30f), 0) * direction;
-            if(!Physics.SphereCast(transform.position, 10f, testDir, out _, lookAheadDistance, obstacleMask))
-            {
-                score += 1f;
-            }
-        }
-        return score;
-    }
-
     void CheckFrontalCollision()
     {
+        //check for obstacles in front of the ship using sphere cast
         Vector3[] rayOffsets = {
             Vector3.zero,
             Vector3.up * 2f,
@@ -338,6 +322,7 @@ public class EnemyShipAI : MonoBehaviour
                 out RaycastHit obstacleHit, 70f, lineOfSightMask))
             {
                 hadCollision = true;
+                //calculate the avoidance direction based on the collision normal and the ship's forward direction
                 Vector3 avoidDir = Vector3.Cross(obstacleHit.point - transform.position, Vector3.up).normalized;
                 targetPosition += avoidDir * avoidanceRadius * (1 - obstacleHit.distance/70f);
                 break;
@@ -352,14 +337,19 @@ public class EnemyShipAI : MonoBehaviour
 
     void FixedUpdate()
     {
+        //the goal here is to make it so that the enemy ships are under the same movement restrictions as the player, and have to calculate and move positions using the constraints of a real ship
+        
+        
         if(anchored) return;
 
+        //update the ship's speed and position based on the current rigging speed and wind direction
         float turnFactor = Mathf.Clamp01(Mathf.Abs(currentRudderAngle)/maxRudderAngle);
         float targetSpeed = Mathf.Lerp(maxSpeed, speed/2, turnFactor);
         
         float windEffect = Vector3.Dot(transform.forward, wind.normalized);
         targetSpeed *= (1 + windEffect * 0.5f);
 
+        //calculate the speed modifier (sails/rigging settings) based on the distance to the player ship
         float emergencySpeedModifier = 1f;
         if(Physics.SphereCast(transform.position, 15f, transform.forward, 
             out RaycastHit frontHit, emergencyBrakeDistance, obstacleMask))
@@ -370,6 +360,7 @@ public class EnemyShipAI : MonoBehaviour
 
         targetSpeed *= emergencySpeedModifier;
 
+        //if the ship is derailing, apply a speed multiplier to recover
         if(derailmentTimer > 0)
         {
             targetSpeed *= recoverySpeedMultiplier;
@@ -380,7 +371,7 @@ public class EnemyShipAI : MonoBehaviour
         {
             rb.AddTorque(transform.up * currentRudderAngle * 0.5f, ForceMode.Acceleration);
         }
-        // Adjust speed based on distance to player
+
         if (playerShip != null)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, playerShip.position);
@@ -390,36 +381,39 @@ public class EnemyShipAI : MonoBehaviour
             }
         }
 
-        // Smooth speed changes
+        //smooth the rigging speed to avoid sudden changes
         currentRiggingSpeed = Mathf.MoveTowards(currentRiggingSpeed, targetSpeed, 0.5f * Time.fixedDeltaTime);
         
         rb.MovePosition(rb.position + transform.forward * currentRiggingSpeed * Time.fixedDeltaTime);
         
+        //apply the rudder force to the ship's rigidbody
         if(navAgent != null && navAgent.enabled)
         {
             navAgent.nextPosition = transform.position;
             navAgent.velocity = rb.linearVelocity;
         }
     }
+
+    //check if the ship is derailing from its intended course, usually from a collision or extreme winds
     void CheckCourseDeviation()
     {
+        //check if the ship is derailing
         bool isMovingStraight = 
             Mathf.Abs(currentRudderAngle) < 5f && 
             rb.angularVelocity.magnitude < 1f &&
             Vector3.Distance(transform.position, targetPosition) > 10f;
 
-        // Calculate how far we've strayed from our intended path
+        //check last valid pos
         float pathDeviation = Vector3.Distance(transform.position, lastValidPosition);
         if(pathDeviation > derailmentThreshold || isMovingStraight)
         {
             derailmentTimer = 3f;
             lastValidPosition = transform.position;
             
-            // Create new target perpendicular to current velocity
+            //calculate a recovery direction based on the ship's current velocity and the last valid pos
             Vector3 recoveryDir = Quaternion.Euler(0, 90f, 0) * rb.linearVelocity.normalized;
             targetPosition = transform.position + recoveryDir * 25f;
             
-            // Validate on NavMesh
             NavMeshHit hit;
             if(NavMesh.SamplePosition(targetPosition, out hit, 30f, NavMesh.AllAreas))
             {
@@ -427,7 +421,7 @@ public class EnemyShipAI : MonoBehaviour
             }
         }
         
-        // Update valid position if we're on course
+        //check if the ship is close to the target position
         if(Vector3.Distance(transform.position, targetPosition) < positionTolerance * 2f)
         {
             lastValidPosition = transform.position;
@@ -436,40 +430,43 @@ public class EnemyShipAI : MonoBehaviour
 
     void acquireTarget()
     {
-        // Get base player position with intelligent velocity prediction
+        //main target acquisition function, the goal is that the ship should try and pull up alongside the player to line up cannon shots
+
+
+        //predict player positions
         Vector3 predictedPlayerPos = playerShip.position;
         Rigidbody playerRb = playerShip.GetComponent<Rigidbody>();
         
         if(playerRb != null) 
         {
-            // Only predict velocity if player is moving away significantly
             Vector3 toPlayer = playerShip.position - transform.position;
             float distanceFactor = Mathf.Clamp01(Vector3.Dot(playerRb.linearVelocity.normalized, toPlayer.normalized));
             predictedPlayerPos += playerRb.linearVelocity * Mathf.Clamp01(distanceFactor) * 1.5f;
         }
 
-        // Calculate dynamic flanking position
+        //work out the shortest path to the player ship's flank (either side, whichever one is closer)
         float flankSide = Vector3.Dot(transform.position - predictedPlayerPos, playerShip.right) > 0 ? 1 : -1;
         Vector3 flankOffset = (playerShip.right * flankSide * targetDistance) + 
                             (-playerShip.forward * Mathf.Lerp(5f, 15f, currentAvoidance.magnitude/avoidanceForce));
         Vector3 idealPosition = predictedPlayerPos + flankOffset;
 
-        // Blend target with avoidance direction
+        //calculate the avoidance force based on the ship's current velocity and the ideal position
         Vector3 avoidanceInfluence = currentAvoidance.normalized * avoidanceRadius;
         Vector3 finalTarget = Vector3.Lerp(idealPosition, 
                                         idealPosition + avoidanceInfluence, 
                                         Mathf.Clamp01(currentAvoidance.magnitude / (avoidanceForce * 0.7f)));
 
-        // Adaptive NavMesh sampling
+        //check if the target position is valid and not obstructed by obstacles
         NavMeshHit hit;
         float sampleRadius = 25f;
         bool foundValid = false;
         
-        // Progressive sampling with path validation
+        //try to find a valid target position using navmesh sampling, 3 iterations
         for(int i = 0; i < 3; i++)
         {
             if(NavMesh.SamplePosition(finalTarget, out hit, sampleRadius, NavMesh.AllAreas))
             {
+                //check if a generated path is valid and not obstructed by obstacles, if it is, use it
                 if(IsPathSafe(hit.position) && 
                 !Physics.CheckSphere(hit.position, islandAvoidanceRadius * 0.8f, obstacleMask))
                 {
@@ -478,29 +475,26 @@ public class EnemyShipAI : MonoBehaviour
                     break;
                 }
             }
-            sampleRadius += 20f; // Aggressive radius expansion
+            sampleRadius += 20f; //increase radius to search for a path for next iteration
         }
 
-        // Fallback strategies
         if(!foundValid)
         {
-            // Try direct path first
+            //if no valid path is found, use the original target position, and it will update again later
             if(!Physics.Linecast(transform.position, finalTarget, obstacleMask))
             {
                 targetPosition = finalTarget;
             }
             else
             {
-                // Fallback to player-relative escape position
                 Vector3 escapeDir = (transform.position - playerShip.position).normalized;
                 targetPosition = transform.position + escapeDir * islandAvoidanceRadius * 2f;
             }
         }
 
-        // Final obstacle validation
         if(Physics.CheckSphere(targetPosition, islandAvoidanceRadius, obstacleMask))
         {
-            // Systematic escape direction testing
+            //if it gets stuck on an island along the way, try to find a new path around it
             Vector3[] escapeVectors = {
                 transform.right * islandAvoidanceRadius * 2f,
                 -transform.right * islandAvoidanceRadius * 2f,
@@ -508,6 +502,7 @@ public class EnemyShipAI : MonoBehaviour
                 -transform.forward * islandAvoidanceRadius * 1.5f
             };
 
+            //loop through the escape vectors and find a valid escape route
             foreach(Vector3 dir in escapeVectors)
             {
                 Vector3 testPos = transform.position + dir;
@@ -519,13 +514,11 @@ public class EnemyShipAI : MonoBehaviour
                 }
             }
         }
-
-        Debug.DrawLine(transform.position, targetPosition, Color.green, 2f);
     }
 
     void Idle()
     {
-        // Generate new patrol point only when close to current target
+        //when far away, move slowly
         if(Vector3.Distance(transform.position, targetPosition) < holdCourseThreshold)
         {
             targetPosition = GetSafePatrolPoint();
@@ -534,12 +527,14 @@ public class EnemyShipAI : MonoBehaviour
 
     Vector3 GetSafePatrolPoint()
     {
+        //when not in aggro, the ship will move slowly, this is overriden by the aggro function, causing the ship to move towards the player, but this will make it so that the ship will not get stuck on islands or obstacles when trying to find a path to the player ship, and move slower so that the player has time to breathe
         Vector3 bestPoint = idleCenterPosition;
         float bestScore = float.MinValue;
         
-        // Try multiple random points to find safest one
+        //some more navmesh sampling
         for(int i = 0; i < 5; i++)
         {
+            //generate a random point within the patrol radius, and check if it is valid, and creates a score for each one to figure out what the best move is
             Vector3 randomOffset = new Vector3(
                 Random.Range(-patrolRadius, patrolRadius),
                 0,
@@ -548,19 +543,18 @@ public class EnemyShipAI : MonoBehaviour
             
             Vector3 testPoint = idleCenterPosition + randomOffset;
             
-            // Check obstacle proximity
             if(Physics.CheckSphere(testPoint, minObstacleDistance, obstacleMask))
                 continue;
 
-            // Get navmesh valid point
+            //check if the point is within the patrol radius and not obstructed by obstacles
             NavMeshHit hit;
             if(NavMesh.SamplePosition(testPoint, out hit, patrolRadius * 2, NavMesh.AllAreas))
             {
-                // Calculate score based on distance from obstacles and center
                 float obstacleDistance = GetObstacleDistance(hit.position);
                 float centerDistance = Vector3.Distance(hit.position, idleCenterPosition);
                 float score = obstacleDistance + (centerDistance * 0.5f);
                 
+                //iterate through the points and find the best one
                 if(score > bestScore)
                 {
                     bestScore = score;
@@ -574,6 +568,7 @@ public class EnemyShipAI : MonoBehaviour
 
     float GetObstacleDistance(Vector3 position)
     {
+        //check for obstacles in the way using sphere cast
         if(Physics.SphereCast(position, 1f, Vector3.forward, out RaycastHit hit, minObstacleDistance, obstacleMask))
         {
             return hit.distance;
@@ -581,62 +576,22 @@ public class EnemyShipAI : MonoBehaviour
         return minObstacleDistance;
     }
 
-    // Custom movement for non-navmesh cases.
     void Move()
     {
+        //move using wind force and rigging speed
         float windEffect = Vector3.Dot(transform.forward, wind);
         float effectiveSpeed = currentRiggingSpeed + windEffect;
         effectiveSpeed = Mathf.Max(effectiveSpeed, speed);
         rb.MovePosition(rb.position + transform.forward * effectiveSpeed * Time.fixedDeltaTime);
     }
 
-    // Custom steering for non-navmesh cases.
-    void Steer()
-    {
-        Vector3 toTarget = targetPosition - transform.position;
-        float distance = toTarget.magnitude;
-        
-        if(distance < holdCourseThreshold * 2f)
-        {
-            // Add reverse capability when stuck
-            if(distance < 3f && currentAvoidance.magnitude > avoidanceForce * 0.7f)
-            {
-                targetRudderAngle = 180f; // Hard turn to escape
-                return;
-            }
-            targetRudderAngle = 0;
-            return;
-        }
-
-        Vector3 targetDir = toTarget.normalized;
-        float angleDiff = Vector3.SignedAngle(transform.forward, targetDir, Vector3.up);
-        
-        // Dynamic turn rate based on obstacle proximity
-        float obstacleWeight = Mathf.Clamp01(currentAvoidance.magnitude / avoidanceForce);
-        float turnBoost = maxTurnBoost * (1 + obstacleWeight);
-        
-        targetRudderAngle = Mathf.Clamp(angleDiff * 1.5f, -maxRudderAngle, maxRudderAngle);
-        
-        // Apply boosted turn rate when avoiding
-        float effectiveTurnRate = maxTurnRate * (1 + obstacleWeight) + turnBoost;
-        Quaternion desiredRotation = Quaternion.LookRotation(targetDir);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation, 
-                                                    effectiveTurnRate * Time.fixedDeltaTime);
-    }
-
-    // Use the NavMeshAgent to update destination and extract the next corner for steering.
     void Navigate()
     {
+        //main navigation function
         if(navAgent == null || !navAgent.enabled) return;
-
-        if(navAgent == null)
-        {
-            Debug.LogError("NavAgent is null!");
-            return;
-        }
-
         try 
         {
+            //check if the agent is on the navmesh, and warp it to the current position if it is not
             if(!navAgent.isOnNavMesh)
             {
                 navAgent.Warp(transform.position);
@@ -645,7 +600,6 @@ public class EnemyShipAI : MonoBehaviour
 
             if(!isAggroed)
             {
-                // Verify path safety
                 if(navAgent.hasPath)
                 {
                     foreach(Vector3 corner in navAgent.path.corners)
@@ -659,7 +613,6 @@ public class EnemyShipAI : MonoBehaviour
                     }
                 }
                 
-                // Reduce update frequency when patrolling
                 if(Time.time - timer > updateTimer * 2f)
                 {
                     NavMesh.SamplePosition(targetPosition, out NavMeshHit sampleHit, patrolRadius * 2, NavMesh.AllAreas);
@@ -667,22 +620,23 @@ public class EnemyShipAI : MonoBehaviour
                     timer = Time.time;
                 }
             } else {
-                // Maintain minimum speed for maneuverability
+                //adjust rigging speed based on distance to player ship
                 currentRiggingSpeed = Mathf.Max(currentRiggingSpeed, speed * 0.8f);
 
-                // Calculate path with dynamic repathing
+                //check distance to player ship and adjust target position accordingly
                 if(Time.time - timer > updateTimer || navAgent.remainingDistance < 5f)
                 {
                     Vector3 finalTarget = Vector3.Lerp(targetPosition, 
                                                     playerShip.position, 
                                                     Mathf.Clamp01(currentAvoidance.magnitude/avoidanceForce));
                     
+                    //check if the target position is valid and not obstructed by obstacles
                     NavMesh.SamplePosition(finalTarget, out NavMeshHit sampleHit, 25f, NavMesh.AllAreas);
                     navAgent.SetDestination(sampleHit.position);
                     timer = Time.time;
                 }
 
-                // Force path refresh when obstructed
+                //create a path to the target position, validation is handled in acquireTarget() as above
                 if(navAgent.pathStatus == NavMeshPathStatus.PathPartial)
                 {
                     navAgent.ResetPath();
@@ -696,25 +650,25 @@ public class EnemyShipAI : MonoBehaviour
 
     void Rudder()
     {
+        //calculate the rudder angle based on the target position and the ship's current velocity
         Vector3 toTarget = targetPosition - transform.position;
         if (toTarget.magnitude > positionTolerance)
         {
-            // Calculate base direction
+            //rudder angle is calculated based on the angle between the ship's forward direction and the target position
             Vector3 pursuitDir = (playerShip.position - transform.position).normalized;
             Vector3 desiredDir = Vector3.Lerp(toTarget.normalized, pursuitDir, pursuitAggression);
 
-            // Boost avoidance influence during recovery
+            //adjust rudder angle here
             float avoidanceWeight = Mathf.Clamp01(currentAvoidance.magnitude / avoidanceForce);
             if(derailmentTimer > 0) avoidanceWeight = Mathf.Clamp(avoidanceWeight * 1.5f, 0.5f, 1f);
             desiredDir = Vector3.Lerp(desiredDir, currentAvoidance.normalized, avoidanceWeight);
 
-            // Calculate angle with emergency turn boost
+            //calculate the angle to the target position and apply turn multiplier based on the ship's current speed
             float angleToTarget = Vector3.SignedAngle(transform.forward, desiredDir, Vector3.up);
             float turnMultiplier = derailmentTimer > 0 ? emergencyTurnBoost : 1f;
             
             targetRudderAngle = Mathf.Clamp(angleToTarget * turnMultiplier, -maxRudderAngle, maxRudderAngle);
 
-            // Prevent straight-line lock
             if(Mathf.Abs(targetRudderAngle) < 5f && derailmentTimer > 0)
             {
                 targetRudderAngle = rb.angularVelocity.y < 0 ? -45f : 45f;
@@ -724,16 +678,20 @@ public class EnemyShipAI : MonoBehaviour
 
     bool IsPathSafe(Vector3 targetPos)
     {
+        //path validation (again), this is a separate one from the patrol point and revalidation one, since the revalidation one is for being called quickly during the update loop AFTER applying forces, and this one is for checking if the path is valid BEFORE setting it as a target position
+        // the other patrol one is for checking if the path is valid when the ship is "idle", which is when it is still moving toward the player, but paths are calculated differently since it is not actively trying to chase the player at full tilt just yet
         if(navAgent != null && navAgent.isOnNavMesh)
         {
             NavMeshPath path = new NavMeshPath();
             if(navAgent.CalculatePath(targetPos, path))
             {
-                // Check entire path corridor
+                //check the parts of the path
                 for(int i = 0; i < path.corners.Length - 1; i++)
                 {
+                    //work out if the path is valid
                     Vector3 segmentStart = path.corners[i];
                     Vector3 segmentEnd = path.corners[i+1];
+                    //obstacle checking
                     if(Physics.SphereCast(segmentStart, navAgent.radius * 1.2f, 
                     (segmentEnd - segmentStart).normalized, out _, 
                     Vector3.Distance(segmentStart, segmentEnd), obstacleMask))
@@ -751,23 +709,25 @@ public class EnemyShipAI : MonoBehaviour
     {
         if(anchored) return;
         
+        //calculate the rigging speed based on the wind direction and ship's forward direction
         float windAlignment = Vector3.Dot(transform.forward, wind.normalized);
         float targetMultiplier = Mathf.Lerp(0.5f, 1.5f, (windAlignment + 1)/2);
         
-        // Maintain minimum speed during avoidance
+        //calculate the speed based on the distance to the player ship and the avoidance force
         float obstacleFactor = Mathf.Clamp01(currentAvoidance.magnitude / avoidanceForce);
         float minSpeed = Mathf.Lerp(speed, speed * 1.5f, obstacleFactor);
 
-        // Lower minSpeed when far from player
         if (playerShip != null)
         {
+            //maintain a minimum speed, but slow down if far away from the player ship, speed up if close
             float distanceToPlayer = Vector3.Distance(transform.position, playerShip.position);
             if (distanceToPlayer > farDistanceThreshold)
             {
-                minSpeed = 0.2f; // Adjust this value as needed
+                minSpeed = 0.2f;
             }
         }
         
+        //smooth the rigging speed
         float smoothedMultiplier = Mathf.Lerp(1f, targetMultiplier, Time.deltaTime * 2f);
         currentRiggingSpeed = Mathf.Clamp(
             currentRiggingSpeed * smoothedMultiplier,
@@ -778,22 +738,23 @@ public class EnemyShipAI : MonoBehaviour
     
     void OnCollisionEnter(Collision collision)
     {
+        //collisions will knock the ship off course, and it will stop being able to navigate properly, so we need to give it a way to recalculate and course correct
         if(collision.impulse.magnitude > 5f)
         {
             derailmentTimer = 3f;
             
-            // Calculate escape direction blending collision normal and current velocity
             Vector3 collisionNormal = collision.contacts[0].normal;
             Vector3 velocityDir = rb.linearVelocity.normalized;
             Vector3 escapeDir = Vector3.Lerp(-collisionNormal, velocityDir, 0.3f).normalized;
 
-            // Find safest escape route
+            //escape direction is the opposite of the collision normal, so that the ship can find a way out quickly if the collision is strong enough
             Vector3[] testDirections = {
                 escapeDir,
                 Quaternion.Euler(0, 45f, 0) * escapeDir,
                 Quaternion.Euler(0, -45f, 0) * escapeDir
             };
 
+            //check each direction
             foreach(Vector3 dir in testDirections)
             {
                 Vector3 testPos = transform.position + dir * recoveryPathRadius;
@@ -806,62 +767,20 @@ public class EnemyShipAI : MonoBehaviour
                 }
             }
 
-            // Force aggressive turning
+            //invoke a delayed course update to re-acquire the target
             currentAvoidance += escapeDir * avoidanceForce * 3f;
-            CancelInvoke("DelayedCourseUpdate");
-            Invoke("DelayedCourseUpdate", 0.5f);
+            CancelInvoke("acquireTarget");
+            Invoke("acquireTarget", 0.5f);
 
             if(collision.gameObject.CompareTag("Island"))
             {
-                // Push away from island center
+                //push away from island center (breaks our ship rules a little bit, but it feels better in gameplay)
                 Vector3 islandCenter = collision.transform.position;
-                Vector3 islandEscapeDirection = (transform.position - islandCenter).normalized; // Renamed variable
+                Vector3 islandEscapeDirection = (transform.position - islandCenter).normalized;
                 islandEscapeDirection.y = 0;
                 currentAvoidance += islandEscapeDirection * avoidanceForce * 4f;
                 targetPosition = transform.position + islandEscapeDirection * 50f;
             }
-        }
-    }
-
-    void DelayedCourseUpdate()
-    {
-        if(isAggroed)
-        {
-            acquireTarget(); // Re-acquire target after recovery
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        // Always draw target position
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(targetPosition, 1f);
-
-        // Only draw NavMesh info if agent exists
-        if(navAgent != null)
-        {
-            // Draw path if available
-            if(navAgent.hasPath)
-            {
-                Gizmos.color = Color.yellow;
-                for(int i = 0; i < navAgent.path.corners.Length - 1; i++)
-                {
-                    Gizmos.DrawLine(navAgent.path.corners[i], navAgent.path.corners[i + 1]);
-                    Gizmos.DrawSphere(navAgent.path.corners[i], 0.5f);
-                }
-            }
-
-            // Draw agent's believed position
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireCube(navAgent.nextPosition, Vector3.one * 3f);
-        }
-
-        // Draw avoidance rays
-        Gizmos.color = Color.blue;
-        Vector3[] rayOffsets = { Vector3.zero, Vector3.up * 2f, Vector3.down * 2f };
-        foreach(Vector3 offset in rayOffsets)
-        {
-            Gizmos.DrawRay(transform.position + offset, transform.forward * 70f);
         }
     }
 }

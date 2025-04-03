@@ -105,7 +105,7 @@ public class ShipController : MonoBehaviour
 
         if (BuffController.registerBuff("Rocket Boost", "Allows you to rocket forward every 15 seconds, giving a burst of speed"))
         {
-            RocketBoost.ActivateRocketBoost();
+            RocketBoost.ActivateBoost();
             Debug.Log("Rocket Boost activated");
         }
 
@@ -126,9 +126,9 @@ public class ShipController : MonoBehaviour
         }
         
         /*
-        if (BuffController.registerBuff("Gaon Cannon", "Fires a high damage laser from the front of your ship every 20 seconds"))
+        if (BuffController.registerBuff("Gaon Cannon", "How much cola do you think we have?"))
         {
-            GaonCannon.ActivateLaserBuff();
+            GaonCannon.Fire();
             Debug.Log("Gaon Cannon activated");
         }
         */
@@ -211,6 +211,8 @@ public class ShipController : MonoBehaviour
 
     void playerMovement()
     {
+        //W and S to increase/decrease rigging, catching wind more for acceleration or deceleration
+        //A and D to turn left/right, using the rudder to steer, A and D are rudder angle, so it works like a real ship, and turning the rudder left makes you go right and vice versa
         if (!anchored)
         {
             if (Input.GetKey(KeyCode.W))
@@ -234,12 +236,14 @@ public class ShipController : MonoBehaviour
             targetRudderAngle = Mathf.Clamp(targetRudderAngle, -maxRudderAngle, maxRudderAngle);
         }
 
+        //moves rudder angle gradually, like a real rudder
         currentRudderAngle = Mathf.MoveTowards(
             currentRudderAngle,
             targetRudderAngle,
             rudderSpeed * Time.deltaTime
         );
 
+        //drop the anchor to stop movement
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (!anchored && !isRaisingAnchor)
@@ -248,7 +252,6 @@ public class ShipController : MonoBehaviour
                 anchorDropSFX.Play();
                 float turnRate = maxTurnRate * (currentRudderAngle / maxRudderAngle);
                 anchorTurnMomentum = turnRate;
-                Debug.Log("Anchor Dropped");
             }
             else if (anchored && !isRaisingAnchor)
             {
@@ -259,6 +262,7 @@ public class ShipController : MonoBehaviour
 
     void playerWeapons()
     {
+        //call cannons.cs to fire left and right cannons separately
         if (Input.GetKeyDown(KeyCode.Q))
         {
             cannons.FireLeft();
@@ -271,6 +275,7 @@ public class ShipController : MonoBehaviour
 
     void windEffect()
     {
+        //get the wind direction and strength from the WindMgr script
         wind = WindMgr.Instance.windDir * WindMgr.Instance.windStrength * windResistance;
     }
 
@@ -278,6 +283,7 @@ public class ShipController : MonoBehaviour
     {
         if (anchored)
         {
+            //ignore wind and rigging speed if anchored, just use the anchor force to stop movement
             currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, anchorForce * Time.fixedDeltaTime);
             rb.MovePosition(rb.position + currentVelocity * Time.fixedDeltaTime);
             float turnBoost = maxTurnBoost * (currentRiggingSpeed / maxSpeed);
@@ -291,6 +297,7 @@ public class ShipController : MonoBehaviour
         }
         else
         {
+            //apply wind forces and rigging speed, so that the ship moves faster with the wind, slower against the wind, etc.
             float forwardSpeed = currentRiggingSpeed + Vector3.Dot(transform.forward, wind);
             currentVelocity = transform.forward * forwardSpeed;
             float turnRate = maxTurnRate * (currentRudderAngle / maxRudderAngle);
@@ -302,6 +309,7 @@ public class ShipController : MonoBehaviour
 
     private IEnumerator RaiseAnchor()
     {
+        //stop the ship from moving while raising the anchor, and make sure that the anchor gets raised after a delay so that the player can't get around wind by spamming the anchor
         isRaisingAnchor = true;
         anchorRaiseSFX.Play();
         yield return new WaitForSeconds(anchorRaiseTime);

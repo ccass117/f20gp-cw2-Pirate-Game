@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+//basically just counts enemies in a scene, and when it hits zero, transitions to buff selection, and then to the next level using our levelloader class
 public class LevelTransitionManager : MonoBehaviour
 {
     [Tooltip("Time (in seconds) between enemy checks.")]
@@ -18,25 +19,25 @@ public class LevelTransitionManager : MonoBehaviour
     {
         levelloader = GameObject.Find("LevelLoader");
 
-        // Subscribe to scene loaded event
+        //subscribe to scene loaded event
         SceneManager.sceneLoaded += OnSceneLoaded;
         StartCoroutine(CheckEnemies());
     }
 
     void OnDestroy()
     {
-        // Unsubscribe to avoid memory leaks
+        //unsubscribe to avoid memory leaks
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //only work on level_1 to level_12
+        //regex to check if the scene name matches level_1 to level_12
         if (Regex.IsMatch(scene.name, @"^level_(1[0-2]|[1-9])$"))
         {
             sceneName = scene.name;
             levelloader = GameObject.Find("LevelLoader");
-            levelCompleted = false;  // Reset level completion when a new scene loads
+            levelCompleted = false;
             StartCoroutine(CheckEnemies());
         }
     }
@@ -74,7 +75,6 @@ public class LevelTransitionManager : MonoBehaviour
 
     void TransitionToPowerUpScene()
     {
-        Debug.Log("All enemies defeated! Transitioning to PowerUpScene for next level");
         LevelLoader loaderScript = levelloader.GetComponent<LevelLoader>();
 
 

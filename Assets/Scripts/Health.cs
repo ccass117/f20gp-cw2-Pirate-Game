@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
+//global health script, this is designed to be attached to any object where combat and damage is concerned, and is configurable for player, enemy, and projectile objects
 public class Health : MonoBehaviour
 {
     [Header("Health Settings")]
@@ -46,7 +47,7 @@ public class Health : MonoBehaviour
     void Awake()
     {
         levelLoader = GameObject.Find("LevelLoader");
-        // If this Health script is attached to the player, use PlayerData to set currentHealth.
+        //if attached to player, use PlayerData.currentHealth from PlayerData.cs, otherwise use maxHealth
         if (gameObject.CompareTag("Player"))
         {
             if (PlayerData.currentHealth >= 0)
@@ -59,10 +60,12 @@ public class Health : MonoBehaviour
                 PlayerData.currentHealth = maxHealth;
             }
 
+            //buff modifiers, see BuffController.cs
             if (BuffController.registerBuff("Strong Hull", "Increase the resistance to damage")) { damageResistance = 0.5f; }
 
             if (BuffController.registerBuff("Cast Iron Figurehead", "Increase ramming dammage")) { damageMultiplier = 2f; }
         }
+        
         else
         {
             currentHealth = maxHealth;
@@ -76,11 +79,12 @@ public class Health : MonoBehaviour
             return;
         }
 
+        //apply damage resistance
         float finalDamage = amount * damageResistance;
         currentHealth -= finalDamage;
         lastDamageTime = Time.time;
 
-        // If this is the player, update PlayerData.
+        //if player, update PlayerData.currentHealth
         if (gameObject.CompareTag("Player") && Time.timeSinceLevelLoad >= 1)
         {
             PlayerData.currentHealth = currentHealth;
@@ -92,6 +96,7 @@ public class Health : MonoBehaviour
         }
 
 
+        //if enemy, play sound if within 15 units of player
         if (gameObject.CompareTag("Enemy"))
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -102,10 +107,9 @@ public class Health : MonoBehaviour
                 {
                     if (hitSfx != null)
                     {
-                        // Normalize volume between 0 and 1
                         float volume = Mathf.Clamp01(1.0f - (distanceToPlayer / 15f));
 
-                        hitSfx.volume = volume; // Set the volume
+                        hitSfx.volume = volume;
                         hitSfx.pitch = Random.Range(0.5f, 1.0f);
                         hitSfx.Play();
                     }
@@ -115,28 +119,28 @@ public class Health : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Die();
+            Die(); // :(
         }
     }
 
+    //heal, this is only ever used for the player in practice
     public void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-
-        // If this is the player, update PlayerData.
         if (gameObject.CompareTag("Player"))
         {
             PlayerData.currentHealth = currentHealth;
         }
     }
 
+    //health drops to zero, and the object sinks below the water, and then is disabled after a couple seconds
     private void Die()
     {
         GoldManager.AddGold(goldAmount);
-        Debug.Log($"{gameObject.name} has died.");
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
+            //turn on gravity so it falls
             rb.isKinematic = false;
             rb.useGravity = true;
             rb.linearVelocity = Vector3.zero;
@@ -162,7 +166,6 @@ public class Health : MonoBehaviour
 
     private IEnumerator Fall(Rigidbody rb)
     {
-        //Lock all axes except Y to make the object fall straight down
         rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
         float fallTime = 3f;
         float elapsedTime = 0f;
@@ -184,12 +187,13 @@ public class Health : MonoBehaviour
          gameObject.SetActive(false);
     }
 
-
+    //getter
     public float GetCurrentHealth()
     {
         return currentHealth;
     }
 
+    //the main way damage works, when two objects collide they exchange velocities and resistances, and then we call this to apply damage correclty to each other based on combined velocity and resistance
     public void DamageHandshake(Health other, float mySpeed, float otherSpeed)
     {
         float damageToMe = (mySpeed + otherSpeed) * other.damageMultiplier;
@@ -207,7 +211,8 @@ public class Health : MonoBehaviour
         bool defenderValid = otherSpeed >= defenderSpeedThreshold;
 
         if (!attackerValid && !defenderValid) return;
-
+        //if one of the colliding objects is a projectile, the handshake becomes one way, the projectile does damage to the other object, and the other object does not do damage to the projectile
+        //if both are projectiles, they do damage to each other
         if (isProjectile || (otherHealth != null && otherHealth.isProjectile))
         {
             if (isProjectile && (otherHealth == null || !otherHealth.isProjectile))
@@ -216,6 +221,7 @@ public class Health : MonoBehaviour
             }
             if (!isProjectile && otherHealth != null && otherHealth.isProjectile)
             {
+                //if it's a projectile, damageMultiplier is used as a flat damage number
                 float projectileDamage = otherHealth.damageMultiplier;
                 TakeDamage(projectileDamage, otherHealth.gameObject);
                 return;
@@ -240,6 +246,7 @@ public class Health : MonoBehaviour
         }
     }
 
+    //the exact same as on collider enter, but has a few use cases for things like fire breath on the hydra
     public void OnTriggerEnter(Collider collision)
     {
         Rigidbody rbSelf = GetComponent<Rigidbody>();

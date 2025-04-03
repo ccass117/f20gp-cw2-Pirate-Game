@@ -2,30 +2,25 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+//spawns hydra heads when low health, alternating left and right sides
 public class HydraHeadGenerator : MonoBehaviour
 {
     [Header("Head Prefab Settings")]
-    [Tooltip("Prefab for the hydra head to spawn.")]
     public GameObject headPrefab;
-    [Tooltip("Local offset applied when spawning a new head. Use the X value for horizontal spacing.")]
     public Vector3 headOffset = new Vector3(2f, 0f, 0f);
 
     [Header("Spawn Timing")]
-    [Tooltip("Time interval (in seconds) between new head spawns when health is below 10%.")]
     public float spawnInterval = 1f;
 
     [Header("Head Rising Settings")]
-    [Tooltip("Fixed water level (target y) for new heads.")]
     public float waterLevel = -20f;
-    [Tooltip("Maximum random offset (in units) to add/subtract from the water level.")]
     public float spawnYOffsetRange = 1f;
-    [Tooltip("Rising animation duration (in seconds).")]
     public float riseDuration = 1.5f;
 
     private Health bossHealth;
     private float spawnTimer = 0f;
     private bool spawnOnLeft = true;
-    private bool phase2Triggered = false;
+    private bool phase2 = false;
 
     void Start()
     {
@@ -37,33 +32,35 @@ public class HydraHeadGenerator : MonoBehaviour
         if (bossHealth == null)
             return;
 
+        //phase 2: spawn 2 more heads
         float healthPercentage = bossHealth.GetCurrentHealth() / bossHealth.maxHealth;
-
-        if (healthPercentage < 0.5f && !phase2Triggered)
+        if (healthPercentage < 0.5f && !phase2)
         {
-            SpawnSideHeads();
-            phase2Triggered = true;
+            SpawnHeads();
+            phase2 = true;
         }
 
+        //phase 3? kinda, spawn a new head every second, good luck
         if (healthPercentage < 0.1f)
         {
             spawnTimer += Time.deltaTime;
             if (spawnTimer >= spawnInterval)
             {
                 spawnTimer = 0f;
-                SpawnAlternatingHead();
+                GoodLuck();
             }
         }
     }
 
-    // Instead of averaging children, return a fixed water level plus a small random offset.
+    //getter for y pos
+    //adds a little variation to head spawn height, just makes it look a bit better
     float GetTargetY()
     {
         float targetY = waterLevel + Random.Range(-spawnYOffsetRange, spawnYOffsetRange);
         return targetY;
     }
 
-    void SpawnSideHeads()
+    void SpawnHeads()
     {
         Transform leftMost = null;
         Transform rightMost = null;
@@ -82,19 +79,20 @@ public class HydraHeadGenerator : MonoBehaviour
 
         float targetY = GetTargetY();
 
-        // Left side spawn
+
+        //alternate spawn side between left and rightmost heads
         if (leftMost != null)
         {
             Vector3 spawnPos = leftMost.localPosition + new Vector3(-headOffset.x, 0f, headOffset.z);
             spawnPos.y = targetY;
             GameObject newHead = Instantiate(headPrefab, transform);
             Vector3 initialSpawnPos = spawnPos;
-            initialSpawnPos.y = -60f; // Start lower so it rises up
+            //spawn way under the map so it rises up
+            initialSpawnPos.y = -60f;
             newHead.transform.localPosition = initialSpawnPos;
-            StartCoroutine(AnimateHead(newHead, targetY, riseDuration));
+            StartCoroutine(InstantiateHead(newHead, targetY, riseDuration));
         }
 
-        // Right side spawn
         if (rightMost != null)
         {
             Vector3 spawnPos = rightMost.localPosition + new Vector3(headOffset.x, 0f, headOffset.z);
@@ -103,11 +101,12 @@ public class HydraHeadGenerator : MonoBehaviour
             Vector3 initialSpawnPos = spawnPos;
             initialSpawnPos.y = -60f;
             newHead.transform.localPosition = initialSpawnPos;
-            StartCoroutine(AnimateHead(newHead, targetY, riseDuration));
+            StartCoroutine(InstantiateHead(newHead, targetY, riseDuration));
         }
     }
 
-    void SpawnAlternatingHead()
+    //spawns heads forever till the boss dies
+    void GoodLuck()
     {
         Transform leftMost = null;
         Transform rightMost = null;
@@ -134,7 +133,7 @@ public class HydraHeadGenerator : MonoBehaviour
             Vector3 initialSpawnPos = spawnPos;
             initialSpawnPos.y = -60f;
             newHead.transform.localPosition = initialSpawnPos;
-            StartCoroutine(AnimateHead(newHead, targetY, riseDuration));
+            StartCoroutine(InstantiateHead(newHead, targetY, riseDuration));
         }
         else if (!spawnOnLeft && rightMost != null)
         {
@@ -144,15 +143,15 @@ public class HydraHeadGenerator : MonoBehaviour
             Vector3 initialSpawnPos = spawnPos;
             initialSpawnPos.y = -60f;
             newHead.transform.localPosition = initialSpawnPos;
-            StartCoroutine(AnimateHead(newHead, targetY, riseDuration));
+            StartCoroutine(InstantiateHead(newHead, targetY, riseDuration));
         }
 
         spawnOnLeft = !spawnOnLeft;
     }
 
-    private IEnumerator AnimateHead(GameObject head, float targetY, float duration)
+    //head spawner
+    private IEnumerator InstantiateHead(GameObject head, float targetY, float duration)
     {
-        // Temporarily disable physics interference.
         Rigidbody rb = head.GetComponent<Rigidbody>();
         bool wasKinematic = false;
         if (rb != null)

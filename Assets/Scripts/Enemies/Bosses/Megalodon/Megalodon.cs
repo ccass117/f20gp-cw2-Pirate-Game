@@ -65,6 +65,7 @@ public class Megalodon : MonoBehaviour
     [SerializeField] private Transform bodyChild;
     [SerializeField] private Health bodyHealth;
 
+    //runtime variables
     private NavMeshAgent agent;
     private float attackTimer;
     private float attackTimeRemaining;
@@ -100,6 +101,7 @@ public class Megalodon : MonoBehaviour
             if (p != null) player = p.transform;
         }
 
+        //setup initial values
         attackHitbox.enabled = false;
         originalAttackInterval = attackInterval;
         originalAttackSpeed = attackSpeed;
@@ -110,17 +112,20 @@ public class Megalodon : MonoBehaviour
 
         currentRadius = circleRadius;
         baseCirclingSpeed = circlingSpeed;
-        GenerateNewPattern();
+        //generate initial movement pattern
+        NewPattern();
     }
 
     void Update()
     {
+        //for when the megalodon has hit the player so that it backs off
         if (isRecovering)
         {
-            HandleRecovery();
+            Recover();
             return;
         }
 
+        //gotta do this separately here than in Health.cs because megalodon body and head are separate children, and only the body takes damage
         if (bodyHealth != null && bodyHealth.GetCurrentHealth() <= 0)
         {
             gameObject.SetActive(false);
@@ -132,13 +137,13 @@ public class Megalodon : MonoBehaviour
             EnterPhase2();
         }
 
-        HandleVerticalMovement();
+        VerticalMovement();
         SyncBodyPosition();
 
         if (!isAttacking)
         {
-            HandleCirclingBehavior();
-            HandlePatternUpdates();
+            Circle();
+            UpdatePattern();
             attackTimer -= Time.deltaTime;
             
             if (attackTimer <= 0f)
@@ -148,21 +153,23 @@ public class Megalodon : MonoBehaviour
         }
         else
         {
-            HandleAttackBehavior();
+            AttackBehaviour();
         }
     }
 
-    void HandlePatternUpdates()
+    //get a new pattern for the megalodon to follow, variation is cool!
+    void UpdatePattern()
     {
         patternTimer -= Time.deltaTime;
         radiusTimer -= Time.deltaTime;
 
         if (patternTimer <= 0)
         {
-            GenerateNewPattern();
+            NewPattern();
             patternTimer = patternChangeInterval + Random.Range(-1f, 1f);
         }
 
+        //randomly change orbit radius
         if (radiusTimer <= 0)
         {
             currentRadius = Mathf.Clamp(
@@ -174,8 +181,10 @@ public class Megalodon : MonoBehaviour
         }
     }
 
-    void GenerateNewPattern()
+    //makes movement patterns a little less predictable and fun
+    void NewPattern()
     {
+        //randomise orbit radius and speed
         orbitOffset = new Vector3(
             Random.Range(-angleVariation, angleVariation),
             0,
@@ -191,7 +200,8 @@ public class Megalodon : MonoBehaviour
         }
     }
 
-    void HandleCirclingBehavior()
+    //circle the player like a shark
+    void Circle()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         agent.speed = Mathf.Lerp(
@@ -200,6 +210,7 @@ public class Megalodon : MonoBehaviour
             Mathf.InverseLerp(minFollowDistance, maxFollowDistance, distanceToPlayer)
         );
 
+        //calculate the new orbit angle based on circling speed and time, current values on the prefab should not be changed, they are quite specifically set so that the angle is correct when orbiting
         Vector3 baseOrbitPos = player.position + 
             (transform.position - player.position).normalized * currentRadius;
 
@@ -207,6 +218,7 @@ public class Megalodon : MonoBehaviour
         Vector3 lateralDirection = Vector3.Cross(Vector3.up, (player.position - transform.position).normalized);
         Vector3 variedOrbitPos = baseOrbitPos + lateralDirection * lateralOffset + orbitOffset;
 
+        //smoooooooooth movement
         Vector3 newPos = Vector3.SmoothDamp(
             transform.position,
             variedOrbitPos,
@@ -215,6 +227,8 @@ public class Megalodon : MonoBehaviour
             agent.speed
         );
 
+        //actual movement direction, since we are using SmoothDamp and there is outside interference from paths, actual movement direction is not the same as calculated direction
+        //so we need to calculate the actual movement direction and use that for rotation
         Vector3 actualMovement = (newPos - transform.position).normalized;
         if (actualMovement.sqrMagnitude > 0.001f)
         {
@@ -225,6 +239,7 @@ public class Megalodon : MonoBehaviour
             );
         }
 
+        //rotate to face movement direction
         if (currentVelocity.magnitude > minMovementForRotation)
         {
             Quaternion targetRotation = Quaternion.LookRotation(smoothedMovementDirection) * 
@@ -240,10 +255,12 @@ public class Megalodon : MonoBehaviour
         transform.position = newPos;
     }
 
-    void HandleAttackBehavior()
+    void AttackBehaviour()
     {
+        //attack cooldown
         attackTimeRemaining -= Time.deltaTime;
         
+        //work out where the megalodon should be moving to when it attacks
         Vector3 newPos = Vector3.MoveTowards(
             transform.position, 
             attackTargetPosition, 
@@ -253,6 +270,7 @@ public class Megalodon : MonoBehaviour
         newPos.y = transform.position.y;
         transform.position = newPos;
 
+        //rotate to face the attack position
         Vector3 moveDir = (attackTargetPosition - transform.position).normalized;
         if (moveDir.sqrMagnitude > 0.001f)
         {
@@ -270,7 +288,8 @@ public class Megalodon : MonoBehaviour
         }
     }
 
-    void HandleVerticalMovement()
+    //makes the megalodon bob up and down, looks pretty!
+    void VerticalMovement()
     {
         float targetY = originalGroundY + (isAttacking ? attackLift : bobbingAmplitude * Mathf.Sin(Time.time * bobbingFrequency));
         Vector3 pos = transform.position;
@@ -278,6 +297,8 @@ public class Megalodon : MonoBehaviour
         transform.position = pos;
     }
 
+    //since megalodon has two separate children for head and body, and rigidbody is on both, we need to sync the position of the body with the head to make sure it doesn't look weird when moving
+    //ideally, we shouldn't have to do this but it lets things move together nicely
     void SyncBodyPosition()
     {
         if (Vector3.Distance(transform.position, lastFramePosition) > positionSyncThreshold && bodyChild != null)
@@ -287,27 +308,26 @@ public class Megalodon : MonoBehaviour
         }
     }
 
+    //getter for player velocity
     Vector3 GetPlayerVelocity()
     {
         if (player == null) return Vector3.zero;
         
         if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
             return rb.linearVelocity;
-        if (player.TryGetComponent<CharacterController>(out CharacterController cc))
-            return cc.velocity;
-        if (player.TryGetComponent<NavMeshAgent>(out NavMeshAgent nma))
-            return nma.velocity;
         
         return Vector3.zero;
     }
 
     void StartAttack()
     {
+        //attack hitbox is enabled separately so the head doesn't do damage when it's not supposed to
         isAttacking = true;
         attackTimeRemaining = attackDuration;
         agent.speed = phase2Active ? phase2AttackSpeed : attackSpeed;
         attackHitbox.enabled = true;
         
+        //predict player pos and charge
         Vector3 playerVelocity = GetPlayerVelocity();
         Vector3 predictedPosition = player.position + playerVelocity * predictionTime;
         Vector3 attackDirection = (predictedPosition - transform.position).normalized;
@@ -318,6 +338,7 @@ public class Megalodon : MonoBehaviour
         transform.rotation = immediateRotation;
     }
 
+    //after an attack, the megalodon will back off a bit and then return to circling the player
     void EndAttack()
     {
         if (phase2Active && remainingChainAttacks > 0)
@@ -339,6 +360,7 @@ public class Megalodon : MonoBehaviour
         }
     }
 
+    //attacks become faster and chain together
     void EnterPhase2()
     {
         phase2Active = true;
@@ -350,7 +372,8 @@ public class Megalodon : MonoBehaviour
         if (!isAttacking) StartAttack();
     }
 
-    void HandleRecovery()
+    //recovery is when the megalodon backs off after an attack, and it will move back to the original position
+    void Recover()
     {
         transform.position = Vector3.Lerp(transform.position, recoveryTarget, Time.deltaTime / recoveryDuration);
         Quaternion desiredRot = Quaternion.LookRotation((transform.position - player.position).normalized) * Quaternion.Euler(rotationOffset);
@@ -362,6 +385,7 @@ public class Megalodon : MonoBehaviour
         }
     }
 
+    //pass off collisions to Health.cs
     void OnCollisionEnter(Collision collision)
     {
         if (bodyHealth != null)
@@ -382,6 +406,7 @@ public class Megalodon : MonoBehaviour
         StartCoroutine(RecoveryBounce());
     }
 
+    //this is the coroutine that lets the shark "bounce" off after attacking
     IEnumerator RecoveryBounce()
     {
         float timer = 0;
@@ -398,7 +423,7 @@ public class Megalodon : MonoBehaviour
             yield return null;
         }
         
-        GenerateNewPattern();
+        NewPattern();
         Vector3 toPlayer = transform.position - player.position;
         currentOrbitAngle = Mathf.Atan2(toPlayer.z, toPlayer.x);
         

@@ -3,14 +3,10 @@ using System.Collections;
 
 public class RocketBoost : MonoBehaviour
 {
-    [Tooltip("Distance to move forward during boost.")]
     public float boostDistance = 20f;
-    [Tooltip("Speed factor for the boost. Higher values result in a faster burst.")]
     public float boostSpeed = 30f;
-    [Tooltip("Cooldown time between boosts (seconds).")]
     public float cooldown = 15f;
-    [Tooltip("Visual effect prefab to spawn at the ship's rear when boosting.")]
-    public GameObject boostEffectPrefab;
+    public GameObject boostEffect;
 
     private bool canBoost = true;
 
@@ -18,26 +14,27 @@ public class RocketBoost : MonoBehaviour
     {
         if (canBoost && Input.GetKeyDown(KeyCode.LeftShift))
         {
-            StartCoroutine(PerformBoost());
+            StartCoroutine(Boost());
         }
     }
 
-    IEnumerator PerformBoost()
+    IEnumerator Boost()
     {
         canBoost = false;
 
-        if (boostEffectPrefab != null)
+        if (boostEffect != null)
         {
             Transform boostOrigin = transform.Find("BoostOrigin");
             Vector3 effectPos = boostOrigin != null ? boostOrigin.position : transform.position;
             Quaternion effectRot = boostOrigin != null ? boostOrigin.rotation : transform.rotation;
-            Instantiate(boostEffectPrefab, effectPos, effectRot, transform);
+            Instantiate(boostEffect, effectPos, effectRot, transform);
         }
 
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + transform.forward * boostDistance;
 
         float t = 0f;
+        //quadratic ease-out (1-(1-t)^2) deceleration
         while (t < 1f)
         {
             t += Time.deltaTime * boostSpeed / boostDistance;
@@ -50,25 +47,19 @@ public class RocketBoost : MonoBehaviour
         canBoost = true;
     }
 
-    public void Initialize()
-    {
-
-    }
-
-
-    public static void ActivateRocketBoost()
+    //use this one for registering the buff
+    public static void ActivateBoost()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogWarning("ActivateRocketBoost: No GameObject tagged 'Player' found. Delaying activation.");
-            CoroutineHelper.Instance.StartCoroutine(WaitForPlayerAndActivate());
+            CoroutineHelper.Instance.StartCoroutine(Attach());
             return;
         }
-        AddRocketBoostComponent(player);
+        AttachBoost(player);
     }
 
-    public static void DeactivateRocketBoost()
+    public static void DeactivateBoost()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -77,30 +68,27 @@ public class RocketBoost : MonoBehaviour
             if (rb != null)
             {
                 Destroy(rb);
-                Debug.Log("Rocket Boost deactivated on " + player.name);
             }
         }
     }
 
-    private static IEnumerator WaitForPlayerAndActivate()
+    //don't reassign player var, just attach so that player instance from a previous scene doesn't get stored since this class isn't actually being attached to anything
+    private static IEnumerator Attach()
     {
         GameObject player = null;
         while (player == null)
         {
-            player = GameObject.FindGameObjectWithTag("Player");
             yield return null;
         }
-        AddRocketBoostComponent(player);
+        AttachBoost(player);
     }
 
-    private static void AddRocketBoostComponent(GameObject player)
+    private static void AttachBoost(GameObject player)
     {
         RocketBoost rb = player.GetComponent<RocketBoost>();
         if (rb == null)
         {
             rb = player.AddComponent<RocketBoost>();
-            rb.Initialize();
         }
-        Debug.Log("Rocket Boost activated on " + player.name);
     }
 }

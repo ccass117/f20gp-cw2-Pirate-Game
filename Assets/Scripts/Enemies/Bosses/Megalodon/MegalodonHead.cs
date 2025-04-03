@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//pretty much just syncs the head with the body of the megalodon and works out any offsets, nothing much to say here
 public class MegalodonHead : MonoBehaviour
 {
     public Transform bodyTransform;
