@@ -17,14 +17,28 @@ public class TentacleEmerger : MonoBehaviour
     [Header("Attack Settings")]
     public float attackRange = 8f;    
 
+    [Header("Tornado Attack Settings")]
+    public GameObject tornadoPrefab;
+    public float tornadoDelay = 1f;
+    [Tooltip("Distance in front of the tentacle from which the tornado is spawned.")]
+    public float tornadoSpawnOffset = 1f;
+    [Tooltip("Chance (0 to 1) that an attack will spawn a tornado when health is low.")]
+    public float tornadoChance = 0.15f;
+
+    
+    [Header("Attack Timer Settings")]
+    public float minAttackInterval = 5f;
+    public float maxAttackInterval = 10f;
+
     private Animator anim;
+    private float attackTimer;
     private float timeAboveWater = 0f;
     private bool retreatTriggered = false;
     private bool isAttacking = false;
     private bool hasRisen = false;  
+    private bool isTornadoSpawnPending = false;
 
     public Transform krakenZone;
-
     private Transform player;
     private Vector3 initialPosition;
 
@@ -55,6 +69,8 @@ public class TentacleEmerger : MonoBehaviour
             else
                 Debug.LogWarning(gameObject.name + ": Player not found!");
         }
+
+        ResetAttackTimer();
     }
 
     void Update()
@@ -119,6 +135,7 @@ public class TentacleEmerger : MonoBehaviour
         hasRisen = true;
     }
 
+
     public void OnAttackComplete()
     {
         isAttacking = false;
@@ -128,11 +145,27 @@ public class TentacleEmerger : MonoBehaviour
             anim.SetTrigger("RetreatTrigger");
             retreatTriggered = true;
         }
+
+        // --- NEW: Check for tornado attack ---
+        Health parentHealth = transform.root.GetComponent<Health>();
+        if (!isTornadoSpawnPending && 
+            parentHealth != null && 
+            (parentHealth.currentHealth / parentHealth.maxHealth) <= 0.4f &&
+            Random.value <= tornadoChance && 
+            tornadoPrefab != null)
+        {
+            StartCoroutine(SpawnTornado());
+        }
     }
 
     public void OnRetreatComplete()
     {
         Destroy(gameObject);
+    }
+
+    void ResetAttackTimer()
+    {
+        attackTimer = Random.Range(minAttackInterval, maxAttackInterval);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -149,4 +182,28 @@ public class TentacleEmerger : MonoBehaviour
     {
         ActiveTentacles.Remove(this);
     }
+
+    private IEnumerator SpawnTornado()
+    {
+        isTornadoSpawnPending = true; // Lock spawning
+        
+        yield return new WaitForSeconds(tornadoDelay);
+        
+        // Calculate spawn position/rotation
+        Vector3 spawnPos = transform.position + transform.forward * tornadoSpawnOffset;
+        Quaternion spawnRot = transform.rotation;
+        
+        // Spawn tornado
+        GameObject tornadoInstance = Instantiate(tornadoPrefab, spawnPos, spawnRot);
+        Tornado tornadoScript = tornadoInstance.GetComponent<Tornado>();
+        if (tornadoScript != null)
+        {
+            tornadoScript.forwardDirection = transform.forward;
+        }
+        Destroy(tornadoInstance, 5f);
+
+        isTornadoSpawnPending = false; // Release lock
+    }
+
+
 }

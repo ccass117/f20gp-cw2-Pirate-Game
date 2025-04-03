@@ -202,14 +202,10 @@ MonoBehaviour:
   damageMultiplier: 10
   isProjectile: 1
   damageCooldown: 0.5
+  goldAmount: 0
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
-  headThreshold: 0.7
-  useHeadHitDetection: 0
-  collisionLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  isSolidObstacle: 1
+  hitSfx: {fileID: 0}
 --- !u!1 &3597643182006345386
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,8 +434,13 @@ MonoBehaviour:
   activeTime: 7
   retreatDuration: 1
   attackRange: 8
+  tornadoPrefab: {fileID: 57540951034900396, guid: d622146470a2f234b99c1bac1463e0be, type: 3}
+  tornadoDelay: 1
+  tornadoSpawnOffset: 1
+  tornadoChance: 0.5
+  minAttackInterval: 5
+  maxAttackInterval: 10
   krakenZone: {fileID: 0}
-  collisionDamage: 5
 --- !u!54 &5982922220738754153
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -485,14 +486,10 @@ MonoBehaviour:
   damageMultiplier: 10
   isProjectile: 1
   damageCooldown: 0.5
+  goldAmount: 0
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
-  headThreshold: 0.7
-  useHeadHitDetection: 0
-  collisionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  isSolidObstacle: 1
+  hitSfx: {fileID: 0}
 --- !u!1 &6625694280971497726
 GameObject:
   m_ObjectHideFlags: 0

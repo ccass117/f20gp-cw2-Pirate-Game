@@ -6,7 +6,7 @@ public class MainMenu : MonoBehaviour
 {
     [Header("Scripts")]
     [SerializeField] private LevelLoader levelLoader;
-    [SerializeField] private Credits credits;
+    //[SerializeField] private Credits credits;
 
     [Header("Main")]
     [SerializeField] private RectTransform titleText;
@@ -43,7 +43,7 @@ public class MainMenu : MonoBehaviour
     // DOTween transition that brings in the title and buttons
     public void AnimUIMainIn()
     {
-        UIAnimator.AnimateUIIn(titleText, new RectTransform[] { startBtn, creditsBtn, quitBtn }, canvasWidth);
+     //   UIAnimator.AnimateUIIn(titleText, new RectTransform[] { startBtn, creditsBtn, quitBtn }, canvasWidth);
     }
 
     public void Play()
@@ -66,7 +66,7 @@ public class MainMenu : MonoBehaviour
         DOVirtual.DelayedCall(1.5f, () =>
         {
             anim.SetTrigger("ToCredits");
-            credits.RollCredits();
+            //credits.RollCredits();
         });
     }
 

@@ -9733,15 +9733,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6665cc027cb6f5a4fa730a3903dc6f5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 2
   currentHealth: 0
-  damageResistance: 1
+  damageResistance: 0
   damageMultiplier: 20
   isProjectile: 1
   damageCooldown: 0.5
   goldAmount: 0
   attackerSpeedThreshold: 0
   defenderSpeedThreshold: 0
+  hitSfx: {fileID: 0}
 --- !u!1 &7037320473298360721
 GameObject:
   m_ObjectHideFlags: 0

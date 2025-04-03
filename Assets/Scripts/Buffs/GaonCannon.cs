@@ -3,95 +3,146 @@ using System.Collections;
 
 public class GaonCannon : MonoBehaviour
 {
-    [Tooltip("Laser projectile prefab to spawn when firing.")]
-    public GameObject laserPrefab;
-    [Tooltip("Local offset from the player's position to spawn the laser (e.g., in front of the ship).")]
-    public Vector3 spawnOffset = new Vector3(0, 0, 2f);
-    [Tooltip("Cooldown time between laser shots (in seconds).")]
-    public float cooldown = 20f;
+    [Header("Sphere Settings")]
+    public GameObject spherePrefab;
+    public float sphereSpeed = 5f;
+    public float orbitRadius = 2f;
+    public float convergeTime = 1.5f;
 
+    [Header("Capsule Settings")]
+    public GameObject capsulePrefab;
+    public float capsuleSpeed = 10f;
+    public float capsuleDuration = 0.5f;
+    public float retractSpeed = 3f;
+
+    [Header("Cooldown")]
+    public float cooldown = 20f;
+    
     private bool canShoot = true;
+    private GameObject leftSphere;
+    private GameObject rightSphere;
+    private GameObject activeCapsule;
 
     void Update()
     {
-        // Listen for middle mouse button click.
         if (canShoot && Input.GetMouseButtonDown(2))
         {
-            StartCoroutine(ShootLaser());
+            StartCoroutine(ChargeAndFire());
         }
     }
 
-    IEnumerator ShootLaser()
+    IEnumerator ChargeAndFire()
     {
         canShoot = false;
-
-        if (laserPrefab != null)
+        
+        SpawnOrbitingSpheres();
+        
+        yield return StartCoroutine(MoveSpheresToFront());
+        
+        float timeout = 5f;
+        float timer = 0f;
+        while ((leftSphere != null || rightSphere != null) && timer < timeout)
         {
-            GameObject laserInstance = Instantiate(laserPrefab, transform);
-            laserInstance.transform.localPosition = spawnOffset;
-            laserInstance.transform.localRotation = Quaternion.identity;
-            Debug.Log("Laser fired from local position " + spawnOffset);
+            timer += Time.deltaTime;
+            yield return null;
         }
-        else
-        {
-            Debug.LogWarning("GaonCannon: No laserPrefab assigned.");
-        }
-
+        
+        CleanupSpheres();
+        yield return StartCoroutine(FireCapsule());
+        
         yield return new WaitForSeconds(cooldown);
         canShoot = true;
     }
 
-    public void Initialize()
+    void SpawnOrbitingSpheres()
     {
-        if (laserPrefab == null)
-            laserPrefab = Resources.Load<GameObject>("LaserPrefabName");
+        Vector3 leftPos = transform.position - transform.right * orbitRadius;
+        Vector3 rightPos = transform.position + transform.right * orbitRadius;
+
+        leftSphere = Instantiate(spherePrefab, leftPos, Quaternion.identity, transform);
+        rightSphere = Instantiate(spherePrefab, rightPos, Quaternion.identity, transform);
+        
+        leftSphere.AddComponent<SphereCollisionHandler>().Init(this);
+        rightSphere.AddComponent<SphereCollisionHandler>().Init(this);
     }
 
-    public static void ActivateLaserBuff()
+    IEnumerator MoveSpheresToFront()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
-        {
-            Debug.LogWarning("ActivateLaserBuff: No GameObject tagged 'Player' found. Delaying activation.");
-            CoroutineHelper.Instance.StartCoroutine(WaitForPlayerAndActivate());
-            return;
-        }
-        AddLaserBuffComponent(player);
-    }
+        float t = 0f;
+        Vector3 leftStart = leftSphere.transform.position;
+        Vector3 rightStart = rightSphere.transform.position;
+        Vector3 frontPosition = transform.position + transform.forward * 2f;
 
-    public static void DeactivateLaserBuff()
-    {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        while (t < 1f && leftSphere != null && rightSphere != null)
         {
-            GaonCannon gc = player.GetComponent<GaonCannon>();
-            if (gc != null)
-            {
-                Destroy(gc);
-                Debug.Log("Laser Buff deactivated on " + player.name);
-            }
-        }
-    }
-
-    private static IEnumerator WaitForPlayerAndActivate()
-    {
-        GameObject player = null;
-        while (player == null)
-        {
-            player = GameObject.FindGameObjectWithTag("Player");
+            t += Time.deltaTime / convergeTime;
+            
+            leftSphere.transform.position = Vector3.Lerp(leftStart, frontPosition, t) + 
+                                         transform.up * Mathf.Sin(t * Mathf.PI) * orbitRadius;
+            rightSphere.transform.position = Vector3.Lerp(rightStart, frontPosition, t) + 
+                                          transform.up * Mathf.Sin(t * Mathf.PI) * orbitRadius;
+            
             yield return null;
         }
-        AddLaserBuffComponent(player);
     }
 
-    private static void AddLaserBuffComponent(GameObject player)
+    public void OnSpheresCollided()
     {
-        GaonCannon gc = player.GetComponent<GaonCannon>();
-        if (gc == null)
+        if (leftSphere != null && rightSphere != null)
         {
-            gc = player.AddComponent<GaonCannon>();
-            gc.Initialize();
+            CleanupSpheres();
+            StartCoroutine(FireCapsule());
         }
-        Debug.Log("Laser Buff activated on " + player.name);
+    }
+
+    IEnumerator FireCapsule()
+    {
+        Vector3 spawnPos = transform.position + transform.forward * 2f;
+        activeCapsule = Instantiate(capsulePrefab, spawnPos, transform.rotation);
+        
+        float timer = 0f;
+        Vector3 startScale = activeCapsule.transform.localScale;
+        Vector3 targetScale = new Vector3(startScale.x, startScale.y, startScale.z * 3f);
+
+        while (timer < capsuleDuration)
+        {
+            activeCapsule.transform.localScale = Vector3.Lerp(startScale, targetScale, timer/capsuleDuration);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        timer = 0f;
+        while (timer < 1f)
+        {
+            activeCapsule.transform.localScale = Vector3.Lerp(targetScale, startScale, timer);
+            timer += Time.deltaTime * retractSpeed;
+            yield return null;
+        }
+
+        Destroy(activeCapsule);
+    }
+
+    void CleanupSpheres()
+    {
+        if (leftSphere != null) Destroy(leftSphere);
+        if (rightSphere != null) Destroy(rightSphere);
+    }
+
+    class SphereCollisionHandler : MonoBehaviour
+    {
+        private GaonCannon cannon;
+
+        public void Init(GaonCannon cannon)
+        {
+            this.cannon = cannon;
+        }
+
+        void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.CompareTag("EnergySphere"))
+            {
+                cannon.OnSpheresCollided();
+            }
+        }
     }
 }
