@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class HydraHeadController : MonoBehaviour
@@ -50,6 +51,15 @@ public class HydraHeadController : MonoBehaviour
     private Animator anim;
     private Transform player;
 
+    // NEW: Parameters for moving the head collider during Attack 2.
+    [Header("Attack 2 Collider Movement")]
+    [Tooltip("How far down (in units) the head should drop during Attack 2.")]
+    public float headDropAmount = 2f;
+    [Tooltip("Duration (in seconds) for the head drop movement.")]
+    public float headDropDuration = 0.5f;
+    [Tooltip("Optional delay (in seconds) before the head returns to its original position.")]
+    public float headDropHoldTime = 0.3f;
+
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -97,7 +107,6 @@ public class HydraHeadController : MonoBehaviour
 
         if (weights.Count == 0)
         {
-            Debug.LogWarning(gameObject.name + ": No attacks enabled, skipping attack.");
             return;
         }
 
@@ -122,21 +131,29 @@ public class HydraHeadController : MonoBehaviour
         {
             anim.SetInteger("AttackIndex", 1);
             anim.SetTrigger("AttackTrigger");
-            Debug.Log(gameObject.name + ": Attack 1 triggered. Animation event will spawn fire prefab.");
         }
         else if (selectedAttack == 2)
         {
+
             if (attack2Prefab == null)
             {
                 Debug.LogWarning(gameObject.name + ": Attack 2 prefab not assigned.");
             }
             else
             {
+
+                anim.SetInteger("AttackIndex", 2);
+                anim.SetTrigger("AttackTrigger");
+                
+
+                StartCoroutine(MoveHeadColliderDown());
+
                 Vector3 predictedPosition = player.position;
                 Rigidbody playerRb = player.GetComponent<Rigidbody>();
                 Vector3 predictedVelocity = Vector3.zero;
                 if (playerRb != null)
                 {
+                    // Project the player's linear velocity along its forward vector.
                     predictedVelocity = Vector3.Project(playerRb.linearVelocity, player.forward);
                 }
                 else
@@ -152,14 +169,13 @@ public class HydraHeadController : MonoBehaviour
                     spawnRot = Quaternion.LookRotation(player.forward);
 
                 Instantiate(attack2Prefab, predictedPosition, spawnRot);
-                Debug.Log(gameObject.name + ": Attack 2 triggered. Spawned prefab at predicted position " + predictedPosition);
             }
         }
         else
         {
+
             anim.SetInteger("AttackIndex", 0);
             anim.SetTrigger("AttackTrigger");
-            Debug.Log(gameObject.name + ": Attack 0 triggered via Animator.");
         }
     }
 
@@ -172,7 +188,7 @@ public class HydraHeadController : MonoBehaviour
     {
         if (attack1Prefab == null || mouthTransform == null)
         {
-            Debug.LogWarning(gameObject.name + ": Attack 1 prefab or mouthTransform not assigned.");
+
             return;
         }
         
@@ -182,12 +198,29 @@ public class HydraHeadController : MonoBehaviour
         Quaternion finalRot = verticalOffset * horizontalOffset * baseRot;
         
         GameObject instance = Instantiate(attack1Prefab, mouthTransform.position, finalRot, mouthTransform);
+        instance.SetActive(true);
         instance.transform.localPosition = Vector3.zero;
         instance.transform.localScale = Vector3.one * attack1PrefabScale;
         
-        Debug.Log(gameObject.name + ": SpawnAttack1Prefab - Spawned fire prefab at mouth with final rotation: " + finalRot.eulerAngles);
+        // Ignore collisions with all colliders in the hydra's hierarchy (the main body).
+        IgnoreCollisionsWithHierarchy(instance, transform.root);
+        
         
         Destroy(instance, attack1AnimationLength);
+    }
+
+    void IgnoreCollisionsWithHierarchy(GameObject child, Transform parentRoot)
+    {
+        Collider[] childColliders = child.GetComponentsInChildren<Collider>();
+        Collider[] parentColliders = parentRoot.GetComponentsInChildren<Collider>();
+
+        foreach (Collider childCol in childColliders)
+        {
+            foreach (Collider parentCol in parentColliders)
+            {
+                Physics.IgnoreCollision(childCol, parentCol);
+            }
+        }
     }
 
     #if UNITY_EDITOR
@@ -221,4 +254,32 @@ public class HydraHeadController : MonoBehaviour
         }
     }
     #endif
+
+    // NEW: Coroutine to move the hydra head (collider) downward during Attack 2
+    private IEnumerator MoveHeadColliderDown()
+    {
+        Vector3 originalPos = transform.localPosition;
+        Vector3 targetPos = originalPos - new Vector3(0, headDropAmount, 0);
+
+        float elapsed = 0f;
+        // Move downward
+        while (elapsed < headDropDuration)
+        {
+            elapsed += Time.deltaTime;
+            transform.localPosition = Vector3.Lerp(originalPos, targetPos, elapsed / headDropDuration);
+            yield return null;
+        }
+        transform.localPosition = targetPos;
+        // Optionally, wait a moment before returning.
+        yield return new WaitForSeconds(headDropHoldTime);
+        // Return to original position.
+        elapsed = 0f;
+        while (elapsed < headDropDuration)
+        {
+            elapsed += Time.deltaTime;
+            transform.localPosition = Vector3.Lerp(targetPos, originalPos, elapsed / headDropDuration);
+            yield return null;
+        }
+        transform.localPosition = originalPos;
+    }
 }

@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 1116726693270471851}
   - component: {fileID: 2653487163822595069}
   - component: {fileID: 3744493983635257273}
+  - component: {fileID: 3785334729363570033}
   m_Layer: 0
-  m_Name: vfx_Tornado_01 1
+  m_Name: Tornado
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4833,3 +4834,21 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &3785334729363570033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57540951034900396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daa63a98c5cbc3a4b8dc11260efa8052, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  amplitude: 2
+  frequency: 1
+  forwardDirection: {x: 0, y: 0, z: 1}
+  repulsionRadius: 5
+  repulsionForce: 100

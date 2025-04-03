@@ -70,16 +70,16 @@ public class MusicMgr : MonoBehaviour
             StartCoroutine(FadeAudioPitch(1.0f, 0.5f)); // Restore pitch over 0.5 sec
 
             // Check if MoveShip.lvls is 1,2,5,6,9, or 10
-            if (MoveShip.lvls == 0 || MoveShip.lvls == 1 || MoveShip.lvls == 4 ||
-                MoveShip.lvls == 5 || MoveShip.lvls == 8 || MoveShip.lvls == 9)
-            {
-                StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
-            } else if (MoveShip.lvls ==-1)
-            {
-                StartCoroutine(FadeAudioVolume(0.0f, 3.0f));
-            } else {
-                StartCoroutine(FadeAudioVolume(0.0f, 7.5f));
-            }
+          //  if (MoveShip.lvls == 0 || MoveShip.lvls == 1 || MoveShip.lvls == 4 ||
+          //      MoveShip.lvls == 5 || MoveShip.lvls == 8 || MoveShip.lvls == 9)
+          //  {
+          //      StartCoroutine(FadeAudioVolume(1.0f, 0.5f));
+          //  } else if (MoveShip.lvls ==-1)
+          //  {
+          //      StartCoroutine(FadeAudioVolume(0.0f, 3.0f));
+           // } else {
+           //     StartCoroutine(FadeAudioVolume(0.0f, 7.5f));
+          //  }
         }
         else
         {
