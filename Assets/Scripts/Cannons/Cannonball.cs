@@ -20,7 +20,7 @@ public class Cannonball : MonoBehaviour
     void Update()
     {
         // splash if the ball hits the water.
-        if (transform.position.y < 0f && splashCoroutine == null)
+        if (transform.position.y < 0f && splash == null)
         {
             splash = StartCoroutine(splishsplash());
         }
@@ -49,7 +49,7 @@ public class Cannonball : MonoBehaviour
     }
 
     // play splash sound effect and then delete the object (it will be hidden under the water so its fine to stay there for a bit)
-    private IEnumerator splashAndDestroy()
+    private IEnumerator splishsplash()
     {
         Instantiate(splashPrefab, new Vector3(transform.position.x, 0.5f, transform.position.z), Quaternion.identity);
         yield return new WaitForSeconds(1.5f);

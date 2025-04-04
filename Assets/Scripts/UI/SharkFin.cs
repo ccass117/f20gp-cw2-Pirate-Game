@@ -29,17 +29,23 @@ public class SharkFin : MonoBehaviour
 
         // DOTween sequence to move shark fin in an upwards arc and then again but reversed
         sharkFin = DOTween.Sequence();
-        sharkFin.Append(transform.DOScaleX(12, 0f));
-        sharkFin.AppendInterval(10f);
+
+        sharkFin.Append(transform.DOScaleX(12, 0f)); // face right
+        sharkFin.AppendInterval(10f); // wait before starting shark movement
+
+        // left > right
         sharkFin.Append(transform.DOMove(arcPos, duration / 2).SetEase(Ease.OutQuad));
         sharkFin.Append(transform.DOMove(endPos, duration / 2).SetEase(Ease.InQuad));
-        sharkFin.AppendInterval(5f);
 
-        sharkFin.Append(transform.DOScaleX(-12, 0f));
+        sharkFin.Append(transform.DOScaleX(-12, 0f)); // face left
+        sharkFin.AppendInterval(5f); // wait before going back
+
+        // right > left
         sharkFin.Append(transform.DOMove(arcPos, duration / 2).SetEase(Ease.OutQuad));
         sharkFin.Append(transform.DOMove(startPos, duration / 2).SetEase(Ease.InQuad));
+        
+        // wait additional ~5 seconds before restarting sequence
         sharkFin.AppendInterval(5f);
-
         sharkFin.SetLoops(-1);
     }
 

@@ -5036,6 +5036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelLoader: {fileID: 1186352606}
+  credits: {fileID: 973547852}
   titleText: {fileID: 1952876290}
   startBtn: {fileID: 1764505112}
   startButton: {fileID: 1764505113}
